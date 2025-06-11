@@ -1,0 +1,101 @@
+/* Variáveis para cores (em CSS puro, as variáveis são definidas com --) */
+:root {
+    --color-dark-brown: #6b4d32;
+    --color-light-cream: #f8f0e5;
+    --color-text-dark-brown: #6b4d32;
+    --color-search-icon: #aaaaaa;
+  }
+  
+  .top-promo-bar {
+    height: 10px; /* Altura da faixa promocional superior */
+    background-color: var(--color-dark-brown); /* Cor da faixa */
+    width: 100%;
+  }
+  
+  .bg-light-cream {
+    background-color: var(--color-light-cream) !important;
+  }
+  
+  .bg-dark-brown {
+    background-color: var(--color-dark-brown) !important;
+  }
+  
+  .text-dark-brown {
+    color: var(--color-text-dark-brown) !important;
+  }
+  
+  .icon-color {
+    color: var(--color-text-dark-brown);
+  }
+  
+  .search-icon-color {
+    color: var(--color-search-icon);
+  }
+  
+  .search-bar-container {
+      max-width: 500px; /* Limita a largura da barra de busca */
+  }
+  
+  .search-input-group {
+    /* Ajuste para deixar a barra de busca redonda */
+    border-radius: 50rem !important; /* Valor grande para arredondar bem */
+    overflow: hidden; /* Garante que o conteúdo não vaze */
+    border: 1px solid #ccc; /* Borda leve para o campo de busca */
+  }
+  
+  .search-input-group .form-control {
+    border: none !important; /* Remove a borda padrão do input */
+    box-shadow: none !important; /* Remove o box-shadow no focus */
+    background-color: rgba(255, 255, 255, 0.7); /* Fundo branco um pouco transparente */
+  }
+  
+  .search-input-group .input-group-text {
+    background-color: transparent !important;
+    border: none !important;
+    padding-right: 0.75rem; /* Espaçamento do ícone */
+    padding-left: 0;
+  }
+  
+  /* Ajustes para links da navbar inferior */
+  .navbar-nav .nav-link {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    transition: color 0.3s ease; /* Transição suave para hover */
+  }
+  
+  .navbar-nav .nav-link:hover {
+    color: rgba(255, 255, 255, 0.85) !important; /* Uma forma de escurecer branco em CSS puro */
+  }
+  
+  .navbar-nav .nav-item {
+      margin-left: 1rem;
+      margin-right: 1rem;
+  }
+  
+  /* Ajuste para o texto dentro do dropdown toggle */
+  .dropdown-toggle.nav-link {
+      display: flex;
+      align-items: center;
+  }
+  
+  /* Ajuste para imagens do logo, se necessário */
+  .navbar-brand img {
+      max-height: 60px; /* Garante que o logo não fique muito grande */
+      width: auto;
+  }
+  
+  /* Responsividade básica (exemplo, ajuste conforme sua necessidade) */
+  @media (max-width: 991.98px) { /* Largura para 'lg' do Bootstrap */
+    .search-bar-container {
+      width: 100% !important;
+      margin: 1rem 0 !important;
+    }
+    .navbar-nav {
+      width: 100%;
+      justify-content: center;
+    }
+    .navbar-collapse {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
