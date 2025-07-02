@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg custom-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/home">
+      <img src="../../assets/images/essenzalogo.jpg"alt="Essenza Logo" class="logo-img">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/heroes" routerLinkActive="active">Heróis</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/villains" routerLinkActive="active">Vilões</a>
+        '        </li>
+      </ul> -->
+
+      <form class="d-flex search-bar" role="search">
+        <input class="form-control me-2" type="search" placeholder="O que você procura hoje?" aria-label="Search">
+        <button class="btn btn-outline-light" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
+      </form>
+
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown" ngbDropdown>
+          <a class="nav-link dropdown-toggle" ngbDropdownToggle id="minhaContaDropdown" role="button" aria-expanded="false">
+            <i class="fas fa-user-circle"></i>
+            <span class="d-none d-lg-inline"> {{ isLoggedIn ? userName : 'Minha Conta' }}</span>
+          </a>
+          <ul ngbDropdownMenu aria-labelledby="minhaContaDropdown">
+            <ng-container *ngIf="isLoggedIn; else loggedOut">
+              <li><a ngbDropdownItem routerLink="/profile">Meu Perfil</a></li>
+              <li><a ngbDropdownItem routerLink="/orders">Meus Pedidos</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a ngbDropdownItem (click)="logout()">Sair</a></li>
+            </ng-container>
+            <ng-template #loggedOut>
+              <li><a ngbDropdownItem routerLink="/login">Entrar</a></li>
+              <li><a ngbDropdownItem routerLink="/register">Cadastrar</a></li>
+            </ng-template>
+          </ul>
+        </li>
+
+        <li class="nav-item cart-icon">
+          <a class="nav-link" routerLink="/cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-value">R$ 0,00</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

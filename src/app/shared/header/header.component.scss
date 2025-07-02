@@ -1,0 +1,135 @@
+/* src/app/shared/header/header.component.scss */
+
+.custom-navbar {
+  background-color: #f8f0e5; // Cor de fundo semelhante à imagem fornecida
+  padding: 0.5rem 1rem; // Ajuste o padding conforme necessário
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Sombra sutil para destaque
+}
+
+.logo-img {
+  height: 60px; // Ajuste o tamanho do logo conforme a imagem
+  margin-right: 1rem; // Espaçamento entre logo e outros elementos
+}
+
+.navbar-brand {
+  padding: 0; // Remover padding padrão se a imagem já tiver espaço
+  margin-right: 2rem; // Aumentar margem para afastar do menu
+}
+
+.nav-link {
+  color: #333; // Cor do texto dos links
+  font-weight: 500;
+  margin-right: 1.5rem; // Espaçamento entre os links
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #007bff; // Cor ao passar o mouse
+  }
+
+  &.active {
+    color: #0056b3; // Cor para link ativo
+    font-weight: 700;
+  }
+}
+
+.search-bar {
+  max-width: 400px; // Largura máxima para a barra de pesquisa
+  flex-grow: 1; // Permite que a barra de pesquisa ocupe espaço
+  margin-right: 2rem; // Espaço antes dos ícones de usuário/carrinho
+
+  .form-control {
+    border-radius: 20px; // Cantos arredondados
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-color: #ccc;
+  }
+
+  .btn-outline-light {
+    border-color: #ccc;
+    color: #333;
+    border-radius: 20px;
+    margin-left: -40px; // Ajuste para posicionar o ícone dentro do input
+    position: relative;
+    z-index: 1;
+    &:hover {
+      background-color: #e9ecef;
+      color: #333;
+    }
+  }
+  .fas.fa-search {
+    color: #6c757d; // Cor do ícone de busca
+  }
+}
+
+.navbar-nav {
+  .nav-item {
+    margin-right: 1rem;
+  }
+}
+
+// Estilos para os ícones de usuário e carrinho
+.nav-link.dropdown-toggle,
+.nav-item.cart-icon .nav-link {
+  color: #333;
+  display: flex;
+  align-items: center;
+
+  i {
+    font-size: 1.2rem;
+    margin-right: 0.3rem;
+  }
+  .cart-value {
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem; // Espaçamento abaixo do toggle
+}
+
+.dropdown-item {
+  color: #333;
+  &:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+}
+
+// Responsividade
+@media (max-width: 991.98px) { // Ponto de quebra padrão do Bootstrap para telas menores que lg
+  .custom-navbar {
+    padding: 0.5rem 1rem;
+  }
+  .navbar-nav {
+    flex-direction: column; // Empilha itens do menu
+    width: 100%; // Ocupa a largura total
+    text-align: center;
+    margin-top: 1rem;
+    .nav-item {
+      margin-right: 0;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .search-bar {
+    width: 90%; // Ocupa mais largura em mobile
+    max-width: none;
+    margin: 1rem auto; // Centraliza a barra de pesquisa
+  }
+
+  .navbar-nav:last-child { // Para os ícones de conta/carrinho
+    margin-top: 1rem;
+  }
+
+  .nav-link.dropdown-toggle,
+  .nav-item.cart-icon .nav-link {
+    justify-content: center; // Centraliza os ícones em mobile
+  }
+
+  .nav-link.dropdown-toggle .d-none.d-lg-inline {
+    display: inline !important; // Mostra o texto "Minha Conta" em mobile
+  }
+}

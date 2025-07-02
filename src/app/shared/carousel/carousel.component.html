@@ -1,0 +1,18 @@
+<div class="container">
+  <ngb-carousel [showNavigationIndicators]="showNavigationIndicators" [interval]="interval"
+    [pauseOnHover]="pauseOnHover" [wrap]="wrap" [keyboard]="keyboard" *ngIf="images && images.length > 0">
+    <ng-template ngbSlide *ngFor="let image of images; let i = index">
+      <div class="picsum-img-wrapper">
+        <img [src]="image.src" [alt]="image.alt" class="d-block w-100">
+      </div>
+
+      <div class="carousel-caption text-left">
+        <h3>{{ image.alt }}</h3>
+      </div>
+    </ng-template>
+  </ngb-carousel>
+
+  <ng-container *ngIf="!images || images.length === 0">
+    <p>Nenhuma imagem para exibir no carrossel.</p>
+  </ng-container>
+</div>
