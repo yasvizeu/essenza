@@ -14,7 +14,6 @@ import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 export class CarouselComponent {
   images = [
     { src: 'https://www.clinicahumanita.com.br/wp-content/uploads/2022/07/vaidade-01-800x267.png', alt: 'Essenza' },
-    { src: 'https://www.florence.edu.br/blog/wp-content/uploads/2022/11/Florence-Faculdade-de-Estetica.jpg', alt: 'Second slide' }
   ];
 
   showNavigationArrows = true;

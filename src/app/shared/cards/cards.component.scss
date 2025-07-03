@@ -1,0 +1,43 @@
+.cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Ou flex-start, space-around, etc. */
+  gap: 1.5rem; /* Ajuste o espaçamento */
+}
+
+/* Opcional: Estilos para o card individual dentro do grid */
+.card {
+  // Ajustes de largura, se necessário, para que o Flexbox/Grid funcione bem com o Bootstrap 18rem
+  width: 20rem; // Mantém a largura base do seu card
+  // flex-grow: 1; // Permite que os cards cresçam para preencher o espaço disponível
+  margin-bottom: 1.5rem; // Adiciona margem inferior para cards que quebram linha
+  box-sizing: border-box; // Garante que padding e border não afetem a largura final
+}
+
+// Responsividade (se você optou por controlá-la via SCSS)
+@media (max-width: 992px) {
+  .cards-grid {
+    .card {
+      // Exemplo para 3 cards por linha em telas médias
+      flex: 0 0 calc(33.333% - 1.5rem);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    .card {
+      // Exemplo para 2 cards por linha em tablets
+      flex: 0 0 calc(50% - 1.5rem);
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .cards-grid {
+    .card {
+      // Exemplo para 1 card por linha em celulares
+      flex: 0 0 100%;
+    }
+  }
+}

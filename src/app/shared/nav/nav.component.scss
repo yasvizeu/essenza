@@ -1,0 +1,42 @@
+// Variables
+$navbar-bg-color: #8B7355; // A color similar to the one in the image
+$nav-link-color: #FFFFFF; // White for the text
+$nav-link-hover-color: lighten($nav-link-color, 10%); // Slightly lighter on hover
+$dropdown-bg-color: #7A634B; // A slightly darker shade for the dropdown
+$dropdown-link-color: #FFFFFF;
+$dropdown-link-hover-bg: lighten($dropdown-bg-color, 10%);
+
+.custom-navbar {
+    background-color: $navbar-bg-color;
+    padding: 0.5rem 0; // Adjust padding as needed
+
+    .navbar-nav {
+        .nav-item {
+            margin: 0 0.5rem; // Adjust spacing between items
+        }
+
+        .nav-link {
+            color: $nav-link-color;
+            font-weight: bold; // Make text bold as in the image
+            text-transform: uppercase; // Uppercase text
+            &:hover {
+                color: $nav-link-hover-color;
+            }
+        }
+
+        .dropdown-menu {
+            background-color: $dropdown-bg-color;
+            border: none; // Remove default border
+            .dropdown-item {
+                color: $dropdown-link-color;
+                &:hover {
+                    background-color: $dropdown-link-hover-bg;
+                    color: $dropdown-link-color; // Keep text color consistent on hover
+                }
+            }
+            .dropdown-divider {
+                border-top-color: lighten($dropdown-bg-color, 15%); // Lighter divider
+            }
+        }
+    }
+}
