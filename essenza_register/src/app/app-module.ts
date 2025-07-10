@@ -4,13 +4,22 @@ import { BrowserModule, provideClientHydration, withEventReplay } from '@angular
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 
+import { RegisterModule } from './components/register/register-module';
+import { AnamneseModule } from './components/anamnese/anamnese-module';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+
 @NgModule({
   declarations: [
     App
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    RegisterModule,
+    AnamneseModule,
+    FormsModule,
+    ReactiveFormsModule,
+
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
