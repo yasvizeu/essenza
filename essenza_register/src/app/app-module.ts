@@ -7,6 +7,7 @@ import { App } from './app';
 import { RegisterModule } from './components/register/register-module';
 import { AnamneseModule } from './components/anamnese/anamnese-module';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { FormsModule, ReactiveFormsModule} from '@angular/forms';
     AnamneseModule,
     FormsModule,
     ReactiveFormsModule,
+    BrowserAnimationsModule,
 
   ],
   providers: [

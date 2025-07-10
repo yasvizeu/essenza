@@ -9,7 +9,7 @@
       <small class="text-white-50">Crie sua conta na Essenza</small>
     </div>
 
-    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="clientForm" (ngSubmit)="nextStep()">
       <!-- Nome ----------------------------------------------------------->
       <div class="mb-3">
         <label class="form-label" for="name">Nome completo</label>
