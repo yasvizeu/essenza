@@ -1,0 +1,51 @@
+<div class="cart-section">
+  <div class="glass-cart">
+    <div class="container py-5">
+      <!-- Carrinho preenchido -->
+      <ng-container *ngIf="cartItems.length > 0; else carrinhoVazio">
+        <div class="logo-top-center">
+          <img src="../../assets/images/Logo.png" alt="Logo Essenza">
+        </div>
+        <h2 class="mb-4 text-center text-success text-menta">Meu Carrinho</h2>
+        <!-- Lista de Itens -->
+        <div class="cart-item-hover row border-bottom pb-2 mb-3" *ngFor="let item of cartItems">
+          <div class="col-md-2">
+            <img [src]="item.imagem" alt="{{ item.nome }}" class="img-fluid rounded">
+          </div>
+          <div class="col-md-6 d-flex flex-column justify-content-center">
+            <h5 class="mb-1">{{ item.nome }}</h5>
+            <p class="mb-0 text-custom-qty">Qtd: {{ item.quantidade }}</p>
+          </div>
+          <div class="col-md-2 d-flex align-items-center justify-content-center">
+            <strong>R$ {{ item.preco * item.quantidade | number:'1.2-2' }}</strong>
+          </div>
+          <div class="col-md-2 d-flex align-items-center justify-content-center">
+            <button class="btn btn-outline-danger btn-sm" (click)="removerItem(item)">
+              Remover
+            </button>
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div class="text-end">
+          <h4>Total: R$ {{ calcularTotal() | number:'1.2-2' }}</h4>
+          <button class="btn btn-success mt-3 px-4 py-2" (click)="finalizarCompra()">
+            Finalizar Compra
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Mensagem de agradecimento -->
+      <div *ngIf="mensagemFinal" class="alert alert-success text-center mt-3">
+        🛍️ {{ mensagemFinal }}
+      </div>
+
+      <!-- Carrinho vazio -->
+      <ng-template #carrinhoVazio>
+        <div class="alert alert-info text-center mt-3">
+          🛒 Seu carrinho está vazio.
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
