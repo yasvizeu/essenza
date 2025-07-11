@@ -16,9 +16,15 @@ import {
 @Component({
   selector: 'app-root',
   standalone: false,
-  template: `<div [@routeAnimations]="prepareRoute(outlet)">
-               <router-outlet #outlet="outlet"></router-outlet>
-             </div>`,
+   template: `
+    <app-header></app-header>
+
+    <div [@routeAnimations]="prepareRoute(outlet)">
+      <router-outlet #outlet="outlet"></router-outlet>
+    </div>
+
+    <app-footer></app-footer>
+  `,
   animations: [
     trigger('routeAnimations', [
       transition('* <=> *', [
