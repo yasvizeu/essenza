@@ -51,14 +51,14 @@ export class Detalhamento  implements OnInit {
     nome: 'Vasinhos PEIM',
     preco: 'R$ 160,00 – R$ 1.400,00',
     descricao: "O tratamento de pele de porcelana é um procedimento estético que visa deixar a pele mais lisa, uniforme e radiante. Ele pode incluir esfoliação, hidratação e aplicação de produtos específicos para melhorar a textura da pele.",
-    imagem: '../../../assets/imagem/vasinhos-peim.webp'
+    imagem: '../../../assets/imagem/Vasinhos.webp'
     },
     {
       id: 'perfectgluteos',
       nome: 'Perfect Glúteos',
       preco: 'R$ 1.800,00',
       descricao:'O tratamento Perfect Glúteos é um procedimento estético que visa melhorar a forma e o volume dos glúteos, proporcionando um contorno mais definido e atraente.',
-      imagem: '../../../assets/imagem/perfect-gluteos.webp'
+      imagem: '../../../assets/imagem/Perfect-Gluteos.webp'
     },
     {
       id: 'hidrolipoclasianaoaspirativa',
@@ -72,7 +72,7 @@ export class Detalhamento  implements OnInit {
       nome: 'Limpeza de pele nas costas',
       preco: 'R$ 200,00 – R$ 1.600,00',
       descricao: 'A limpeza de pele nas costas é um procedimento estético que visa remover impurezas, cravos e espinhas da pele das costas, deixando-a mais limpa e saudável.',
-      imagem: '../../../assets/imagem/Limpeza-de-pele-nas-costas.webp'
+      imagem: '../../../assets/imagem/Limpeza-de-pele-nas-costas-.webp'
     },
     {
       id: 'estriasoff',
@@ -93,24 +93,24 @@ export class Detalhamento  implements OnInit {
       nome: 'Modelatta',
       preco: 'R$ 130,00 – R$ 900,00',
       descricao:'O Modelatta é um tratamento estético que visa modelar o corpo e melhorar a silhueta, proporcionando uma aparência mais tonificada e definida.',
-      imagem: '../../../assets/imagem/Modelatta.webp'
+      imagem: '../../../assets/imagem/Modelatta-.webp'
     },
      //massagem
     {
-      id: "Shiatsu",
+      id: "shiatsu",
       nome: "Shiatsu",
       preco: "R$ 200,00 – R$ 1.800,00",          descricao: "O Shiatsu é uma técnica de massagem japonesa que utiliza pressão com os dedos em pontos específicos do corpo para aliviar tensões, melhorar a circulação e promover o relaxamento.",
-      imagem: '../../../assets/imagem/shiatsu.webp',
+      imagem: '../../../assets/imagem/massagem/shiatsu.webp'
     },
     {
-      id:" drenagemlinfáticaposoperatorio",
+      id:"drenagemlinfaticaposoperatorio",
       nome: "Drenagem Linfática Pós-Operatório",
       preco:"R$ 180,00 - R$ 1.600,00",
       descricao: "A drenagem linfática pós-operatório é uma técnica de massagem que ajuda a reduzir o inchaço e a dor após cirurgias, melhorando a circulação linfática e promovendo uma recuperação mais rápida.",
-      imagem: '../../../assets/imagem/drenagem-linfatica-pos-operatorio.webp',
+      imagem: '../../../assets/imagem/massagem/drenagem-linfatica-pos-operatorio.webp',
     },
     {
-      id: "drenomodeladoraesplendorrevitalizante",
+      id: "drenomodeladora",
       nome: "Drenagem Modeladora Esplendor Revitalizante",
       preco: "R$ 130,00 – R$ 1.100,00",
       descricao: "A drenagem modeladora é uma técnica de massagem que combina movimentos de drenagem linfática com manobras de modelagem corporal, ajudando a reduzir medidas e melhorar o contorno do corpo.",
