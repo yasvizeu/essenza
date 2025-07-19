@@ -187,32 +187,32 @@ export class Detalhamento  implements OnInit {
       imagem: "../../../assets/imagem/Radiofrequência-Redução de flacidez.png"
     },
     {
-      id: "0",
+      id: "hidragloss",
       nome: "Hidragloss",
       preco: "R$ 120,00 – R$ 500,00",
       descricao: "A técnica é indicada para quem quer dar um “up” e revitalizar os lábios de forma natural, hidratar, melhorar o volume, formato e retirar as “linhas” que aparecem na boca após alguns anos. É realizado por meio de um microagulhamento na região dos lábios e ativos e máscaras específicas para rejuvenescer e dar volume, além de hidratar profundamente.",
-      imagem: "../../../assets/imagem/Hidragloss.webp"
+      imagem: "../../../assets/imagem/hydragloss-labios-calme.jpg"
     },
     {
     id: "carboxiterapia",
     nome: "Carboxiterapia Olheiras",
     preco: "R$ 250,00 – R$ 1.050,00",
     descricao: "Este procedimento ajuda a clarear a pele ao redor dos olhos e combater as olheiras inchadas, aquelas pequenas “bolsas” que podem surgir abaixo dos olhos. Recupere a luminosidade do seu olhar e livre-se das olheiras indesejadas com a carboxiterapia.",
-    imagem: "../../../assets/imagem/Carboxiterapia.webp"
+    imagem: "../../../assets/imagem/Carboxiterapia-olheiras.webp"
     },
     {
-       id: "blafaroplastia",
+       id: "blefaroplastia",
        nome: "Blefaroplastia com Plasma",
        preco: "R$ 400,00 – R$ 2.850,00",
        descricao: "A blefaroplastia com plasma é uma versão não invasiva da cirurgia para lifting de pálpebras. Indicada para remoção do excesso de pele e tratamento de rugas ao redor dos olhos.",
-       imagem:"../../../assets/imagem/blefaroplastia.webp"
+       imagem:"../../../assets/imagem/blefaroplastia.jpg"
     },
     {
-       id: "hrejuvenescimento",
+       id: "hrejuvenecimento",
        nome:"Rejuvenescimento com Jato de Plasma Full Face",
         preco: "R$ 600,00 – R$ 3.850,00",
         descricao: "O jato de plasma é um tratamento estético que pode ser usado para tratamento de rugas, linhas de expressão, manchas escuras na pele, cicatrizes e principalmente flacidez de pálpebras. Esse tratamento aumenta a produção de colágeno e fibras elásticas conferindo mais firmeza à pele.",
-        imagem: "../../../assets/imagem/Rejuvenescimento-com-Jato-de-Plasma-Full-Face.png"
+        imagem: "../../../assets/imagem/Rejuvenecimento-com-Jato-de-plasma-Full-face.png"
     },
      {   id: "detoxfacial",
         nome: "Detox Facial",
@@ -225,14 +225,14 @@ export class Detalhamento  implements OnInit {
          nome: "Peeling Químico Descamativo",
         preco: "R$ 350,00 – R$ 1.250,00",
         descricao: "O peeling químico é um tratamento estético que utiliza substâncias químicas para esfoliar a pele, removendo as camadas superficiais e promovendo a regeneração celular. Ele é eficaz no tratamento de manchas, rugas e acne.",
-        imagem: "../../../assets/imagem/PEELING-QUIMICO-DESCAMATIVO-768X768.webp"
+        imagem: "../../../assets/imagem/peeling-quimico-descamativo.webp"
       },
       {
         id: "hidratacaoprofunda",
         nome: "Hidratação Profunda com Peeling de Diamante",
         preco: "R$ 120,00 – R$ 500,00",
         descricao: "A hidratação profunda com peeling de diamante é um tratamento estético que combina a esfoliação suave da pele com a aplicação de produtos hidratantes. Ele ajuda a remover células mortas, melhorar a textura da pele e proporcionar uma hidratação intensa.",
-        imagem: "../../../assets/imagem/HIDRATAÇÃO-PROFUNDA-COM-PEELING-DE-DIAMANTE.webp"
+        imagem: "../../../assets/imagem/hidratacao-profunda-com-peeling-de-diamante.webp"
       },
 
 
