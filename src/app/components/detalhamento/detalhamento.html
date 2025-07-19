@@ -1,0 +1,15 @@
+<p>detalhamento works!</p>
+<div class="container mt-5" *ngIf="tratamentoSelecionado">
+  <div class="row">
+    <div class="col-md-6">
+      <img [src]="tratamentoSelecionado.imagem" class="img-fluid rounded" [alt]="tratamentoSelecionado.nome">
+    </div>
+    <div class="col-md-6">
+      <h2>{{ tratamentoSelecionado.nome }}</h2>
+      <p class="text-muted">{{ tratamentoSelecionado.descricao }}</p>
+      <h4 class="text-success">{{ tratamentoSelecionado.preco }}</h4>
+
+      <button class="btn btn-primary mt-3" (click)="adicionarAoCarrinho()">Adicionar ao carrinho</button>
+    </div>
+  </div>
+</div>
