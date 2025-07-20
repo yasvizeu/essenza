@@ -1,4 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+background-image: url("assets/imagem/Background/background-essenza.jpg") ; background-size: cover; background-position: center; }
+
+.card {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2); /* borda suave, se quiser tirar, remova */
+  box-shadow: none; /* ou use algo bem leve */
+  border-radius: 12px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Ajuste do conteúdo para melhor contraste */
+.card-title,
+.card-text,
+.card-body {
+  color: #ffffff; /* branco para destacar no fundo da página */
+}
+
+/* Imagem ainda com borda suave */
+.card-img-top {
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Botões verdes */
+.btn-primary {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+.btn-primary:hover {
+  background-color: #218838;
+  border-color: #218838;
+}
+
