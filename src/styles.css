@@ -5,8 +5,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
 background-image: url("assets/imagem/Background/background-essenza.jpg") ; background-size: cover; background-position: center; }
 
 .card {
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2); /* borda suave, se quiser tirar, remova */
+  background-color: rgba(7, 151, 7, 0.89);
+  border: 1px solid rgba(5, 236, 21, 0.2); /* borda suave, se quiser tirar, remova */
   box-shadow: none; /* ou use algo bem leve */
   border-radius: 12px;
   height: 100%;
@@ -19,7 +19,7 @@ background-image: url("assets/imagem/Background/background-essenza.jpg") ; backg
 .card-title,
 .card-text,
 .card-body {
-  color: #ffffff; /* branco para destacar no fundo da página */
+  color:white; /* branco para destacar no fundo da página */
 }
 
 /* Imagem ainda com borda suave */
