@@ -30,7 +30,7 @@ export class Detalhamento  implements OnInit {
       nome: 'Cronograma de cuidados com a pele Anual',
       preco: 'R$ 3.210,00',
       imagem: '../../../assets/imagem/cronograma-de-cuidadospele.webp',
-      descricao: 'O tratamento de cuidados com a pele é um conjunto de procedimentos estéticos que visam melhorar a saúde e a aparência da pele. Ele inclui limpeza, esfoliação, hidratação e nutrição da pele.'
+      descricao: 'O tratamento de cuidados com a pele é um conjunto de procedimentos estéticos que visam melhorar a saúde e a aparência da pele. Ele inclui limpeza, esfoliação, hidratação e nutrição da pele. Divisão por Estações do Ano. Verão: foco em proteção solar, controle de oleosidade e hidratação leve. Inverno: tratamentos mais intensos como peelings, hidratação profunda e renovação celular. Outono/Primavera: equilibrio entre renovação e preparação para mudanças climáticas.' 
     },
     {
       id: 'pelerenovadora',
