@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {CommonModule} from '@angular/common'
 import{RouterModule} from '@angular/router';
+import{FormsModule} from '@angular/forms';
 
 interface Tratamento{
   id: string;
@@ -16,13 +17,15 @@ interface Tratamento{
 @Component({
   selector: 'app-detalhamento',
   standalone:true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './detalhamento.html',
   styleUrl: './detalhamento.css'
 })
 export class Detalhamento  implements OnInit {
-
+  
   tratamentoSelecionado!: Tratamento;
+  sessoes: number = 1; //quantidade inicial de sessões
+  
   tratamento: Tratamento []= [
     //corporal
     {
@@ -242,14 +245,14 @@ export class Detalhamento  implements OnInit {
   constructor(private Route: ActivatedRoute){}
 
   ngOnInit(): void {
-    const id = this.Route.snapshot.paramMap.get('tratamento');
+    const id = this.Route.snapshot.paramMap.get('id');
+    this.tratamentoSelecionado = this.tratamento.find((t) => t.id === id) || this.tratamento [0];
     const encontrado = this.tratamento.find(t => t.id === id);
-    if(encontrado) {
-      this.tratamentoSelecionado = encontrado;
-    }
+
   }
+
 adicionarAoCarrinho(){
-  alert('tratamento' + this.tratamentoSelecionado.nome+ 'adicionado ao carrinho!');
+  console.log('Adicionado: ' + this.tratamentoSelecionado.nome+ 'Sessões: ' + this.sessoes);
 
 
 }

@@ -1,13 +1,18 @@
-<p>detalhamento works!</p>
+
 <div class="container mt-5" *ngIf="tratamentoSelecionado">
   <div class="row">
     <div class="col-md-6">
       <img [src]="tratamentoSelecionado.imagem" class="img-fluid rounded" [alt]="tratamentoSelecionado.nome">
     </div>
     <div class="col-md-6">
-      <h2>{{ tratamentoSelecionado.nome }}</h2>
-      <p class="text-muted">{{ tratamentoSelecionado.descricao }}</p>
-      <h4 class="text-success">{{ tratamentoSelecionado.preco }}</h4>
+      <h2 class="detalhamento-title">{{ tratamentoSelecionado.nome }}</h2>
+      <p class="detalhamento-descricao">{{ tratamentoSelecionado.descricao }}</p>
+      <h4 class="detalhamento-preco">{{ tratamentoSelecionado.preco }}</h4>
+     <!--Campo de sessões-->     
+<div class="sessões">
+  <label for="sessoes" class="label-sessoes">Sessões:</label>
+  <input type="number" id = "sessoes" [(ngModel)]="sessoes" min="1" class="input-sessoes" />
+</div>
 
       <button class="btn btn-primary mt-3" (click)="adicionarAoCarrinho()">Adicionar ao carrinho</button>
     </div>

@@ -2,11 +2,15 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
-background-image: url("assets/imagem/Background/background-essenza.jpg") ; background-size: cover; background-position: center; }
+background-image: url("assets/imagem/Background/imagem-backgroundo-p.jpg") ; background-size: cover; background-position: center; }
 
+.text-center {
+  color:aliceblue;
+  text-shadow: #fff;
+}
 .card {
-  background-color: rgba(7, 151, 7, 0.89);
-  border: 1px solid rgba(5, 236, 21, 0.2); /* borda suave, se quiser tirar, remova */
+  background-color: rgba(23, 215, 23, 0.053);
+  border: 1px solid rgba(5, 236, 20, 0.272); /* borda suave, se quiser tirar, remova */
   box-shadow: none; /* ou use algo bem leve */
   border-radius: 12px;
   height: 100%;
@@ -42,4 +46,26 @@ background-image: url("assets/imagem/Background/background-essenza.jpg") ; backg
   background-color: #218838;
   border-color: #218838;
 }
+
+
+
+/* Estilos para a página de detalhamento */
+.detalhamento-title {
+  color:white; /* Cor do título */
+}
+
+.detalhamento-descricao {
+  color:white; /* Cor da descrição */
+}
+
+.detalhamento-preco {
+  color: #f2f4f2; /* Cor do preço */
+  font-weight: bold;
+}
+
+.label-sessoes {
+  color:white
+}
+
+
 
