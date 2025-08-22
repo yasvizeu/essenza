@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RegistroStateService } from '../../services/registro-state.service';
+import { EssenzaService } from '../../services/essenza.service';
+import { cpfValidator } from '../../validators/cpf.validator';
 
 @Component({
   selector: 'app-register',
@@ -19,55 +22,70 @@ export class Register implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
-  ) {}
+    private router: Router,
+    private registroService: RegistroStateService,
+    private essenzaService: EssenzaService,
+  ) { }
+
+
 
   ngOnInit(): void {
-    this.clientForm = this.fb.group(
-      {
-        name: ['', [
-          Validators.required,
-          Validators.minLength(10),
-          Validators.maxLength(60),
-          Validators.pattern(/^[a-zA-Z\s]*$/)
-        ]],
-        age: [null, [
-          Validators.required,
-          Validators.min(1),
-          Validators.max(150)
-        ]],
-        email: ['', [
-          Validators.required,
-          Validators.email
-        ]],
-        cell: ['', [
-          Validators.required,
-          Validators.pattern(/^\d{10,11}$/)
-        ]],
-        address: ['', [Validators.required]],
-        password: ['', [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(30),
-          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{"':;?/>.<,])(?!.*\s).{6,30}$/)
-        ]],
-        passwordConfirm: ['', [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(30)
-        ]]
-      },
-      { validators: this.mustMatch('password', 'passwordConfirm') }
-    );
+    this.clientForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(60), Validators.pattern(/^[a-zA-Z\s]*$/)]],
+      birthDate: ['', [Validators.required, this.validBirthDate()]],
+      cpf: ['', [
+        Validators.required,
+        cpfValidator(),
+      ]],
+      email: ['', [Validators.required, Validators.email]],
+      cell: ['', [Validators.required, Validators.pattern(/^\d{10,11}$/)]],
+      address: ['', [Validators.required]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(30),
+        // At least one uppercase, one lowercase, one number, one special character
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{"':;?/>.<,])(?!.*\s).{6,30}$/)
+      ]],
+      passwordConfirm: ['', [
+        Validators.required,
+      ]],
+    }, { validators: this.mustMatch('password', 'passwordConfirm') });
   }
 
-  // Getter para facilitar acesso aos controles
-  controle(campo: string) {
-    return this.clientForm.get(campo);
+  validBirthDate() {
+    return (control: any) => {
+      if (!control.value) return null;
+
+      const birthDate = new Date(control.value);
+      const today = new Date();
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      if (birthDate > today) {
+        return { invalidDate: true };
+      }
+
+      if (age < 1 || age > 120) {
+        return { invalidAge: true };
+      }
+
+      return null;
+    };
   }
+
+  //força da senha
 
   toggleShow(): void {
     this.showPwd = !this.showPwd;
+  }
+
+  controle(campo: string) {
+    return this.clientForm.get(campo);
   }
 
   updateStrength(): void {
@@ -77,8 +95,8 @@ export class Register implements OnInit {
 
     this.strengthClass =
       score <= 1 ? 'weak' :
-      score === 2 ? 'fair' :
-      score === 3 ? 'good' : 'strong';
+        score === 2 ? 'fair' :
+          score === 3 ? 'good' : 'strong';
   }
 
   private calcStrength(pwd: string): { score: number; percent: number } {
@@ -92,7 +110,7 @@ export class Register implements OnInit {
 
     return { score, percent: (score / 5) * 100 };
   }
-
+  // vê se coincide
   mustMatch(controlName: string, matchingControlName: string) {
     return (formGroup: FormGroup) => {
       const control = formGroup.controls[controlName];
@@ -113,18 +131,53 @@ export class Register implements OnInit {
       return;
     }
 
-    const userClient = this.clientForm.value;
-    console.log(userClient);
-  }
-
-  nextStep(): void {
-    if (this.clientForm.invalid) {
-      this.clientForm.markAllAsTouched();
-      this.onSubmit()
-      return;
+    const userData = {
+      ...this.clientForm.value,
+      type: 'cliente'
+    };
+    
+    // Chamada ao serviço para enviar os dados ao back-end
+    this.essenzaService.createClient(userData).subscribe({
+      next: (response: any) => {
+        console.log('Cliente registrado com sucesso!', response);
+        // Salva a resposta completa (incluindo o ID) no serviço de estado
+        this.registroService.setDadosRegistro(response);
+        // Navega para a próxima etapa (Anamnese)
+        this.router.navigate(['/anamnese']);
+      },
+      error: (error:any) => {
+        console.error('Erro no registro:', error);
+        // Lógica para lidar com erros, como CPF já cadastrado
+        alert('Ocorreu um erro no cadastro. Por favor, verifique os dados e tente novamente.');
+      }
+    });
     }
-
-    // Aqui você pode salvar os dados em um service ou store, se quiser
-    this.router.navigate(['/anamnese']);
   }
-}
+
+  // O método nextStep() não é mais necessário se a navegação for feita no subscribe.
+  // Você pode chamá-lo diretamente do HTML, mas a lógica agora está em onSubmit.
+
+     // A lógica de navegação foi movida para o onSubmit()
+  
+
+  // onSubmit() {
+  //   if (this.clientForm.invalid) {
+  //     this.clientForm.markAllAsTouched();
+  //     console.error('Formulário inválido. Por favor, preencha todos os campos corretamente');
+  //     return false; // Sai cedo se inválido
+  //   }
+
+  //   const userData = {
+  //     ...this.clientForm.value,
+  //     type: 'cliente'
+  //   };
+
+  //   this.registroService.setDadosRegistro(userData);
+
+
+  //   console.log(userData);
+  //   return true;  // sucesso
+  // }
+
+  
+  // }

@@ -9,10 +9,10 @@
       <small class="text-white-50">Crie sua conta na Essenza</small>
     </div>
 
-    <form [formGroup]="clientForm" (ngSubmit)="nextStep()">
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
       <!-- Nome ----------------------------------------------------------->
       <div class="mb-3">
-        <label class="form-label" for="name">Nome completo</label>
+        <label class="form-label" for="name">Nome Completo</label>
         <input id="name" type="text" class="form-control" formControlName="name" placeholder="Seu nome"
           [class.is-invalid]="controle('name')?.invalid && controle('name')?.touched">
         <div class="invalid-feedback">
@@ -20,13 +20,24 @@
         </div>
       </div>
 
-      <!-- Idade ---------------------------------------------------------->
+      <!-- Data de Nascimento -->
       <div class="mb-3">
-        <label class="form-label" for="age">Idade</label>
-        <input id="age" type="number" class="form-control" formControlName="age" placeholder="Ex.: 25"
-          [class.is-invalid]="controle('age')?.invalid && controle('age')?.touched">
+        <label class="form-label" for="birthDate">Data de Nascimento</label>
+        <input id="birthDate" type="date" class="form-control modern-input" formControlName="birthDate"
+        [class.is-invalid]="controle('birthDate')?.invalid && controle('birthDate')?.touched">
         <div class="invalid-feedback">
-          Informe uma idade entre 1 e 150 anos.
+          Informe uma data de nascimento válida.
+        </div>
+      </div>
+
+      <!-- CPF -------------->
+      <div class="mb-3">
+        <label class="form-label" for="cpf">CPF</label>
+        <input id="cpf" type="text" class="form-control modern-input" formControlName="cpf"
+          placeholder="Ex.: 12345678900"
+          [class.is-invalid]="controle('cpf')?.invalid && controle('cpf')?.touched">
+        <div class="invalid-feedback" >
+          Digite um CPF válido (11 dígitos).
         </div>
       </div>
 
@@ -87,7 +98,6 @@
           Mínimo 6 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 símbolo.
         </div>
       </div>
-
 
       <!-- Confirmação de senha ---------------------------------------------------------->
       <div class="mb-4 position-relative">

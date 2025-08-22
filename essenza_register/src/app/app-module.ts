@@ -4,6 +4,7 @@ import { BrowserModule, provideClientHydration, withEventReplay } from '@angular
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 
+
 import { RegisterModule } from './components/register/register-module';
 import { AnamneseModule } from './components/anamnese/anamnese-module';
 import { HomeModule } from './components/home/home.module';
@@ -17,11 +18,12 @@ import { CartModule } from './components/cart/cart-module';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { provideHttpClient, withFetch} from '@angular/common/http';
+
 
 @NgModule({
   declarations: [
     App,
-  
   ],
   imports: [
     BrowserModule,
@@ -37,16 +39,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FooterModule,
     HeaderModule,
     CarouselModule,
-    CartModule
-
-
-    
-
-
+    CartModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch()),
   ],
   bootstrap: [App]
 })
