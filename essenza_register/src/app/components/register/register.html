@@ -1,0 +1,135 @@
+<!-- Cadastro Cliente -->
+<section class="login-section d-flex justify-content-center align-items-center">
+
+  <div class="glass-card p-4 p-lg-5 shadow rounded-4 w-100" style="max-width: 480px">
+    <!-- Cabeçalho -->
+    <div class="text-center mb-4">
+      <img src="assets/logo-leaf.svg" alt="Essenza logo" width="64" height="64" class="mb-2">
+      <h5 class="fw-semibold mb-0">Cadastro Cliente</h5>
+      <small class="text-white-50">Crie sua conta na Essenza</small>
+    </div>
+
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+      <!-- Nome ----------------------------------------------------------->
+      <div class="mb-3">
+        <label class="form-label" for="name">Nome Completo</label>
+        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Seu nome"
+          [class.is-invalid]="controle('name')?.invalid && controle('name')?.touched">
+        <div class="invalid-feedback">
+          Nome obrigatório (10‑60 caracteres).
+        </div>
+      </div>
+
+      <!-- Data de Nascimento -->
+      <div class="mb-3">
+        <label class="form-label" for="birthDate">Data de Nascimento</label>
+        <input id="birthDate" type="date" class="form-control modern-input" formControlName="birthDate"
+        [class.is-invalid]="controle('birthDate')?.invalid && controle('birthDate')?.touched">
+        <div class="invalid-feedback">
+          Informe uma data de nascimento válida.
+        </div>
+      </div>
+
+      <!-- CPF -------------->
+      <div class="mb-3">
+        <label class="form-label" for="cpf">CPF</label>
+        <input id="cpf" type="text" class="form-control modern-input" formControlName="cpf"
+          placeholder="Ex.: 12345678900"
+          [class.is-invalid]="controle('cpf')?.invalid && controle('cpf')?.touched">
+        <div class="invalid-feedback" >
+          Digite um CPF válido (11 dígitos).
+        </div>
+      </div>
+
+      <!-- E‑mail --------------------------------------------------------->
+      <div class="mb-3">
+        <label class="form-label" for="email">E‑mail</label>
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="exemplo@dominio.com"
+          [class.is-invalid]="controle('email')?.invalid && controle('email')?.touched">
+        <div class="invalid-feedback">
+          Informe um e‑mail válido.
+        </div>
+      </div>
+
+      <!-- Celular -------------------------------------------------------->
+      <div class="mb-3">
+        <label class="form-label" for="cell">Celular</label>
+        <input id="cell" type="tel" class="form-control" formControlName="cell" placeholder="DDD + número"
+          [class.is-invalid]="controle('cell')?.invalid && controle('cell')?.touched">
+        <div class="invalid-feedback">
+          Digite 10 ou 11 dígitos (somente números).
+        </div>
+      </div>
+
+      <!-- Endereço ------------------------------------------------------->
+      <div class="mb-3">
+        <label class="form-label" for="address">Endereço</label>
+        <input id="address" type="text" class="form-control" formControlName="address"
+          placeholder="Rua, nº, bairro, cidade"
+          [class.is-invalid]="controle('address')?.invalid && controle('address')?.touched">
+        <div class="invalid-feedback">
+          Endereço é obrigatório.
+        </div>
+      </div>
+
+      <!-- Senha -------------------------------------------------------->
+      <div class="mb-4 position-relative">
+        <label class="form-label" for="password">Senha</label>
+
+        <!-- INPUT ----------------------------------------------------------->
+        <input id="password" [type]="showPwd ? 'text' : 'password'" class="form-control pe-5" formControlName="password"
+          placeholder="Crie uma senha" (input)="updateStrength()"
+          [class.is-invalid]="controle('password')?.invalid && controle('password')?.touched" />
+
+        <!-- BOTÃO MOSTRAR --------------------------------------------------->
+        <button type="button"
+          class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-white-50"
+          (click)="toggleShow()" aria-label="Mostrar senha">
+          <i class="bi" [ngClass]="showPwd ? 'bi-eye-slash' : 'bi-eye'"></i>
+        </button>
+
+        <!-- BARRA DE FORÇA -------------------------------------------------->
+        <div class="password-meter mt-2" aria-hidden="true">
+          <div class="bar" [ngClass]="strengthClass" [style.width.%]="strengthPercent"></div>
+        </div>
+
+        <!-- Feedback Bootstrap -->
+        <div class="invalid-feedback">
+          Mínimo 6 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 símbolo.
+        </div>
+      </div>
+
+      <!-- Confirmação de senha ---------------------------------------------------------->
+      <div class="mb-4 position-relative">
+
+        <label class="form-label" for="password">Confirme a senha</label>
+
+        <input id="passwordConfirm" [type]="showPwdConfirm ? 'text' : 'passwordConfirm'" class="form-control pe-5"
+          formControlName="passwordConfirm" placeholder="Crie uma senha"
+          [class.is-invalid]="controle('password')?.invalid && controle('password')?.touched">
+        <button type="button"
+          class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-white-50"
+          (click)="showPwdConfirm = !showPwdConfirm" aria-label="Mostrar senha">
+          <i class="bi" [ngClass]="showPwdConfirm ? 'bi-eye-slash' : 'bi-eye'"></i>
+        </button>
+        <div class="invalid-feedback">
+          Mínimo 6 caracteres.
+        </div>
+      </div>
+      <div *ngIf="controle('passwordConfirm')?.hasError('mustMatch') && controle('passwordConfirm')?.touched"
+        class="text-danger small">
+        As senhas não coincidem.
+      </div>
+
+      <!-- Botão ---------------------------------------------------------->
+      <button type="submit" class="btn btn-success rounded-pill w-100 py-2 mb-3">
+        Próximo
+      </button>
+
+      <!-- Já tem conta? -------------------------------------------------->
+      <p class="text-center small mb-0 text-white-50">
+        Já possui conta? <a routerLink="/login" class="text-white-50">Entrar</a>
+      </p>
+    </form>
+  </div>
+</section>

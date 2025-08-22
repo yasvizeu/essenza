@@ -1,0 +1,129 @@
+/* --- Seção com fundo e alinhamento --- */
+.cart-section {
+  min-height: 100vh;
+  background: url('../../assets/images/imagemregister.jpg') center/cover no-repeat fixed;
+  margin: 0;
+  padding: clamp(1rem, 4vw, 3rem);
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}
+
+/* --- Cartão estilo vidro fosco --- */
+.glass-cart {
+  position: relative;
+  background: rgba(0, 64, 0, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+  color: #fff;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+
+/* --- Logo centralizada --- */
+.logo-top-center {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.logo-top-center img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #66bb6a;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px;
+  box-shadow: 0 0 10px rgba(102, 187, 106, 0.5);
+  animation: fadeInDown 1s ease-out;
+}
+
+
+/* --- Título --- */
+.glass-cart h2 {
+  color: #66BB6A !important;
+  font-weight: bold;
+}
+
+/* --- Estilização de itens do carrinho --- */
+.cart-item-hover {
+  transition: all 0.3s ease;
+  border-radius: 0.75rem;
+  padding: 12px;
+}
+.cart-item-hover:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: scale(1.01);
+  box-shadow: 0 0 18px 4px rgba(40, 167, 69, 0.3);
+  cursor: pointer;
+}
+
+.text-custom-qty {
+  color: #66BB6A;
+  font-weight: 500;
+}
+
+.glass-cart strong {
+  color: #E8F5E9;
+  font-size: 1.2rem;
+}
+
+/* --- Botões --- */
+.glass-cart .btn {
+  border-radius: 2rem;
+  padding-inline: 1.5rem;
+  font-weight: 500;
+}
+
+.glass-cart .btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.glass-cart .btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.glass-cart .btn-success {
+  background-color: #28a745;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.glass-cart .btn-success:hover {
+  background-color: #218838;
+  transform: scale(1.03);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+/* --- Alertas --- */
+.alert-success {
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border-color: rgba(40, 167, 69, 0.3);
+  border-radius: 1rem;
+  font-weight: 500;
+}
+
+.alert-info {
+  background-color: rgba(23, 162, 184, 0.1);
+  color: #E8F5E9;
+  border-color: rgba(23, 162, 184, 0.3);
+  border-radius: 1rem;
+  font-weight: 500;
+}
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

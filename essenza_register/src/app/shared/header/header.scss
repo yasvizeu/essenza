@@ -1,0 +1,32 @@
+/* Diminui a altura do header */
+nav.navbar {
+  padding-top: 0.3rem !important;
+  padding-bottom: 0.3rem !important;
+}
+
+/* Ajusta o tamanho do logo */
+.navbar-brand img {
+  width: 60px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+/* Alinha verticalmente logo + texto */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Reduz espaço lateral do container */
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.nav-link:hover i {
+  color: #4fd19494;
+  /* ou qualquer cor desejada */
+}

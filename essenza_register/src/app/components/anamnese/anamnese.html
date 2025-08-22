@@ -1,0 +1,52 @@
+<section class="login-section d-flex justify-content-center align-items-center">
+  <div class="glass-card p-4 p-lg-5 shadow rounded-4 w-100" style="max-width: 480px">
+    <div class="text-center mb-4">
+      <img src="assets/logo-leaf.svg" alt="Essenza logo" width="64" height="64" class="mb-2">
+      <h5 class="fw-semibold mb-0">Ficha de Anamnese</h5>
+      <small class="text-white-50">Informações de saúde</small>
+    </div>
+
+    <form [formGroup]="anamneseForm" (ngSubmit)="onSubmit()">
+
+      <div class="mb-3">
+        <label class="form-label" for="healthProblems">Problemas de saúde</label>
+        <input id="healthProblems" type="text" class="form-control" formControlName="healthProblems"
+          placeholder="Ex.: hipertensão, diabetes"
+          [class.is-invalid]="controle('healthProblems')?.invalid && controle('healthProblems')?.touched">
+        <div class="invalid-feedback">Este campo é obrigatório.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="medications">Medicamentos em uso</label>
+        <input id="medications" type="text" class="form-control" formControlName="medications"
+          placeholder="Liste os medicamentos, se houver">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="allergies">Alergias</label>
+        <input id="allergies" type="text" class="form-control" formControlName="allergies"
+          placeholder="Descreva qualquer alergia">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="surgeries">Cirurgias anteriores</label>
+        <input id="surgeries" type="text" class="form-control" formControlName="surgeries"
+          placeholder="Liste as cirurgias, se houver">
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="lifestyle">Hábitos e estilo de vida</label>
+        <textarea id="lifestyle" class="form-control" formControlName="lifestyle"
+          placeholder="Descreva rotina, alimentação, exercícios..."
+          rows="3"
+          [class.is-invalid]="controle('lifestyle')?.invalid && controle('lifestyle')?.touched"></textarea>
+        <div class="invalid-feedback">Este campo é obrigatório.</div>
+      </div>
+
+      <button type="submit" class="btn btn-success rounded-pill w-100 py-2 mb-3">
+        Finalizar
+      </button>
+
+    </form>
+  </div>
+</section>
