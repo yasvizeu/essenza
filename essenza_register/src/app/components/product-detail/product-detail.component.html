@@ -1,0 +1,18 @@
+<section class="container py-4">
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <img src="https://images.unsplash.com/photo-1599050751776-0e56b2b3a3f4?q=80&w=1200" class="img-fluid rounded-4" alt="Produto">
+    </div>
+    <div class="col-12 col-lg-6">
+      <h2 class="fw-bold">{{ title }}</h2>
+      <p class="text-muted">{{ description }}</p>
+      <h4 class="text-success">R$ {{ price | number:'1.2-2' }}</h4>
+      <div class="mt-3 d-flex align-items-center">
+        <input type="number" class="form-control me-2" style="width: 100px" value="1">
+        <button class="btn btn-success" (click)="addToCart()">Adicionar ao carrinho</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+

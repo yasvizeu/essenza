@@ -1,5 +1,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { EssenzaService } from '../../services/essenza.service';
+import { AuthService } from '../../services/auth.service';
+import { TokenRefreshService } from '../../services/token-refresh.service';
+import { RegistroStateService } from '../../services/registro-state.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +19,7 @@ export class Login implements OnInit, AfterViewInit {
   isProfissional = false;
   showPassword = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private router: Router, private essenza: EssenzaService, private registro: RegistroStateService, private auth: AuthService, private tokenRefresh: TokenRefreshService) {}
 
   ngOnInit(): void {
     // Formulário para usuário comum
@@ -44,10 +49,21 @@ export class Login implements OnInit, AfterViewInit {
 onSubmit(): void {
   if (this.formAtual.invalid) return;
 
-  const dadosCliente = this.formAtual.value;
+  const credentials = this.formAtual.value;
 
-  console.log('🟢 Cliente logado com sucesso:');
-  console.table(dadosCliente); // Mostra os dados em forma de tabela
+  this.essenza.authenticateCliente(credentials).subscribe({
+    next: (res: any) => {
+      // Espera: { user: { ... }, token: 'jwt...' }
+      const token = res?.token;
+      const user = res?.user ?? res;
+      if (token) { this.auth.setToken(token); this.tokenRefresh.start(); }
+      this.registro.setDadosRegistro(user);
+      this.router.navigate(['/home']);
+    },
+    error: () => {
+      alert('Credenciais inválidas. Verifique seu e-mail e senha.');
+    }
+  });
 }
 
 

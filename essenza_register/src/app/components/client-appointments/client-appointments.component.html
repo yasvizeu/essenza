@@ -1,0 +1,43 @@
+<section class="container py-4">
+  <div class="text-center mb-4">
+    <h2 class="fw-semibold">Meus Agendamentos</h2>
+    <p class="text-muted">Veja os seus agendamentos abaixo</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <full-calendar [options]="calendarOptions"></full-calendar>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Horário</th>
+                  <th>Serviço</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ev of events">
+                  <td>{{ (ev.start?.date || ev.start?.dateTime) | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ (ev.start?.dateTime | date:'HH:mm') || '--:--' }}</td>
+                  <td>{{ ev.summary || 'Serviço' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+

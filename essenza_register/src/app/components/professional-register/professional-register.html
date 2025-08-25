@@ -1,0 +1,45 @@
+<section class="login-section d-flex justify-content-center align-items-center">
+
+  <div class="glass-card p-4 p-lg-5 shadow rounded-4 w-100" style="max-width: 480px">
+    <div class="text-center mb-4">
+      <img src="assets/logo-leaf.svg" alt="Essenza logo" width="64" height="64" class="mb-2">
+      <h5 class="fw-semibold mb-0">Cadastro Profissional</h5>
+      <small class="text-white-50">Crie sua conta de profissional</small>
+    </div>
+
+    <form [formGroup]="professionalForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label" for="name">Nome</label>
+        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Seu nome"
+          [class.is-invalid]="controle('name')?.invalid && controle('name')?.touched">
+        <div class="invalid-feedback">Nome obrigatório (3‑60 caracteres).</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="email">E‑mail</label>
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="exemplo@dominio.com"
+          [class.is-invalid]="controle('email')?.invalid && controle('email')?.touched">
+        <div class="invalid-feedback">Informe um e‑mail válido.</div>
+      </div>
+
+      <div class="mb-4 position-relative">
+        <label class="form-label" for="password">Senha</label>
+        <input id="password" [type]="showPwd ? 'text' : 'password'" class="form-control pe-5" formControlName="password" placeholder="Crie uma senha"
+          [class.is-invalid]="controle('password')?.invalid && controle('password')?.touched" />
+        <button type="button" class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-white-50"
+          (click)="toggleShow()" aria-label="Mostrar senha">
+          <i class="bi" [ngClass]="showPwd ? 'bi-eye-slash' : 'bi-eye'"></i>
+        </button>
+        <div class="invalid-feedback">Mínimo 6 caracteres.</div>
+      </div>
+
+      <button type="submit" class="btn btn-success rounded-pill w-100 py-2 mb-3">Cadastrar</button>
+
+      <p class="text-center small mb-0 text-white-50">
+        É cliente? <a routerLink="/register" class="text-white-50">Cadastre-se aqui</a>
+      </p>
+    </form>
+  </div>
+</section>
+
+

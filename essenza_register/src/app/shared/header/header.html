@@ -12,15 +12,22 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a routerLink="/login" routerLinkActive="router-link-active" class="nav-link text-success">
-
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-success" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-fill fs-5"></i>
           </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/login">Entrar</a></li>
+            <li><a class="dropdown-item" routerLink="/register">Criar conta</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" routerLink="/meus-agendamentos">Meus agendamentos</a></li>
+            <li><a class="dropdown-item disabled"><span class="text-muted">{{ userName || 'Convidado' }}</span></a></li>
+            <li><a class="dropdown-item text-danger" (click)="onLogout?.()">Sair</a></li>
+          </ul>
         </li>
         <li class="nav-item">
           <a routerLink="/cart" routerLinkActive="router-link-active" class="nav-link text-success">
-            <i class="bi bi-cart3 fs-5"> </i> <!-- Ícone com tamanho ajustado -->
+            <i class="bi bi-cart3 fs-5"> </i>
           </a>
         </li>
       </ul>

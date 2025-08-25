@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { RegistroStateService } from '../../services/registro-state.service';
+import { BookingService } from '../../services/booking.service';
 
 @Component({
   selector: 'app-cart',
@@ -13,6 +16,8 @@ export class Cart {
   ];
 
 
+  constructor(private router: Router, private registro: RegistroStateService, private booking: BookingService) {}
+
   removerItem(item: any): void {
     this.cartItems = this.cartItems.filter(i => i !== item);
   }
@@ -22,21 +27,21 @@ export class Cart {
   }
 
   mensagemFinal = '';
-finalizarCompra(): void {
-  console.log('✅ Obrigado pela preferência!');
-  console.log('🛒 Produtos comprados:');
-  console.table(this.cartItems); // Mostra bonitinho em tabela
+  finalizarCompra(): void {
+    const user = this.registro.getDadosRegistro();
+    if (!user) {
+      alert('Faça login para finalizar a compra.');
+      this.router.navigate(['/login']);
+      return;
+    }
 
-  this.mensagemFinal = '🛍️ Obrigado pela preferência! Sua compra foi finalizada com sucesso.';
+    // Guarda itens para a seleção de horário
+    this.booking.set({
+      items: this.cartItems.map(i => ({ name: i.nome, quantity: i.quantidade, price: i.preco }))
+    });
 
- // Limpa o carrinho
-  this.cartItems = [];
-
-  // Opcional: zera o total
-  // this.total = 0; // Se você tiver uma variável total
-  setTimeout(() => {
-  this.mensagemFinal = '';
-}, 5000); // limpa a mensagem depois de 5 segundos
-}
+    // Vai para selecionar horário
+    this.router.navigate(['/selecionar-horario']);
+  }
 
 }

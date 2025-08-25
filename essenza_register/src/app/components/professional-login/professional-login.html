@@ -1,0 +1,29 @@
+<div class="login-bg d-flex justify-content-center align-items-center vh-100">
+  <div class="bg-overlay"></div>
+
+  <div class="card-login p-4 rounded-4 shadow">
+    <div class="text-center mb-3">
+      <h4 class="fw-bold text-success mt-3 text-white">Login Profissional</h4>
+      <p class="text-white small">Área do profissional</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="email" class="form-label text-white">E-mail</label>
+        <input formControlName="email" type="email" class="form-control" id="email" placeholder="exemplo@dominio.com">
+      </div>
+
+      <div class="mb-3 position-relative">
+        <label for="senha" class="form-label text-white">Senha</label>
+        <input formControlName="senha" [type]="showPassword ? 'text' : 'password'" class="form-control" id="senha" placeholder="Digite sua senha" />
+        <button type="button" class="btn-olho" (click)="togglePassword()">
+          <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+        </button>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 rounded-pill">Entrar</button>
+    </form>
+  </div>
+</div>
+
+

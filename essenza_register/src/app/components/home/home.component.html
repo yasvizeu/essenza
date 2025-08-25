@@ -1,3 +1,15 @@
-<app-carousel></app-carousel>
-<app-cards> </app-cards>
+<section class="container py-4">
+  <div class="text-center mb-4">
+    <h2 class="fw-semibold">Bem-vindo<span *ngIf="userName">, {{ userName }}!</span></h2>
+    <p class="text-muted mb-0">Estamos felizes em tê-lo aqui.</p>
+  </div>
+
+  <div class="text-center mb-4">
+    <a routerLink="/anamnese" class="btn btn-success rounded-pill px-4">Preencher anamnese</a>
+    <a *ngIf="userType==='profissional'" routerLink="/agenda" class="btn btn-outline-success rounded-pill px-4 ms-2">Gerenciar Agendamentos</a>
+  </div>
+
+  <app-carousel></app-carousel>
+  <app-cards></app-cards>
+</section>
 

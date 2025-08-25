@@ -1,0 +1,21 @@
+<section class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="m-0">Gerenciar Agendamentos</h3>
+    <div>
+      <select class="form-select d-inline-block w-auto me-2" [(ngModel)]="selectedCalendarId" (change)="loadEvents()">
+        <option *ngFor="let c of calendars" [value]="c.id">{{ c.summary }}</option>
+      </select>
+      <button class="btn btn-outline-secondary me-2" (click)="view='week'">Semanal</button>
+      <button class="btn btn-outline-secondary me-2" (click)="view='month'">Mês</button>
+      <button class="btn btn-success" (click)="addEvent()">Novo evento</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center text-muted">Carregando calendário…</div>
+
+  <div *ngIf="!loading">
+    <full-calendar [options]="calendarOptions"></full-calendar>
+  </div>
+</section>
+
+

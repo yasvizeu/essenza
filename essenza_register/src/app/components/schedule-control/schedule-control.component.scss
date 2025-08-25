@@ -1,0 +1,18 @@
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.event-card {
+  background: rgba(0, 64, 0, 0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.event-title {
+  font-weight: 600;
+}
+
+

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class EssenzaService {
 
 
-  private apiUrl = 'http://localhost:3000'; // ajuste para o endereço real da sua API
+  private apiUrl = 'http://localhost:4000'; // ajuste para o endereço real da sua API
 
   constructor(private http: HttpClient) {}
 
@@ -28,6 +28,34 @@ export class EssenzaService {
   createAnamnese(anamneseData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/fichas`, anamneseData);
   }
+
+  /**
+   * Cria um novo profissional no sistema.
+   */
+  createProfessional(professionalData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/profissionais`, professionalData);
+  }
+
+  /**
+   * Autentica um cliente.
+   */
+  authenticateCliente(credentials: { email: string; senha: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/cliente`, credentials);
+  }
+
+  /**
+   * Autentica um profissional.
+   */
+  authenticateProfissional(credentials: { email: string; senha: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/profissional`, credentials);
+  }
+
+  /**
+   * Renova o token JWT do usuário atual.
+   */
+  refreshToken(): Observable<{ token: string }> {
+    return this.http.post<{ token: string }>(`${this.apiUrl}/auth/refresh`, {});
+  }
 
   /**
    * Busca todos os clientes cadastrados.
