@@ -34,32 +34,32 @@
 /* Ícone do Bootstrap Icons */
 .bi { font-size: 1.1rem; }
 
-  .btn-eye-toggle {
-    position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.6);
-    background: none;
-    border: none;
-    padding: 0;
-    z-index: 2;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
+.btn-eye-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 2;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
 
-    &:hover {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    i {
-      font-size: 1.1rem;
-    }
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
   }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
 
 /* Barra de força branca-transparente que preenche da esquerda p/ direita */
 .password-meter {
@@ -79,4 +79,3 @@
     &.strong { background: #28a745; } /* verde      */
   }
 }
-

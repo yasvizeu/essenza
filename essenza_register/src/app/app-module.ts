@@ -14,6 +14,7 @@ import { FooterModule } from './shared/footer/footer-module';
 import { HeaderModule } from './shared/header/header-module';
 import { LoginModule } from './components/login/login-module';
 import { CartModule } from './components/cart/cart-module';
+import { ProfessionalRegisterModule } from './components/professional-register/professional-register-module';
 
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -40,6 +41,7 @@ import { provideHttpClient, withFetch} from '@angular/common/http';
     HeaderModule,
     CarouselModule,
     CartModule,
+    ProfessionalRegisterModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

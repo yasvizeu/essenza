@@ -32,8 +32,8 @@ export class EssenzaService {
   /**
    * Busca todos os clientes cadastrados.
    */
-  getClientes(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/clientes`);
+ getClientes(): Observable<any[]> {
+   return this.http.get<any[]>(`${this.apiUrl}/clientes`);
   }
 
   /**
@@ -50,10 +50,54 @@ export class EssenzaService {
     return this.http.put<any>(`${this.apiUrl}/clientes/${id}`, cliente);
   }
 
-  /**
-   * Remove um cliente pelo ID.
-   */
-  deleteCliente(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/clientes/${id}`);
-  }
+    /**
+   * Remove um cliente pelo ID.
+   */
+  deleteCliente(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/clientes/${id}`);
+  }
+
+  /**
+   * Cria um novo profissional no sistema.
+   * @param professionalData Objeto com os dados do profissional
+   */
+  createProfessional(professionalData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/profissionais`, professionalData);
+  }
+
+  /**
+   * Busca todos os profissionais cadastrados.
+   */
+  getProfissionais(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/profissionais`);
+  }
+
+  /**
+   * Busca um profissional específico pelo ID.
+   */
+  getProfissionalById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profissionais/${id}`);
+  }
+
+  /**
+   * Atualiza um profissional pelo ID.
+   */
+  updateProfissional(id: number, profissional: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/profissionais/${id}`, profissional);
+  }
+
+  /**
+   * Remove um profissional pelo ID.
+   */
+  deleteProfissional(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/profissionais/${id}`);
+  }
+
+  /**
+   * Realiza login de usuário (cliente ou profissional).
+   * @param loginData Objeto com email e senha
+   */
+  login(loginData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/personas/login`, loginData);
+  }
 }

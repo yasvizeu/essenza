@@ -1,19 +1,19 @@
-<!-- Cadastro Cliente -->
+<!-- Cadastro Profissional -->
 <section class="login-section d-flex justify-content-center align-items-center">
 
   <div class="glass-card p-4 p-lg-5 shadow rounded-4 w-100" style="max-width: 480px">
     <!-- Cabeçalho -->
     <div class="text-center mb-4">
       <img src="assets/logo-leaf.svg" alt="Essenza logo" width="64" height="64" class="mb-2">
-      <h5 class="fw-semibold mb-0">Cadastro Cliente</h5>
-      <small class="text-white-50">Crie sua conta na Essenza</small>
+      <h5 class="fw-semibold mb-0">Cadastro Profissional</h5>
+      <small class="text-white-50">Crie sua conta profissional na Essenza</small>
     </div>
 
-    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="professionalForm" (ngSubmit)="onSubmit()">
       <!-- Nome ----------------------------------------------------------->
       <div class="mb-3">
         <label class="form-label" for="name">Nome Completo</label>
-        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Seu nome"
+        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Seu nome completo"
           [class.is-invalid]="controle('name')?.invalid && controle('name')?.touched">
         <div class="invalid-feedback">
           Nome obrigatório (10‑60 caracteres).
@@ -26,11 +26,11 @@
         <input id="birthDate" type="date" class="form-control modern-input" formControlName="birthDate"
         [class.is-invalid]="controle('birthDate')?.invalid && controle('birthDate')?.touched">
         <div class="invalid-feedback">
-          Informe uma data de nascimento válida.
+          Informe uma data de nascimento válida (mínimo 18 anos).
         </div>
       </div>
 
-      <!-- CPF -------------->
+      <!-- CPF --------------> 
       <div class="mb-3">
         <label class="form-label" for="cpf">CPF</label>
         <input id="cpf" type="text" class="form-control modern-input" formControlName="cpf"
@@ -57,7 +57,7 @@
         <input id="cell" type="tel" class="form-control" formControlName="cell" placeholder="DDD + número"
           [class.is-invalid]="controle('cell')?.invalid && controle('cell')?.touched">
         <div class="invalid-feedback">
-          Digite 10 ou 11 dígitos (somente números).
+          Digite 10 ou 11 dígitos (somente números).
         </div>
       </div>
 
@@ -72,7 +72,29 @@
         </div>
       </div>
 
-      <!-- Senha -------------------------------------------------------->
+      <!-- Especialidade -------------------------------------------------->
+      <div class="mb-3">
+        <label class="form-label" for="especialidade">Especialidade</label>
+        <input id="especialidade" type="text" class="form-control" formControlName="especialidade"
+          placeholder="Ex.: Nutricionista, Psicólogo, etc."
+          [class.is-invalid]="controle('especialidade')?.invalid && controle('especialidade')?.touched">
+        <div class="invalid-feedback">
+          Especialidade é obrigatória (3-50 caracteres).
+        </div>
+      </div>
+
+      <!-- CNEC ----------------------------------------------------------->
+      <div class="mb-3">
+        <label class="form-label" for="cnec">CNEC (Conselho Regional)</label>
+        <input id="cnec" type="text" class="form-control" formControlName="cnec"
+          placeholder="Número do conselho"
+          [class.is-invalid]="controle('cnec')?.invalid && controle('cnec')?.touched">
+        <div class="invalid-feedback">
+          Número do conselho é obrigatório (somente números).
+        </div>
+      </div>
+
+      <!-- Senha --------------------------------------------------------->
       <div class="mb-4 position-relative">
         <label class="form-label" for="password">Senha</label>
 
@@ -101,8 +123,7 @@
 
       <!-- Confirmação de senha ---------------------------------------------------------->
       <div class="mb-4 position-relative">
-
-        <label class="form-label" for="password">Confirme a senha</label>
+        <label class="form-label" for="passwordConfirm">Confirme a senha</label>
 
         <input id="passwordConfirm" [type]="showPwdConfirm ? 'text' : 'password'" class="form-control pe-5"
           formControlName="passwordConfirm" placeholder="Confirme sua senha"
@@ -113,7 +134,7 @@
           <i class="bi" [ngClass]="showPwdConfirm ? 'bi-eye-slash' : 'bi-eye'"></i>
         </button>
         <div class="invalid-feedback">
-          Mínimo 6 caracteres.
+          Confirme sua senha.
         </div>
       </div>
       <div *ngIf="controle('passwordConfirm')?.hasError('mustMatch') && controle('passwordConfirm')?.touched"
@@ -123,7 +144,7 @@
 
       <!-- Botão ---------------------------------------------------------->
       <button type="submit" class="btn btn-success rounded-pill w-100 py-2 mb-3">
-        Próximo
+        Cadastrar Profissional
       </button>
 
       <!-- Já tem conta? -------------------------------------------------->

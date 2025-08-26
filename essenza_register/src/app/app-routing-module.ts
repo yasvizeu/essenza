@@ -5,6 +5,7 @@ import { Anamnese } from './components/anamnese/anamnese';
 import { HomeComponent } from './components/home/home.component';
 import { Login } from './components/login/login';
 import { Cart } from './components/cart/cart';
+import { ProfessionalRegister } from './components/professional-register/professional-register';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'login', component: Login, pathMatch: 'full' },
   { path: 'cart', component: Cart, pathMatch: 'full' },
   { path: 'register', component: Register, data: { animation: 'RegisterPage' } },
+  { path: 'professional-register', component: ProfessionalRegister, data: { animation: 'ProfessionalRegisterPage' } },
   { path: 'anamnese', component: Anamnese, data: { animation: 'AnamnesePage' } }
 ];
 
