@@ -1,0 +1,158 @@
+<!-- register-profissional.component.html -->
+<div class="register-bg d-flex justify-content-center align-items-center min-vh-100 py-4">
+  <div class="bg-overlay"></div>
+
+  <div class="card-register p-4 rounded-4 shadow">
+    <div class="text-center mb-4">
+      <div class="d-flex justify-content-center mb-3">
+        <div class="rounded-circle overflow-hidden" style="width: 80px; height: 80px; border: 3px solid #198754;">
+          <img src="../../assets/images/Logo.png" alt="Logo Essenza"
+            style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%">
+        </div>
+      </div>
+      <h4 class="fw-bold text-success">Registro de Profissional</h4>
+      <p class="text-muted">Cadastre-se como profissional da saúde</p>
+    </div>
+
+    <form [formGroup]="professionalForm" (ngSubmit)="onSubmit()">
+      <!-- Dados Pessoais -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">Nome Completo *</label>
+          <input formControlName="name" type="text" class="form-control" id="name"
+            placeholder="Digite seu nome completo">
+          <div *ngIf="controle('name')?.invalid && controle('name')?.touched" class="text-danger small">
+            <span *ngIf="controle('name')?.errors?.['required']">Nome é obrigatório</span>
+            <span *ngIf="controle('name')?.errors?.['minlength']">Nome deve ter pelo menos 10 caracteres</span>
+            <span *ngIf="controle('name')?.errors?.['pattern']">Nome deve conter apenas letras</span>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="birthDate" class="form-label">Data de Nascimento *</label>
+          <input formControlName="birthDate" type="date" class="form-control" id="birthDate">
+          <div *ngIf="controle('birthDate')?.invalid && controle('birthDate')?.touched" class="text-danger small">
+            <span *ngIf="controle('birthDate')?.errors?.['required']">Data de nascimento é obrigatória</span>
+            <span *ngIf="controle('birthDate')?.errors?.['invalidDate']">Data inválida</span>
+            <span *ngIf="controle('birthDate')?.errors?.['invalidAge']">Idade deve ser entre 18 e 120 anos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="cpf" class="form-label">CPF *</label>
+          <input formControlName="cpf" type="text" class="form-control" id="cpf"
+            placeholder="000.000.000-00" maxlength="14">
+          <div *ngIf="controle('cpf')?.invalid && controle('cpf')?.touched" class="text-danger small">
+            <span *ngIf="controle('cpf')?.errors?.['required']">CPF é obrigatório</span>
+            <span *ngIf="controle('cpf')?.errors?.['invalidCpf']">CPF inválido</span>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="cell" class="form-label">Celular *</label>
+          <input formControlName="cell" type="tel" class="form-control" id="cell"
+            placeholder="(00) 00000-0000">
+          <div *ngIf="controle('cell')?.invalid && controle('cell')?.touched" class="text-danger small">
+            <span *ngIf="controle('cell')?.errors?.['required']">Celular é obrigatório</span>
+            <span *ngIf="controle('cell')?.errors?.['pattern']">Celular deve ter 10 ou 11 dígitos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail *</label>
+        <input formControlName="email" type="email" class="form-control" id="email"
+          placeholder="exemplo@dominio.com">
+        <div *ngIf="controle('email')?.invalid && controle('email')?.touched" class="text-danger small">
+          <span *ngIf="controle('email')?.errors?.['required']">E-mail é obrigatório</span>
+          <span *ngIf="controle('email')?.errors?.['email']">E-mail inválido</span>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="address" class="form-label">Endereço *</label>
+        <input formControlName="address" type="text" class="form-control" id="address"
+          placeholder="Digite seu endereço completo">
+        <div *ngIf="controle('address')?.invalid && controle('address')?.touched" class="text-danger small">
+          <span *ngIf="controle('address')?.errors?.['required']">Endereço é obrigatório</span>
+        </div>
+      </div>
+
+      <!-- Dados Profissionais -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="especialidade" class="form-label">Especialidade *</label>
+          <input formControlName="especialidade" type="text" class="form-control" id="especialidade"
+            placeholder="Ex: Fisioterapia, Nutrição, Psicologia">
+          <div *ngIf="controle('especialidade')?.invalid && controle('especialidade')?.touched" class="text-danger small">
+            <span *ngIf="controle('especialidade')?.errors?.['required']">Especialidade é obrigatória</span>
+            <span *ngIf="controle('especialidade')?.errors?.['minlength']">Especialidade deve ter pelo menos 3 caracteres</span>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="cnec" class="form-label">CNEC *</label>
+          <input formControlName="cnec" type="text" class="form-control" id="cnec"
+            placeholder="Número do registro profissional">
+          <div *ngIf="controle('cnec')?.invalid && controle('cnec')?.touched" class="text-danger small">
+            <span *ngIf="controle('cnec')?.errors?.['required']">CNEC é obrigatório</span>
+            <span *ngIf="controle('cnec')?.errors?.['pattern']">CNEC deve ter 6 a 8 dígitos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Senha -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Senha *</label>
+        <div class="position-relative">
+          <input formControlName="password" [type]="showPwd ? 'text' : 'password'" 
+                 class="form-control" id="password" placeholder="Digite sua senha"
+                 (input)="updateStrength()">
+          <button type="button" class="btn-olho" (click)="toggleShow()">
+            <i class="bi" [class.bi-eye]="!showPwd" [class.bi-eye-slash]="showPwd"></i>
+          </button>
+        </div>
+        
+        <!-- Indicador de força da senha -->
+        <div class="password-strength mt-2" *ngIf="controle('password')?.value">
+          <div class="progress" style="height: 5px;">
+            <div class="progress-bar" [class]="'bg-' + (strengthClass === 'weak' ? 'danger' : strengthClass === 'fair' ? 'warning' : strengthClass === 'good' ? 'info' : 'success')"
+                 [style.width.%]="strengthPercent"></div>
+          </div>
+          <small class="text-muted">Força: {{ strengthClass === 'weak' ? 'Fraca' : strengthClass === 'fair' ? 'Média' : strengthClass === 'good' ? 'Boa' : 'Forte' }}</small>
+        </div>
+
+        <div *ngIf="controle('password')?.invalid && controle('password')?.touched" class="text-danger small">
+          <span *ngIf="controle('password')?.errors?.['required']">Senha é obrigatória</span>
+          <span *ngIf="controle('password')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</span>
+          <span *ngIf="controle('password')?.errors?.['pattern']">Senha deve conter maiúscula, minúscula, número e caractere especial</span>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="passwordConfirm" class="form-label">Confirmar Senha *</label>
+        <div class="position-relative">
+          <input formControlName="passwordConfirm" [type]="showPwdConfirm ? 'text' : 'password'" 
+                 class="form-control" id="passwordConfirm" placeholder="Confirme sua senha">
+          <button type="button" class="btn-olho" (click)="toggleShowConfirm()">
+            <i class="bi" [class.bi-eye]="!showPwdConfirm" [class.bi-eye-slash]="showPwdConfirm"></i>
+          </button>
+        </div>
+        <div *ngIf="controle('passwordConfirm')?.invalid && controle('passwordConfirm')?.touched" class="text-danger small">
+          <span *ngIf="controle('passwordConfirm')?.errors?.['required']">Confirmação de senha é obrigatória</span>
+          <span *ngIf="professionalForm.errors?.['mustMatch']">As senhas não coincidem</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 rounded-pill mb-3">
+        Cadastrar Profissional
+      </button>
+
+      <div class="text-center">
+        <a routerLink="/login" class="link-acao">Já tem conta? Faça login</a>
+      </div>
+    </form>
+  </div>
+</div>

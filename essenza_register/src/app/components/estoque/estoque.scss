@@ -1,0 +1,462 @@
+// estoque.component.scss
+
+.estoque-container {
+  min-height: 100vh;
+  background: url('../../assets/images/imagemregister.jpg') center center/cover no-repeat fixed;
+  position: relative;
+  overflow: hidden;
+  
+  // Barras laterais verdes com padrão de folhas
+  &::before,
+  &::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    width: 80px;
+    height: 100vh;
+    background: linear-gradient(180deg, #2d5a27 0%, #4a7c59 100%);
+    z-index: 1;
+  }
+  
+  &::before {
+    left: 0;
+    background-image: 
+      radial-gradient(circle at 20px 50px, rgba(255,255,255,0.1) 2px, transparent 2px),
+      radial-gradient(circle at 60px 150px, rgba(255,255,255,0.1) 3px, transparent 3px),
+      radial-gradient(circle at 40px 300px, rgba(255,255,255,0.1) 2px, transparent 2px),
+      radial-gradient(circle at 70px 450px, rgba(255,255,255,0.1) 2px, transparent 2px),
+      radial-gradient(circle at 30px 600px, rgba(255,255,255,0.1) 3px, transparent 3px),
+      radial-gradient(circle at 50px 750px, rgba(255,255,255,0.1) 2px, transparent 2px);
+    background-size: 80px 100px;
+  }
+  
+  &::after {
+    right: 0;
+    background-image: 
+      radial-gradient(circle at 60px 100px, rgba(255,255,255,0.1) 2px, transparent 2px),
+      radial-gradient(circle at 20px 250px, rgba(255,255,255,0.1) 3px, transparent 3px),
+      radial-gradient(circle at 50px 400px, rgba(255,255,255,0.1) 2px, transparent 2px),
+      radial-gradient(circle at 30px 550px, rgba(255,255,255,0.1) 2px, transparent 2px),
+      radial-gradient(circle at 70px 700px, rgba(255,255,255,0.1) 3px, transparent 3px),
+      radial-gradient(circle at 40px 850px, rgba(255,255,255,0.1) 2px, transparent 2px);
+    background-size: 80px 100px;
+  }
+}
+
+// Header principal
+.estoque-header {
+  padding: 3rem 6rem;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  margin: 2rem 6rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  
+  .main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2d5a27;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+// Seções principais
+.estoque-section,
+.protocolo-section {
+  margin: 2rem 6rem;
+  position: relative;
+  z-index: 2;
+  
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2d5a27;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #4a7c59;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+  }
+}
+
+// Container das tabelas
+.table-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+// Tabela de estoque
+.estoque-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background: linear-gradient(135deg, #2d5a27 0%, #4a7c59 100%);
+    
+    th {
+      color: white;
+      padding: 1.2rem 1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: left;
+      border: none;
+      
+      &:first-child {
+        border-radius: 12px 0 0 0;
+      }
+      
+      &:last-child {
+        border-radius: 0 12px 0 0;
+      }
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid rgba(241, 243, 244, 0.5);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: rgba(248, 249, 250, 0.8);
+        transform: translateX(5px);
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    
+    td {
+      padding: 1.2rem 1rem;
+      vertical-align: middle;
+    }
+  }
+}
+
+// Colunas específicas
+.produto-nome {
+  font-weight: 600;
+  color: #2d5a27;
+  font-size: 1.1rem;
+}
+
+.produto-quantidade {
+  font-weight: 500;
+  color: #495057;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.produto-acao {
+  text-align: center;
+}
+
+// Botão Atualizar
+.btn-atualizar {
+  background: linear-gradient(135deg, #4a7c59 0%, #2d5a27 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(74, 124, 89, 0.4);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 124, 89, 0.6);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Tabela de protocolo
+.protocolo-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    
+    th {
+      color: white;
+      padding: 1.2rem 1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      text-align: left;
+      border: none;
+      
+      &:first-child {
+        border-radius: 12px 0 0 0;
+      }
+      
+      &:last-child {
+        border-radius: 0 12px 0 0;
+      }
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid rgba(241, 243, 244, 0.5);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: rgba(248, 249, 250, 0.8);
+        transform: translateX(5px);
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    
+    td {
+      padding: 1.2rem 1rem;
+      vertical-align: middle;
+      color: #495057;
+    }
+  }
+}
+
+// Seção do botão adicionar produto
+.add-product-section {
+  text-align: center;
+  margin: 3rem 6rem;
+  position: relative;
+  z-index: 2;
+}
+
+.btn-add-product {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(40, 167, 69, 0.6);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+  }
+}
+
+// Modais (mantidos do design anterior)
+.modal {
+  z-index: 1050;
+}
+
+.modal-content {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(15px);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #2d5a27 0%, #4a7c59 100%);
+  color: white;
+  border-radius: 15px 15px 0 0;
+  border: none;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(222, 226, 230, 0.5);
+  padding: 1rem 1.5rem;
+}
+
+// Formulários
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+  border: 2px solid rgba(233, 236, 239, 0.8);
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.9);
+  
+  &:focus {
+    border-color: #2d5a27;
+    box-shadow: 0 0 0 0.2rem rgba(45, 90, 39, 0.25);
+    background: rgba(255, 255, 255, 1);
+  }
+}
+
+.form-control.ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
+
+// Botões dos modais
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+    }
+  }
+  
+  &.btn-secondary {
+    background: #6c757d;
+    border: none;
+    
+    &:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 1200px) {
+  .estoque-container::before,
+  .estoque-container::after {
+    width: 60px;
+  }
+  
+  .estoque-header,
+  .estoque-section,
+  .protocolo-section,
+  .add-product-section {
+    margin-left: 4rem;
+    margin-right: 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .estoque-container::before,
+  .estoque-container::after {
+    width: 40px;
+  }
+  
+  .estoque-header,
+  .estoque-section,
+  .protocolo-section,
+  .add-product-section {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+  
+  .estoque-header {
+    padding: 2rem 2rem;
+    
+    .main-title {
+      font-size: 2rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+    }
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .estoque-table,
+  .protocolo-table {
+    font-size: 0.9rem;
+    
+    thead th,
+    tbody td {
+      padding: 0.8rem 0.5rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .estoque-container::before,
+  .estoque-container::after {
+    width: 30px;
+  }
+  
+  .estoque-header,
+  .estoque-section,
+  .protocolo-section,
+  .add-product-section {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  
+  .estoque-header {
+    padding: 1.5rem 1rem;
+    
+    .main-title {
+      font-size: 1.8rem;
+    }
+  }
+  
+  .btn-add-product {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+// Animações
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.estoque-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.estoque-section,
+.protocolo-section {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.add-product-section {
+  animation: fadeInUp 1s ease-out;
+}

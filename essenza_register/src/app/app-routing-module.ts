@@ -5,6 +5,8 @@ import { Anamnese } from './components/anamnese/anamnese';
 import { HomeComponent } from './components/home/home.component';
 import { Login } from './components/login/login';
 import { Cart } from './components/cart/cart';
+import { RegisterProfissional } from './components/register-profissional/register-profissional';
+import { Estoque } from './components/estoque/estoque';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -12,9 +14,10 @@ const routes: Routes = [
   { path: 'login', component: Login, pathMatch: 'full' },
   { path: 'cart', component: Cart, pathMatch: 'full' },
   { path: 'register', component: Register, data: { animation: 'RegisterPage' } },
-  { path: 'anamnese', component: Anamnese, data: { animation: 'AnamnesePage' } }
+  { path: 'register-profissional', component: RegisterProfissional, data: { animation: 'RegisterProfissionalPage' } },
+  { path: 'anamnese', component: Anamnese, data: { animation: 'AnamnesePage' } },
+  { path: 'estoque', component: Estoque, data: { animation: 'EstoquePage' } }
 ];
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

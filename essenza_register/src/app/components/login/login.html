@@ -11,32 +11,86 @@
             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%">
         </div>
       </div>
-      <h4 class="fw-bold text-success mt-3 text-white">Login Cliente</h4>
+      <h4 class="fw-bold text-success mt-3 text-white">Login Essenza</h4>
       <p class="text-white small">Welcome To Essenza</p>
     </div>
 
-    <form [formGroup]="formAtual" (ngSubmit)="onSubmit()">
-  <div class="mb-3">
-    <label for="email" class="form-label text-white">E-mail</label>
-    <input formControlName="email" type="email" class="form-control" id="email"
-      title="Digite seu e-mail cadastrado" placeholder="exemplo@dominio.com">
-  </div>
+    <!-- Seleção de tipo de usuário -->
+    <div class="user-type-selector mb-4">
+      <div class="btn-group w-100" role="group">
+        <button type="button" 
+                class="btn" 
+                [class.btn-success]="!isProfissional" 
+                [class.btn-outline-success]="isProfissional"
+                (click)="toggleTipoUsuario()">
+          <i class="bi bi-person me-2"></i>Cliente
+        </button>
+        <button type="button" 
+                class="btn" 
+                [class.btn-success]="isProfissional" 
+                [class.btn-outline-success]="!isProfissional"
+                (click)="toggleTipoUsuario()">
+          <i class="bi bi-briefcase me-2"></i>Profissional
+        </button>
+      </div>
+    </div>
 
-  <div class="mb-3 position-relative">
-    <label for="senha" class="form-label text-white">Senha</label>
-    <input formControlName="senha" [type]="showPassword ? 'text' : 'password'" class="form-control" id="senha"
-      placeholder="Digite sua senha" />
-    <button type="button" class="btn-olho" (click)="togglePassword()">
-      <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
-    </button>
-  </div>
+    <!-- Formulário de Cliente -->
+    <form *ngIf="!isProfissional" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="email" class="form-label text-white">E-mail</label>
+        <input formControlName="email" type="email" class="form-control" id="email"
+          title="Digite seu e-mail cadastrado" placeholder="exemplo@dominio.com">
+      </div>
 
-  <button type="submit" class="btn btn-success w-100 rounded-pill">Entrar</button>
+      <div class="mb-3 position-relative">
+        <label for="senha" class="form-label text-white">Senha</label>
+        <input formControlName="senha" [type]="showPassword ? 'text' : 'password'" class="form-control" id="senha"
+          placeholder="Digite sua senha" />
+        <button type="button" class="btn-olho" (click)="togglePassword()">
+          <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+        </button>
+      </div>
 
-  <div class="text-center mt-3">
-    <a href="#" class="link-acao">Esqueceu a senha?</a><br>
-    <a routerLink="/register" routerLinkActive="router-link-active" class="link-acao">Criar conta</a>
+      <button type="submit" class="btn btn-success w-100 rounded-pill" [disabled]="isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+        {{ isLoading ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+      <div class="text-center mt-3">
+        <a href="#" class="link-acao">Esqueceu a senha?</a><br>
+        <a routerLink="/register" routerLinkActive="router-link-active" class="link-acao">Criar conta</a>
+      </div>
+    </form>
+
+    <!-- Formulário de Profissional -->
+    <form *ngIf="isProfissional" [formGroup]="professionalForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="prof-email" class="form-label text-white">E-mail Profissional</label>
+        <input formControlName="email" type="email" class="form-control" id="prof-email"
+          title="Digite seu e-mail profissional" placeholder="profissional@dominio.com">
+      </div>
+
+      <div class="mb-3 position-relative">
+        <label for="prof-senha" class="form-label text-white">Senha</label>
+        <input formControlName="senha" [type]="showProfessionalPassword ? 'text' : 'password'" class="form-control" id="prof-senha"
+          placeholder="Digite sua senha" />
+        <button type="button" class="btn-olho" (click)="toggleProfessionalPassword()">
+          <i class="bi" [class.bi-eye]="!showProfessionalPassword" [class.bi-eye-slash]="showProfessionalPassword"></i>
+        </button>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 rounded-pill" [disabled]="isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+        {{ isLoading ? 'Entrando...' : 'Entrar como Profissional' }}
+      </button>
+
+      <div class="text-center mt-3">
+        <a href="#" class="link-acao">Esqueceu a senha?</a><br>
+        <a routerLink="/register-profissional" routerLinkActive="router-link-active" class="link-acao">Registrar como Profissional</a>
+      </div>
+    </form>
   </div>
-</form>
+</div>
 
 

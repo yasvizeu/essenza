@@ -1,0 +1,204 @@
+<!-- estoque.component.html -->
+<div class="estoque-container">
+  <!-- Header Principal -->
+  <div class="estoque-header">
+    <h1 class="main-title">Controle de Estoque e Protocolo</h1>
+    <p class="subtitle">Gerencie de forma eficiente o seu estoque de produtos e o protocolo de atendimentos</p>
+  </div>
+
+  <!-- Seção de Estoque -->
+  <div class="estoque-section">
+    <h2 class="section-title">Estoque</h2>
+    <div class="table-container">
+      <table class="estoque-table">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let produto of produtosPaginados">
+            <td class="produto-nome">{{ produto.nome }}</td>
+            <td class="produto-quantidade">{{ produto.quantidade }}</td>
+            <td class="produto-acao">
+              <button class="btn-atualizar" (click)="abrirModalEstoque(produto)">
+                Atualizar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Seção de Protocolo -->
+  <div class="protocolo-section">
+    <h2 class="section-title">Protocolo</h2>
+    <div class="table-container">
+      <table class="protocolo-table">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cliente Exemplo</td>
+            <td>Produto Exemplo</td>
+            <td>01/01/2024</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Botão Adicionar Produto -->
+  <div class="add-product-section">
+    <button class="btn-add-product" (click)="showAddProduto = true">
+      + Adicionar Produto
+    </button>
+  </div>
+
+  <!-- Modal Adicionar/Editar Produto -->
+  <div class="modal fade" [class.show]="showAddProduto || showEditProduto" [style.display]="(showAddProduto || showEditProduto) ? 'block' : 'none'">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ showEditProduto ? 'Editar Produto' : 'Novo Produto' }}
+          </h5>
+          <button type="button" class="btn-close" (click)="showAddProduto = false; showEditProduto = false"></button>
+        </div>
+        <form [formGroup]="produtoForm" (ngSubmit)="showEditProduto ? atualizarProduto() : adicionarProduto()">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Nome do Produto *</label>
+                <input type="text" class="form-control" formControlName="nome" placeholder="Nome do produto">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Categoria *</label>
+                <select class="form-select" formControlName="categoria">
+                  <option value="">Selecione uma categoria</option>
+                  <option value="Limpeza">Limpeza</option>
+                  <option value="Tratamento">Tratamento</option>
+                  <option value="Maquiagem">Maquiagem</option>
+                  <option value="Proteção">Proteção</option>
+                  <option value="Hidratação">Hidratação</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Descrição *</label>
+              <textarea class="form-control" formControlName="descricao" rows="3" placeholder="Descrição detalhada do produto"></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Preço de Venda *</label>
+                <input type="number" class="form-control" formControlName="preco" step="0.01" min="0" placeholder="0.00">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Preço de Custo</label>
+                <input type="number" class="form-control" formControlName="precoCusto" step="0.01" min="0" placeholder="0.00">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Unidade *</label>
+                <select class="form-select" formControlName="unidade">
+                  <option value="">Selecione</option>
+                  <option value="ml">ml</option>
+                  <option value="g">g</option>
+                  <option value="un">unidades</option>
+                  <option value="fr">frascos</option>
+                  <option value="cx">caixas</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Quantidade Inicial *</label>
+                <input type="number" class="form-control" formControlName="quantidade" min="0" placeholder="0">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Quantidade Mínima *</label>
+                <input type="number" class="form-control" formControlName="quantidadeMinima" min="0" placeholder="0">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Data de Validade</label>
+                <input type="date" class="form-control" formControlName="dataValidade">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Código de Barras</label>
+                <input type="text" class="form-control" formControlName="codigoBarras" placeholder="Código de barras">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Fornecedor</label>
+                <input type="text" class="form-control" formControlName="fornecedor" placeholder="Nome do fornecedor">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Lote</label>
+              <input type="text" class="form-control" formControlName="lote" placeholder="Número do lote">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">URL da Imagem</label>
+              <input type="url" class="form-control" formControlName="imagem" placeholder="https://exemplo.com/imagem.jpg">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="showAddProduto = false; showEditProduto = false">Cancelar</button>
+            <button type="submit" class="btn btn-success" [disabled]="produtoForm.invalid">
+              {{ showEditProduto ? 'Atualizar' : 'Cadastrar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Estoque -->
+  <div class="modal fade" [class.show]="showEstoqueModal" [style.display]="showEstoqueModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Gerenciar Estoque - {{ produtoSelecionado?.nome }}</h5>
+          <button type="button" class="btn-close" (click)="showEstoqueModal = false"></button>
+        </div>
+        <form [formGroup]="estoqueForm" (ngSubmit)="executarOperacaoEstoque()">
+          <div class="modal-body">
+            <div class="alert alert-info">
+              <strong>Estoque Atual:</strong> {{ produtoSelecionado?.quantidade }} {{ produtoSelecionado?.unidade }}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Operação</label>
+              <select class="form-select" formControlName="operacao">
+                <option value="adicionar">Adicionar ao Estoque</option>
+                <option value="remover">Remover do Estoque</option>
+                <option value="ajustar">Ajustar Quantidade</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantidade *</label>
+              <input type="number" class="form-control" formControlName="quantidade" min="0" placeholder="0">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="showEstoqueModal = false">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="estoqueForm.invalid">
+              Executar Operação
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay para modais -->
+  <div class="modal-backdrop fade show" *ngIf="showAddProduto || showEditProduto || showEstoqueModal"></div>
+</div>
