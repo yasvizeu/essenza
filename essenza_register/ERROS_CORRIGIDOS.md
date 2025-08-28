@@ -138,3 +138,6 @@ ng serve
 ---
 
 **Sistema de Estoque Essenza** - Erros corrigidos e funcionando! 🎉
+
+
+

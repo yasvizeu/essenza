@@ -1,7 +1,9 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { EssenzaService } from '../../services/essenza.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { LoginRequest } from '../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +23,9 @@ export class Login implements OnInit, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private essenzaService: EssenzaService
+    private essenzaService: EssenzaService,
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -66,41 +70,32 @@ export class Login implements OnInit, AfterViewInit {
     if (this.formAtual.invalid) return;
 
     this.isLoading = true;
-    const dados = this.formAtual.value;
+    const dados: LoginRequest = this.formAtual.value;
 
-    if (this.isProfissional) {
-      // Login de profissional
-      this.essenzaService.loginProfissional(dados).subscribe({
-        next: (response: any) => {
-          console.log('🟢 Profissional logado com sucesso:', response);
-          // Redirecionar para dashboard do profissional
-          this.router.navigate(['/profissional/dashboard']);
-        },
-        error: (error: any) => {
-          console.error('❌ Erro no login do profissional:', error);
-          alert('Erro no login. Verifique suas credenciais.');
-        },
-        complete: () => {
-          this.isLoading = false;
+    // Usar o AuthService para autenticação
+    this.authService.login(dados).subscribe({
+      next: (response) => {
+        console.log('🟢 Login realizado com sucesso:', response);
+        
+        // Verificar se há uma URL de retorno
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+        
+        // Redirecionar baseado no tipo de usuário
+        if (response.user.tipo === 'profissional') {
+          this.router.navigate(['/dashboard-profissional']);
+        } else {
+          this.router.navigate(['/home']);
         }
-      });
-    } else {
-      // Login de cliente
-      this.essenzaService.loginCliente(dados).subscribe({
-        next: (response: any) => {
-          console.log('🟢 Cliente logado com sucesso:', response);
-          // Redirecionar para dashboard do cliente
-          this.router.navigate(['/cliente/dashboard']);
-        },
-        error: (error: any) => {
-          console.error('❌ Erro no login do cliente:', error);
-          alert('Erro no login. Verifique suas credenciais.');
-        },
-        complete: () => {
-          this.isLoading = false;
-        }
-      });
-    }
+      },
+      error: (error) => {
+        console.error('❌ Erro no login:', error);
+        alert('Erro no login. Verifique suas credenciais.');
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   // Autofoco no campo de e-mail ao iniciar a tela

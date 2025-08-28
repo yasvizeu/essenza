@@ -15,12 +15,14 @@ import { HeaderModule } from './shared/header/header-module';
 import { LoginModule } from './components/login/login-module';
 import { CartModule } from './components/cart/cart-module';
 import { RegisterProfissionalModule } from './components/register-profissional/register-profissional-module';
+import { DashboardProfissionalModule } from './components/dashboard-profissional/dashboard-profissional-module';
 
 
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { provideHttpClient, withFetch} from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors} from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 
 @NgModule({
@@ -42,13 +44,17 @@ import { provideHttpClient, withFetch} from '@angular/common/http';
     HeaderModule,
     CarouselModule,
     CartModule,
-    RegisterProfissionalModule
+    RegisterProfissionalModule,
+    DashboardProfissionalModule
     
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([AuthInterceptor])
+    ),
   ],
   bootstrap: [App]
 })

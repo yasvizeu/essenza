@@ -1,0 +1,133 @@
+<div class="dashboard-container">
+  <div class="container mt-4">
+    <!-- Header do Dashboard -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="text-success">
+            <i class="bi bi-speedometer2 me-2"></i>
+            Dashboard Profissional
+          </h1>
+          <div class="user-info">
+            <span class="text-muted">Bem-vindo,</span>
+            <strong class="text-success ms-1">{{ user?.nome }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="icon-circle bg-primary text-white mb-3">
+              <i class="bi bi-box-seam fs-1"></i>
+            </div>
+            <h3 class="card-title text-primary">{{ totalProdutos }}</h3>
+            <p class="card-text text-muted">Produtos em Estoque</p>
+            <button class="btn btn-outline-primary btn-sm" (click)="navegarParaEstoque()">
+              Ver Estoque
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="icon-circle bg-success text-white mb-3">
+              <i class="bi bi-people fs-1"></i>
+            </div>
+            <h3 class="card-title text-success">{{ totalClientes }}</h3>
+            <p class="card-text text-muted">Clientes Cadastrados</p>
+            <button class="btn btn-outline-success btn-sm" (click)="navegarParaClientes()">
+              Ver Clientes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="icon-circle bg-warning text-white mb-3">
+              <i class="bi bi-clipboard-data fs-1"></i>
+            </div>
+            <h3 class="card-title text-warning">{{ totalFichas }}</h3>
+            <p class="card-text text-muted">Fichas de Anamnese</p>
+            <button class="btn btn-outline-warning btn-sm" (click)="navegarParaAnamnese()">
+              Ver Fichas
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body text-center">
+            <div class="icon-circle bg-info text-white mb-3">
+              <i class="bi bi-plus-circle fs-1"></i>
+            </div>
+            <h3 class="card-title text-info">+</h3>
+            <p class="card-text text-muted">Adicionar Novo</p>
+            <button class="btn btn-outline-info btn-sm" (click)="navegarParaProdutos()">
+              Novo Produto
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white">
+            <h5 class="mb-0 text-success">
+              <i class="bi bi-lightning me-2"></i>
+              Ações Rápidas
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3 mb-3">
+                <button class="btn btn-success w-100" (click)="navegarParaEstoque()">
+                  <i class="bi bi-box-seam me-2"></i>
+                  Gerenciar Estoque
+                </button>
+              </div>
+              <div class="col-md-3 mb-3">
+                <button class="btn btn-primary w-100" (click)="navegarParaClientes()">
+                  <i class="bi bi-person-plus me-2"></i>
+                  Novo Cliente
+                </button>
+              </div>
+              <div class="col-md-3 mb-3">
+                <button class="btn btn-warning w-100" (click)="navegarParaAnamnese()">
+                  <i class="bi bi-clipboard-plus me-2"></i>
+                  Nova Anamnese
+                </button>
+              </div>
+              <div class="col-md-3 mb-3">
+                <button class="btn btn-info w-100" (click)="navegarParaProdutos()">
+                  <i class="bi bi-plus-circle me-2"></i>
+                  Novo Produto
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-2 text-muted">Carregando dados do dashboard...</p>
+    </div>
+  </div>
+</div>
+

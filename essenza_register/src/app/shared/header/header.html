@@ -12,17 +12,37 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a routerLink="/login" routerLinkActive="router-link-active" class="nav-link text-success">
+        <!-- Menu para usuários não autenticados -->
+        <ng-container *ngIf="!isAuthenticated">
+          <li class="nav-item">
+            <a routerLink="/login" routerLinkActive="router-link-active" class="nav-link text-success">
+              <i class="bi bi-person-fill fs-5"></i>
+              Entrar
+            </a>
+          </li>
+        </ng-container>
 
-            <i class="bi bi-person-fill fs-5"></i>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/cart" routerLinkActive="router-link-active" class="nav-link text-success">
-            <i class="bi bi-cart3 fs-5"> </i> <!-- Ícone com tamanho ajustado -->
-          </a>
-        </li>
+        <!-- Menu para usuários autenticados -->
+        <ng-container *ngIf="isAuthenticated">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-success" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle fs-5"></i>
+              {{ userDisplayName }}
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/profile">Perfil</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" (click)="logout()">Sair</a></li>
+            </ul>
+          </li>
+          
+          <!-- Carrinho sempre visível para usuários logados -->
+          <li class="nav-item">
+            <a routerLink="/cart" routerLinkActive="router-link-active" class="nav-link text-success">
+              <i class="bi bi-cart3 fs-5"></i>
+            </a>
+          </li>
+        </ng-container>
       </ul>
     </div>
   </div>
