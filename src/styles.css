@@ -55,7 +55,7 @@ background-image: url("assets/imagem/Background/imagem-backgroundo-p.jpg") ; bac
 }
 
 .detalhamento-descricao {
-  color:white; /* Cor da descrição */
+  white-space: pre-line; /* Para manter quebras de linha */ color:rgb(243, 247, 245); /* Cor da descrição */
 }
 
 .detalhamento-preco {

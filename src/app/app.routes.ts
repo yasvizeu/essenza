@@ -21,6 +21,6 @@ export const routes: Routes = [
         path:"cardmassagem", component: Cardmassagem
     },
     {
-        path:"detalhes/:tratamento", component: Detalhamento
+        path:"detalhes/:id", component: Detalhamento
     },
 ];

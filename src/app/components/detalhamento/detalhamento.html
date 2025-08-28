@@ -6,7 +6,7 @@
     </div>
     <div class="col-md-6">
       <h2 class="detalhamento-title">{{ tratamentoSelecionado.nome }}</h2>
-      <p class="detalhamento-descricao">{{ tratamentoSelecionado.descricao }}</p>
+      <p class="detalhamento-descricao" [innerHTML]="tratamentoSelecionado.descricao"></p>
       <h4 class="detalhamento-preco">{{ tratamentoSelecionado.preco }}</h4>
      <!--Campo de sessões-->     
 <div class="sessões">
