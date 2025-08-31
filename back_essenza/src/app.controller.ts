@@ -9,4 +9,14 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('test')
+  getTest(): any {
+    return { message: 'Test route working', timestamp: new Date().toISOString() };
+  }
+
+  @Get('health')
+  getHealth(): any {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  }
 }

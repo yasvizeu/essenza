@@ -1,16 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EssenzaService } from '../../services/essenza.service';
 import { RegistroStateService } from '../../services/registro-state.service';
 
 @Component({
   selector: 'app-anamnese',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './anamnese.html',
   styleUrl: './anamnese.scss'
 })
-export class Anamnese implements OnInit {
+export class AnamneseComponent implements OnInit {
 
   anamneseForm!: FormGroup;
 
@@ -112,7 +114,7 @@ export class Anamnese implements OnInit {
   //       alert(response.message || 'Cliente criado com sucesso!');
   //       this.anamneseForm.reset();
   //       // Limpa os dados de registro após o sucesso para evitar problemas.
-  //       this.registroService.clearDadosRegistro(); 
+  //       this.registroService.clearDadosRegistro();
   //       this.router.navigate(['/home']);
   //     },
   //     error: (error: any) => {

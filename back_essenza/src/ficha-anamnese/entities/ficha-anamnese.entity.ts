@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn} from "typeorm";
-import { Cliente } from "src/clientes/entities/cliente.entity";
 
 @Entity()
 export class FichaAnamnese {
@@ -21,7 +20,7 @@ export class FichaAnamnese {
   @Column()
   lifestyle: string;
 
-  @OneToOne(()=> Cliente, { eager: true })
+  @OneToOne('Cliente', { eager: true })
   @JoinColumn()
-  cliente:Cliente;
+  cliente: any;
 }

@@ -1,17 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 import { Persona } from "../../personas/entities/persona.entity";
 
 @Entity()
 export class Profissional extends Persona {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column()
-  especialidade: string;
+    @Column()
+    admin: boolean;
 
-  @Column({ default: false })
-  admin: boolean;
+    @Column()
+    especialidade: string;
 
-  @Column({ nullable: true })
-  cnec: number;
+    @Column()
+    cnec: number;
 }

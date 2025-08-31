@@ -18,7 +18,7 @@ export class ClientesService {
   }
 
   findAll() {
-    return this.clienteRepo.find;
+    return this.clienteRepo.find();
   }
 
   findOne(id: number) {

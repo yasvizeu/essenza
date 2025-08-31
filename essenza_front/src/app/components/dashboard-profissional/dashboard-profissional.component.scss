@@ -1,0 +1,64 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff5f7 0%, #fef7f9 50%, #f8f9fa 100%);
+}
+
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.user-info {
+  font-size: 1.1rem;
+}
+
+.card-header {
+  border-bottom: 2px solid #e9ecef;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+  }
+
+  .icon-circle i {
+    font-size: 1.5rem !important;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+  }
+}

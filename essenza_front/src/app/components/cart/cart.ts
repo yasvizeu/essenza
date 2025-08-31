@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './cart.html',
   styleUrl: './cart.scss'
 })
-export class Cart {
+export class CartComponent {
   cartItems = [
     { nome: 'Produto 1', quantidade: 2, preco: 49.90, imagem: 'https://blog.adcosprofissional.com.br/wp-content/uploads/2021/09/Profissional_pauta-4_produtos-ADCOS-1-scaled-e1630938241319.jpg' },
     { nome: 'Produto 2', quantidade: 1, preco: 79.90, imagem: 'https://blog.adcosprofissional.com.br/wp-content/uploads/2021/09/Profissional_pauta-4_produtos-ADCOS-1-scaled-e1630938241319.jpg' }

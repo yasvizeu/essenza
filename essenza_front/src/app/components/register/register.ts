@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
 import { RegistroStateService } from '../../services/registro-state.service';
 import { EssenzaService } from '../../services/essenza.service';
 import { cpfValidator } from '../../validators/cpf.validator';
 
 @Component({
   selector: 'app-register',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   styleUrls: ['./register.scss'],
   templateUrl: './register.html',
 })
-export class Register implements OnInit {
+export class RegisterComponent implements OnInit {
   clientForm!: FormGroup;
 
   showPwd = false;
@@ -135,7 +136,7 @@ export class Register implements OnInit {
       ...this.clientForm.value,
       type: 'cliente'
     };
-    
+
     // Chamada ao serviço para enviar os dados ao back-end
     this.essenzaService.createClient(userData).subscribe({
       next: (response: any) => {
@@ -158,7 +159,7 @@ export class Register implements OnInit {
   // Você pode chamá-lo diretamente do HTML, mas a lógica agora está em onSubmit.
 
      // A lógica de navegação foi movida para o onSubmit()
-  
+
 
   // onSubmit() {
   //   if (this.clientForm.invalid) {
@@ -179,5 +180,5 @@ export class Register implements OnInit {
   //   return true;  // sucesso
   // }
 
-  
+
   // }

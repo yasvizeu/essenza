@@ -12,11 +12,14 @@ import {
   query,
   group
 } from '@angular/animations';
+import { HeaderComponent } from './shared/header/header';
+import { FooterComponent } from './shared/footer/footer';
 
 @Component({
   selector: 'app-root',
-  standalone: false,
-   template: `
+  standalone: true,
+  imports: [RouterOutlet, HeaderComponent, FooterComponent],
+  template: `
     <app-header></app-header>
 
     <div [@routeAnimations]="prepareRoute(outlet)">

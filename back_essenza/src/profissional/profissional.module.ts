@@ -10,6 +10,6 @@ import { Profissional } from './entities/profissional.entity';
   imports: [TypeOrmModule.forFeature([Profissional])],
   controllers: [ProfissionalController],
   providers: [ProfissionalService],
-  exports:[TypeOrmModule],
+  exports:[TypeOrmModule, ProfissionalService],
 })
 export class ProfissionalModule {}

@@ -1,21 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Login } from './login';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AfterViewInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
-  declarations: [
-    Login
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule
-    
   ],
-  exports: [Login]
+  exports: []
 })
 export class LoginModule { }

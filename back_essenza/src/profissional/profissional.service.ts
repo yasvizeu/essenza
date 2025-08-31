@@ -19,8 +19,8 @@ export class ProfissionalService {
   }
 
   findAll() {
-    return this.profiRepo.find;
-    }
+    return this.profiRepo.find();
+  }
 
   findOne(id: number) {
     return this.profiRepo.findOneBy({id});
