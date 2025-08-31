@@ -1,0 +1,371 @@
+// Estilos para o componente de login
+
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 2rem 0;
+}
+
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.logo-container {
+  .bi-leaf-fill {
+    filter: drop-shadow(0 4px 8px rgba(40, 167, 69, 0.3));
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+// Seletor de tipo de usuário
+.user-type-selector {
+  .btn-group {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+    .btn {
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    .btn-check:checked + .btn {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      border-color: #28a745;
+      color: white;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+  }
+}
+
+// Formulário
+.form-group {
+  .form-label {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+
+    i {
+      color: #28a745;
+    }
+  }
+
+  .input-group {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+
+    &:focus-within {
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .input-group-text {
+      border: none;
+      background: #f8f9fa;
+      color: #6c757d;
+      padding: 0.75rem 1rem;
+    }
+
+    .form-control {
+      border: none;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      background: white;
+
+      &:focus {
+        box-shadow: none;
+        background: white;
+      }
+
+      &::placeholder {
+        color: #adb5bd;
+        font-style: italic;
+      }
+    }
+
+    .btn {
+      border: none;
+      padding: 0.75rem 1rem;
+      background: #f8f9fa;
+      color: #6c757d;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #e9ecef;
+        color: #495057;
+      }
+    }
+  }
+
+  .text-danger {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+  }
+}
+
+// Checkbox personalizado
+.form-check {
+  .form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    margin-top: 0.1em;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    &:checked {
+      background-color: #28a745;
+      border-color: #28a745;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+  }
+
+  .form-check-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+}
+
+// Links
+a.text-success {
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #1e7e34 !important;
+    text-decoration: underline !important;
+  }
+}
+
+// Alertas
+.alert {
+  border-radius: 12px;
+  border: none;
+  padding: 1rem;
+  font-weight: 500;
+
+  &.alert-danger {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    color: #c53030;
+    border-left: 4px solid #e53e3e;
+  }
+}
+
+// Botões
+.btn {
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+  text-transform: none;
+  letter-spacing: 0.5px;
+
+  &.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  &.btn-outline-success {
+    border: 2px solid #28a745;
+    color: #28a745;
+    background: transparent;
+    font-weight: 600;
+
+    &:hover {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      border-color: #28a745;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+  }
+}
+
+// Separador
+.separator {
+  position: relative;
+  text-align: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #dee2e6 50%, transparent 100%);
+  }
+
+  .separator-text {
+    background: white;
+    padding: 0 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Card de informações
+.info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  .info-item {
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+
+      i {
+        color: #20c997 !important;
+      }
+    }
+
+    i {
+      transition: all 0.3s ease;
+      margin-bottom: 0.5rem;
+    }
+
+    small {
+      font-weight: 500;
+      color: #6c757d;
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .login-container {
+    padding: 1rem 0;
+  }
+
+  .login-card {
+    padding: 2rem 1.5rem;
+    margin: 0 1rem;
+    border-radius: 16px;
+  }
+
+  .user-type-selector .btn-group {
+    flex-direction: column;
+
+    .btn {
+      border-radius: 8px !important;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .logo-container .bi-leaf-fill {
+    font-size: 3rem !important;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+// Animações de entrada
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card {
+  animation: slideInUp 0.6s ease;
+}
+
+.info-card {
+  animation: slideInUp 0.8s ease;
+}
+
+// Estados de foco e hover
+.form-control:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+// Melhorias de acessibilidade
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
