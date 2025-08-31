@@ -1,0 +1,86 @@
+<div class="estoque-container">
+  <div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="text-primary">
+            <i class="bi bi-box-seam me-2"></i>
+            Controle de Estoque
+          </h1>
+          <button class="btn btn-outline-primary" (click)="voltarParaDashboard()">
+            <i class="bi bi-arrow-left me-2"></i>
+            Voltar ao Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-2 text-muted">Carregando produtos...</p>
+    </div>
+
+    <!-- Lista de Produtos -->
+    <div class="row" *ngIf="!isLoading">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white">
+            <h5 class="mb-0 text-primary">
+              <i class="bi bi-box-seam me-2"></i>
+              Produtos em Estoque ({{ produtos.length }})
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="produtos.length > 0; else semProdutos">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th>Nome</th>
+                      <th>Categoria</th>
+                      <th>Quantidade</th>
+                      <th>Unidade</th>
+                      <th>Em Estoque</th>
+                      <th>Validade</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let produto of produtos">
+                      <td>{{ produto.id }}</td>
+                      <td>
+                        <strong>{{ produto.nome }}</strong>
+                        <br>
+                        <small class="text-muted">{{ produto.descricao }}</small>
+                      </td>
+                      <td>{{ produto.categoria || 'N/A' }}</td>
+                      <td>{{ produto.quantidade }}</td>
+                      <td>{{ produto.baseUnit || 'ml' }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="produto.emEstoque ? 'bg-success' : 'bg-danger'">
+                          {{ produto.emEstoque ? 'Sim' : 'Não' }}
+                        </span>
+                      </td>
+                      <td>{{ produto.dataValidade || 'N/A' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <ng-template #semProdutos>
+              <div class="text-center py-4">
+                <i class="bi bi-box-seam display-4 text-muted"></i>
+                <h5 class="text-muted mt-3">Nenhum produto cadastrado</h5>
+                <p class="text-muted">Comece cadastrando produtos no sistema</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

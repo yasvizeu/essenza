@@ -1,0 +1,82 @@
+<div class="servicos-container">
+  <div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="text-info">
+            <i class="bi bi-tools me-2"></i>
+            Gerenciamento de Serviços
+          </h1>
+          <button class="btn btn-outline-info" (click)="voltarParaDashboard()">
+            <i class="bi bi-arrow-left me-2"></i>
+            Voltar ao Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-info" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-2 text-muted">Carregando serviços...</p>
+    </div>
+
+    <!-- Lista de Serviços -->
+    <div class="row" *ngIf="!isLoading">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white">
+            <h5 class="mb-0 text-info">
+              <i class="bi bi-tools me-2"></i>
+              Serviços Disponíveis ({{ servicos.length }})
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="servicos.length > 0; else semServicos">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>ID</th>
+                      <th>Nome</th>
+                      <th>Descrição</th>
+                      <th>Preço</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let servico of servicos">
+                      <td>{{ servico.id }}</td>
+                      <td>
+                        <strong>{{ servico.nome }}</strong>
+                      </td>
+                      <td>{{ servico.descricao || 'N/A' }}</td>
+                      <td>
+                        <span class="badge bg-success">
+                          R$ {{ servico.preco?.toFixed(2) || '0.00' }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge bg-success">Ativo</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <ng-template #semServicos>
+              <div class="text-center py-4">
+                <i class="bi bi-tools display-4 text-muted"></i>
+                <h5 class="text-muted mt-3">Nenhum serviço cadastrado</h5>
+                <p class="text-muted">Comece cadastrando serviços no sistema</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

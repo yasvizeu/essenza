@@ -1,0 +1,150 @@
+<div class="home-cliente">
+  <!-- Header da Home do Cliente -->
+  <div class="welcome-section bg-success text-white py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="display-4 fw-bold">Bem-vindo(a), {{ user?.name }}! 👋</h1>
+          <p class="lead">Gerencie seus agendamentos e descubra produtos incríveis</p>
+        </div>
+        <div class="col-md-4 text-end">
+          <img src="assets/images/Logo.png" alt="Logo Essenza" class="logo-welcome">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <!-- Cards de Acesso Rápido -->
+    <div class="row mb-5">
+      <div class="col-md-3 mb-3">
+        <div class="card quick-access-card h-100" (click)="navegarParaAgendamento()">
+          <div class="card-body text-center">
+            <i class="bi bi-calendar-check display-4 text-success"></i>
+            <h5 class="card-title mt-3">Meus Agendamentos</h5>
+            <p class="card-text">Visualize e gerencie seus horários</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="card quick-access-card h-100" (click)="navegarParaProdutos()">
+          <div class="card-body text-center">
+            <i class="bi bi-bag-heart display-4 text-primary"></i>
+            <h5 class="card-title mt-3">Produtos</h5>
+            <p class="card-text">Descubra produtos recomendados</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="card quick-access-card h-100" (click)="navegarParaCarrinho()">
+          <div class="card-body text-center">
+            <i class="bi bi-cart3 display-4 text-warning"></i>
+            <h5 class="card-title mt-3">Carrinho</h5>
+            <p class="card-text">Finalize suas compras</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <div class="card quick-access-card h-100" (click)="navegarParaPerfil()">
+          <div class="card-body text-center">
+            <i class="bi bi-person-circle display-4 text-info"></i>
+            <h5 class="card-title mt-3">Meu Perfil</h5>
+            <p class="card-text">Gerencie suas informações</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de Agendamentos -->
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-success text-white">
+            <h4 class="mb-0">
+              <i class="bi bi-calendar-event me-2"></i>
+              Próximos Agendamentos
+            </h4>
+          </div>
+          <div class="card-body">
+            <div *ngIf="agendamentos.length > 0; else semAgendamentos">
+              <div class="row" *ngFor="let agendamento of agendamentos">
+                <div class="col-md-3">
+                  <strong>Data:</strong> {{ agendamento.data | date:'dd/MM/yyyy' }}
+                </div>
+                <div class="col-md-2">
+                  <strong>Horário:</strong> {{ agendamento.horario }}
+                </div>
+                <div class="col-md-3">
+                  <strong>Serviço:</strong> {{ agendamento.servico }}
+                </div>
+                <div class="col-md-2">
+                  <strong>Profissional:</strong> {{ agendamento.profissional }}
+                </div>
+                <div class="col-md-2">
+                  <span class="badge" [ngClass]="{
+                    'bg-success': agendamento.status === 'Confirmado',
+                    'bg-warning': agendamento.status === 'Pendente',
+                    'bg-danger': agendamento.status === 'Cancelado'
+                  }">
+                    {{ agendamento.status }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <ng-template #semAgendamentos>
+              <p class="text-muted text-center py-3">
+                <i class="bi bi-calendar-x display-4"></i><br>
+                Nenhum agendamento encontrado
+              </p>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produtos Recomendados -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+              <i class="bi bi-star me-2"></i>
+              Produtos Recomendados para Você
+            </h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-3" *ngFor="let produto of produtosRecomendados">
+                <div class="card product-card h-100">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img [src]="produto.imagem" class="img-fluid rounded-start h-100" [alt]="produto.nome">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ produto.nome }}</h5>
+                        <p class="card-text">
+                          <small class="text-muted">{{ produto.categoria }}</small>
+                        </p>
+                        <p class="card-text">
+                          <strong class="text-success">R$ {{ produto.preco | number:'1.2-2' }}</strong>
+                        </p>
+                        <button class="btn btn-outline-success btn-sm">
+                          <i class="bi bi-cart-plus me-1"></i>
+                          Adicionar ao Carrinho
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

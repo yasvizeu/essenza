@@ -1,0 +1,72 @@
+/* Fundo verde com folhas — reutilizado da tela de login */
+.login-section {
+  min-height: 100vh;
+  background: url('../../../assets/images/imagemregister.jpg') center/cover no-repeat fixed;
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+/* Cartão glassmorphism */
+.glass-card {
+  background: rgba(0, 64, 0, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+
+  .form-label       { color: #d1d1d1; }
+  .invalid-feedback { font-size: .8rem; }
+
+  .form-control {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+
+    &::placeholder { color: rgba(255, 255, 255, 0.6); }
+
+    &:focus {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 0 .25rem rgba(25, 135, 84, .4); // verde BS
+    }
+  }
+
+  .btn-success { background-image: none; }
+}
+
+/* Ícone do Bootstrap Icons */
+.bi { font-size: 1.1rem; }
+
+  .btn-eye-toggle {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 2;
+  font-size: 1.2rem;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Barra de força branca-transparente que preenche da esquerda p/ direita */
+.password-meter {
+  height: 6px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+
+  .bar {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease;
+    &.weak   { background: #dc3545; } /* vermelho   */
+    &.fair   { background: #fd7e14; } /* laranja    */
+    &.good   { background: #ffc107; } /* amarelo    */
+    &.strong { background: #28a745; } /* verde      */
+  }
+}
+
