@@ -1,0 +1,182 @@
+<!-- Hero Section -->
+<div class="hero-section bg-success text-white py-5">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-12">
+        <h1 class="display-4 fw-bold mb-4">Sobre a Essenza</h1>
+        <p class="lead mb-0">Conheça nossa história, missão e a equipe que faz a diferença</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Nossa História -->
+<section class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <h2 class="display-6 fw-bold mb-4">Nossa História</h2>
+        <p class="lead text-muted mb-4">
+          Fundada em {{ empresa.fundacao }}, a {{ empresa.nome }} nasceu da paixão por beleza natural e sustentabilidade. 
+          Começamos como uma pequena clínica com o sonho de transformar vidas através de tratamentos estéticos 
+          que respeitam tanto a pele quanto o meio ambiente.
+        </p>
+        <p class="text-muted">
+          Ao longo dos anos, desenvolvemos uma metodologia única que combina tecnologia de ponta com ingredientes 
+          naturais, sempre priorizando a segurança e o bem-estar de nossos clientes. Hoje, somos referência 
+          em tratamentos estéticos sustentáveis na região.
+        </p>
+      </div>
+      <div class="col-lg-6 text-center">
+        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+             alt="História da Essenza" class="img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Missão, Visão e Valores -->
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-6 fw-bold mb-3">Nossos Pilares</h2>
+        <p class="lead text-muted">Os fundamentos que guiam nosso trabalho</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Missão -->
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-bullseye text-success fs-1"></i>
+            </div>
+            <h5 class="card-title mb-3">Nossa Missão</h5>
+            <p class="card-text text-muted">
+              {{ empresa.missao }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visão -->
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-eye text-success fs-1"></i>
+            </div>
+            <h5 class="card-title mb-3">Nossa Visão</h5>
+            <p class="card-text text-muted">
+              {{ empresa.visao }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Valores -->
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body text-center p-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                 style="width: 80px; height: 80px;">
+              <i class="bi bi-heart text-success fs-1"></i>
+            </div>
+            <h5 class="card-title mb-3">Nossos Valores</h5>
+            <ul class="list-unstyled text-start">
+              <li *ngFor="let valor of empresa.valores" class="mb-2">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                {{ valor }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Estatísticas -->
+<section class="py-5">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-12 mb-5">
+        <h2 class="display-6 fw-bold mb-3">Números que Falam</h2>
+        <p class="lead text-muted">Resultados que comprovam nossa excelência</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div *ngFor="let estatistica of estatisticas" class="col-lg-3 col-md-6">
+        <div class="text-center">
+          <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+               style="width: 100px; height: 100px;">
+            <span class="display-4 fw-bold text-success">{{ estatistica.numero }}</span>
+          </div>
+          <h5 class="fw-bold">{{ estatistica.descricao }}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Nossa Equipe -->
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-6 fw-bold mb-3">Nossa Equipe</h2>
+        <p class="lead text-muted">Profissionais qualificados e dedicados ao seu bem-estar</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div *ngFor="let membro of equipe" class="col-lg-4 col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-img-wrapper">
+            <img [src]="membro.imagem" class="card-img-top" [alt]="membro.nome" 
+                 style="height: 300px; object-fit: cover;">
+            <div class="card-img-overlay d-flex align-items-end">
+              <div class="w-100">
+                <span class="badge bg-success mb-2">{{ membro.especialidade }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body text-center">
+            <h5 class="card-title mb-2">{{ membro.nome }}</h5>
+            <p class="text-success fw-bold mb-2">{{ membro.cargo }}</p>
+            <p class="card-text text-muted">{{ membro.descricao }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-12">
+        <h2 class="display-6 fw-bold mb-4">Pronto para Transformar Sua Vida?</h2>
+        <p class="lead text-muted mb-4">
+          Agende sua consulta e descubra como podemos ajudar você a alcançar sua melhor versão
+        </p>
+        <div class="d-flex gap-3 justify-content-center">
+          <button class="btn btn-success btn-lg">
+            <i class="bi bi-calendar-check me-2"></i>
+            Agendar Consulta
+          </button>
+          <button class="btn btn-outline-success btn-lg">
+            <i class="bi bi-telephone me-2"></i>
+            Falar Conosco
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
