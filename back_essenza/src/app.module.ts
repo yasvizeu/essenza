@@ -11,6 +11,7 @@ import { ProdutosModule } from './produtos/produtos.module';
 import { ServicosModule } from './servicos/servicos.module';
 import { ProtocolosModule } from './protocolos/protocolos.module';
 import { EstoqueModule } from './estoque/estoque.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import 'dotenv/config';
 
 @Module({
@@ -25,7 +26,7 @@ import 'dotenv/config';
     synchronize: false,
     charset: 'utf8mb4_unicode_ci',
     // manualInitialization: true,
-  }), AuthModule, PersonasModule, ClientesModule, ProfissionalModule, FichaAnamneseModule, ProdutosModule, ServicosModule, ProtocolosModule, EstoqueModule],
+  }), AuthModule, PersonasModule, ClientesModule, ProfissionalModule, FichaAnamneseModule, ProdutosModule, ServicosModule, ProtocolosModule, EstoqueModule, DashboardModule],
   controllers: [AppController],
   providers: [AppService],
 })

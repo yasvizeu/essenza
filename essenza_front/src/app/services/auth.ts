@@ -220,7 +220,7 @@ export class AuthService {
     if (response.user.tipo === 'profissional') {
       this.router.navigate(['/dashboard-profissional']);
     } else {
-      this.router.navigate(['/dashboard-cliente']);
+      this.router.navigate(['/home']); // Clientes vão para home por enquanto
     }
   }
 
