@@ -31,9 +31,9 @@ export class ClienteCadastroComponent implements OnInit {
   initForms(): void {
     // Formulário de dados pessoais
     this.cadastroForm = this.fb.group({
-      nome: ['', [Validators.required, Validators.minLength(3)]], // Mudado de 'name' para 'nome'
+      name: ['', [Validators.required, Validators.minLength(3)]], // Mudado de 'nome' para 'name'
       email: ['', [Validators.required, Validators.email]],
-      senha: ['', [Validators.required, Validators.minLength(8)]], // Mudado de 'password' para 'senha'
+      password: ['', [Validators.required, Validators.minLength(8)]], // Mudado de 'senha' para 'password'
       confirmPassword: ['', [Validators.required]],
       cpf: ['', [Validators.required]],
       birthDate: ['', [Validators.required]],
@@ -53,10 +53,10 @@ export class ClienteCadastroComponent implements OnInit {
 
   // Validador personalizado para confirmar senha
   passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
-    const senha = control.get('senha'); // Mudado de 'password' para 'senha'
+    const password = control.get('password'); // Mudado de 'senha' para 'password'
     const confirmPassword = control.get('confirmPassword');
 
-    if (senha && confirmPassword && senha.value !== confirmPassword.value) {
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
       return { 'passwordMismatch': true };
     }
     return null;
@@ -113,9 +113,9 @@ export class ClienteCadastroComponent implements OnInit {
 
       const cliente: Cliente = {
         email: this.cadastroForm.value.email,
-        nome: this.cadastroForm.value.nome, // Mudado de 'name' para 'nome'
-        senha: this.cadastroForm.value.senha, // Mudado de 'password' para 'senha'
-        tipo: 'cliente', // Mudado de 'type' para 'tipo'
+        name: this.cadastroForm.value.name, // Mudado de 'nome' para 'name'
+        password: this.cadastroForm.value.password, // Mudado de 'senha' para 'password'
+        type: 'cliente', // Mudado de 'tipo' para 'type'
         cpf: this.cadastroForm.value.cpf,
         birthDate: this.cadastroForm.value.birthDate,
         cell: this.cadastroForm.value.cell,

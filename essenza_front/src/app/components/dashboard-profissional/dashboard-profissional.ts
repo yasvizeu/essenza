@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -47,10 +47,10 @@ export class DashboardProfissionalComponent implements OnInit {
   showModalExecutarServico = false;
 
   // Formulários
-  movimentoEstoqueForm: FormGroup;
-  novoProfissionalForm: FormGroup;
-  buscarClientesForm: FormGroup;
-  executarServicoForm: FormGroup;
+  movimentoEstoqueForm!: FormGroup;
+  novoProfissionalForm!: FormGroup;
+  buscarClientesForm!: FormGroup;
+  executarServicoForm!: FormGroup;
 
   // Filtros e busca
   filtroProdutos = '';
@@ -69,7 +69,8 @@ export class DashboardProfissionalComponent implements OnInit {
     private authService: AuthService,
     private dashboardService: DashboardService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.initForms();
   }
@@ -124,8 +125,10 @@ export class DashboardProfissionalComponent implements OnInit {
   }
 
   // Carregar dados do dashboard
-  private loadDashboardData(): void {
+  loadDashboardData(): void {
+    console.log('🔍 Debug - Iniciando carregamento do dashboard');
     this.isLoading = true;
+    console.log('🔍 Debug - isLoading definido como true');
     
     // Carregar dados em paralelo
     Promise.all([
@@ -133,19 +136,30 @@ export class DashboardProfissionalComponent implements OnInit {
       this.loadServicos(),
       this.loadClientes(),
       this.loadProfissionais(),
-      this.loadEstatisticas(),
       this.loadUltimasMovimentacoes(),
       this.loadProdutosBaixoEstoque()
-    ]).finally(() => {
+    ]).then(() => {
+      // Calcular estatísticas localmente após carregar todos os dados
+      this.calcularEstatisticas();
+      console.log('🔍 Debug - Carregamento do dashboard concluído');
       this.isLoading = false;
+      console.log('🔍 Debug - isLoading definido como false');
+      this.cdr.detectChanges(); // Forçar detecção de mudanças
+    }).catch(error => {
+      console.error('Erro ao carregar dados do dashboard:', error);
+      this.isLoading = false;
+      console.log('🔍 Debug - isLoading definido como false (erro)');
+      this.cdr.detectChanges(); // Forçar detecção de mudanças
     });
   }
 
   // Carregar produtos
   private loadProdutos(): Promise<void> {
+    console.log('🔍 Debug - Carregando produtos...');
     this.isLoadingProdutos = true;
     return this.dashboardService.getProdutos().toPromise()
       .then(produtos => {
+        console.log('🔍 Debug - Produtos carregados:', produtos);
         this.produtos = produtos || [];
       })
       .catch(error => {
@@ -153,14 +167,17 @@ export class DashboardProfissionalComponent implements OnInit {
         this.produtos = [];
       })
       .finally(() => {
+        console.log('🔍 Debug - Produtos carregamento finalizado');
         this.isLoadingProdutos = false;
       });
   }
 
   // Carregar serviços
   private loadServicos(): Promise<void> {
+    console.log('🔍 Debug - Carregando serviços...');
     return this.dashboardService.getServicos().toPromise()
       .then(servicos => {
+        console.log('🔍 Debug - Serviços carregados:', servicos);
         this.servicos = servicos || [];
       })
       .catch(error => {
@@ -171,9 +188,11 @@ export class DashboardProfissionalComponent implements OnInit {
 
   // Carregar clientes
   private loadClientes(): Promise<void> {
+    console.log('🔍 Debug - Carregando clientes...');
     this.isLoadingClientes = true;
     return this.dashboardService.getClientes().toPromise()
       .then(clientes => {
+        console.log('🔍 Debug - Clientes carregados:', clientes);
         this.clientes = clientes || [];
         this.clientesFiltrados = [...this.clientes];
       })
@@ -183,14 +202,17 @@ export class DashboardProfissionalComponent implements OnInit {
         this.clientesFiltrados = [];
       })
       .finally(() => {
+        console.log('🔍 Debug - Clientes carregamento finalizado');
         this.isLoadingClientes = false;
       });
   }
 
   // Carregar profissionais
   private loadProfissionais(): Promise<void> {
+    console.log('🔍 Debug - Carregando profissionais...');
     return this.dashboardService.getProfissionais().toPromise()
       .then(profissionais => {
+        console.log('🔍 Debug - Profissionais carregados:', profissionais);
         this.profissionais = profissionais || [];
       })
       .catch(error => {
@@ -199,27 +221,64 @@ export class DashboardProfissionalComponent implements OnInit {
       });
   }
 
-  // Carregar estatísticas
-  private loadEstatisticas(): Promise<void> {
-    return this.dashboardService.getEstatisticas().toPromise()
-      .then(stats => {
-        this.estatisticas = stats || {
-          totalClientes: 0,
-          totalProdutos: 0,
-          totalServicos: 0,
-          produtosBaixoEstoque: 0,
-          movimentacoesHoje: 0
-        };
-      })
-      .catch(error => {
-        console.error('Erro ao carregar estatísticas:', error);
-      });
+  // Calcular estatísticas localmente
+  private calcularEstatisticas(): void {
+    console.log('🔍 Debug - Calculando estatísticas localmente');
+    console.log('🔍 Debug - Dados disponíveis:', {
+      clientes: this.clientes.length,
+      produtos: this.produtos.length,
+      servicos: this.servicos.length,
+      produtosBaixoEstoque: this.produtosBaixoEstoque.length,
+      movimentacoes: this.ultimasMovimentacoes.length
+    });
+
+    this.estatisticas = {
+      totalClientes: this.clientes.length,
+      totalProdutos: this.produtos.length,
+      totalServicos: this.servicos.length,
+      produtosBaixoEstoque: this.produtosBaixoEstoque.length,
+      movimentacoesHoje: this.ultimasMovimentacoes.filter(mov => {
+        const hoje = new Date().toDateString();
+        const dataMov = new Date(mov.criadoEm).toDateString();
+        return dataMov === hoje;
+      }).length
+    };
+
+    console.log('🔍 Debug - Estatísticas calculadas:', this.estatisticas);
+    console.log('🔍 Debug - Verificando se estatísticas foram atualizadas no template...');
+    
+    // Forçar detecção de mudanças
+    this.cdr.detectChanges();
+    
+    setTimeout(() => {
+      console.log('🔍 Debug - Estatísticas após timeout:', this.estatisticas);
+      this.cdr.detectChanges();
+    }, 100);
   }
+
+  // Carregar estatísticas (comentado - agora calculamos localmente)
+  // private loadEstatisticas(): Promise<void> {
+  //   return this.dashboardService.getEstatisticas().toPromise()
+  //     .then(stats => {
+  //       this.estatisticas = stats || {
+  //         totalClientes: 0,
+  //         totalProdutos: 0,
+  //         totalServicos: 0,
+  //         produtosBaixoEstoque: 0,
+  //         movimentacoesHoje: 0
+  //       };
+  //     })
+  //     .catch(error => {
+  //       console.error('Erro ao carregar estatísticas:', error);
+  //     });
+  // }
 
   // Carregar últimas movimentações
   private loadUltimasMovimentacoes(): Promise<void> {
+    console.log('🔍 Debug - Carregando movimentações...');
     return this.dashboardService.getUltimasMovimentacoes(10).toPromise()
       .then(movimentacoes => {
+        console.log('🔍 Debug - Movimentações carregadas:', movimentacoes);
         this.ultimasMovimentacoes = movimentacoes || [];
       })
       .catch(error => {
@@ -230,8 +289,10 @@ export class DashboardProfissionalComponent implements OnInit {
 
   // Carregar produtos com baixo estoque
   private loadProdutosBaixoEstoque(): Promise<void> {
+    console.log('🔍 Debug - Carregando produtos com baixo estoque...');
     return this.dashboardService.getProdutosBaixoEstoque().toPromise()
       .then(produtos => {
+        console.log('🔍 Debug - Produtos com baixo estoque carregados:', produtos);
         this.produtosBaixoEstoque = produtos || [];
       })
       .catch(error => {
@@ -436,14 +497,11 @@ export class DashboardProfissionalComponent implements OnInit {
     return `R$ ${preco.toFixed(2).replace('.', ',')}`;
   }
 
-  // Formatar quantidade
-  formatarQuantidade(quantidade: number, unidade: string): string {
-    return `${quantidade} ${unidade}`;
-  }
-
   // Verificar se produto está com baixo estoque
   isBaixoEstoque(produto: Produto): boolean {
-    return (produto.quantidade || 0) < 10; // Considera baixo estoque se menos de 10 unidades
+    // Como a propriedade quantidade não existe na entidade Produto,
+    // vamos usar a lista de produtos com baixo estoque que já é carregada
+    return this.produtosBaixoEstoque.some(p => p.id === produto.id);
   }
 
   // Obter classe CSS para status do estoque
@@ -475,5 +533,16 @@ export class DashboardProfissionalComponent implements OnInit {
   // Obter classe CSS para quantidade
   getQuantidadeClass(quantidade: number): string {
     return quantidade > 0 ? 'text-success' : 'text-danger';
+  }
+
+  // Obter data atual formatada
+  getCurrentDate(): string {
+    return new Date().toISOString();
+  }
+
+  // Obter nome do produto por ID
+  getProdutoNome(produtoId: number): string {
+    const produto = this.produtos.find(p => p.id === produtoId);
+    return produto?.nome || 'N/A';
   }
 }

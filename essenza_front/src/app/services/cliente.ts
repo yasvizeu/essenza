@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 
 export interface Cliente {
   email: string;
-  nome: string; // Mudado de 'name' para 'nome'
-  senha: string; // Mudado de 'password' para 'senha'
-  tipo: 'cliente' | 'profissional'; // Mudado de 'type' para 'tipo'
+  name: string; // Mudado de 'nome' para 'name' para corresponder ao backend
+  password: string; // Mudado de 'senha' para 'password' para corresponder ao backend
+  type: 'cliente' | 'profissional'; // Mudado de 'tipo' para 'type' para corresponder ao backend
   cpf: string;
   birthDate: string;
   cell: string;

@@ -1,5 +1,7 @@
 // Dashboard Profissional Styles
 
+@use "sass:color";
+
 // Variáveis
 $primary-color: #198754;
 $secondary-color: #6c757d;
@@ -392,7 +394,7 @@ $dark-color: #212529;
     border-radius: 4px;
     
     &:hover {
-      background: darken($primary-color, 10%);
+      background: color.adjust($primary-color, $lightness: -10%);
     }
   }
 }

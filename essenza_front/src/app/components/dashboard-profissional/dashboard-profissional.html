@@ -83,7 +83,7 @@
       <div class="card border-0 shadow-sm">
         <div class="card-body text-center">
           <i class="bi bi-calendar-check text-secondary fs-1 mb-2"></i>
-          <h5 class="card-title mb-1">{{ formatarData(new Date().toISOString()) }}</h5>
+          <h5 class="card-title mb-1">{{ formatarData(getCurrentDate()) }}</h5>
           <p class="card-text text-muted small">Data Atual</p>
         </div>
       </div>
@@ -197,9 +197,11 @@
                         <small class="text-muted">{{ produto.descricao }}</small>
                       </td>
                       <td>{{ produto.categoria || 'N/A' }}</td>
-                      <td [class]="getEstoqueClass(produto)">
-                        <strong>{{ produto.quantidade || 0 }}</strong>
-                      </td>
+                                             <td [class]="getEstoqueClass(produto)">
+                         <strong>N/A</strong>
+                         <br>
+                         <small class="text-muted">Ver detalhes</small>
+                       </td>
                       <td>{{ produto.baseUnit }}</td>
                       <td>{{ produto.dataValidade ? formatarData(produto.dataValidade) : 'N/A' }}</td>
                       <td>
@@ -345,7 +347,7 @@
                         </small>
                       </td>
                       <td>
-                        <strong>{{ produtos.find(p => p.id === mov.produtoId)?.nome || 'N/A' }}</strong>
+                        <strong>{{ getProdutoNome(mov.produtoId) }}</strong>
                       </td>
                       <td [class]="getQuantidadeClass(mov.quantidade)">
                         <strong>{{ mov.quantidade > 0 ? '+' : '' }}{{ mov.quantidade }}</strong>

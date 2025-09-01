@@ -46,17 +46,17 @@
             <div class="row">
                              <!-- Nome Completo -->
                <div class="col-md-12 mb-3">
-                 <label for="nome" class="form-label fw-bold">
+                 <label for="name" class="form-label fw-bold">
                    <i class="bi bi-person me-2"></i>Nome Completo *
                  </label>
                  <input type="text"
                         class="form-control"
-                        id="nome"
-                        formControlName="nome"
+                        id="name"
+                        formControlName="name"
                         placeholder="Digite seu nome completo">
                  <div class="text-danger small mt-1"
-                      *ngIf="getErrorMessage('nome', cadastroForm)">
-                   {{ getErrorMessage('nome', cadastroForm) }}
+                      *ngIf="getErrorMessage('name', cadastroForm)">
+                   {{ getErrorMessage('name', cadastroForm) }}
                  </div>
                </div>
 
@@ -148,17 +148,17 @@
 
                              <!-- Senha -->
                <div class="col-md-6 mb-3">
-                 <label for="senha" class="form-label fw-bold">
+                 <label for="password" class="form-label fw-bold">
                    <i class="bi bi-lock me-2"></i>Senha *
                  </label>
                  <input type="password"
                         class="form-control"
-                        id="senha"
-                        formControlName="senha"
+                        id="password"
+                        formControlName="password"
                         placeholder="Mínimo 8 caracteres">
                  <div class="text-danger small mt-1"
-                      *ngIf="getErrorMessage('senha', cadastroForm)">
-                   {{ getErrorMessage('senha', cadastroForm) }}
+                      *ngIf="getErrorMessage('password', cadastroForm)">
+                   {{ getErrorMessage('password', cadastroForm) }}
                  </div>
                </div>
 

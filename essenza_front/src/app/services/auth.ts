@@ -212,14 +212,19 @@ export class AuthService {
 
   // Manipular sucesso do login
   private handleLoginSuccess(response: LoginResponse): void {
+    console.log('🔍 Debug - Login response:', response);
+    console.log('🔍 Debug - User type:', response.user.tipo);
+    
     this.setAuthData(response.access_token, response.refresh_token, response.user);
     this.isAuthenticatedSubject.next(true);
     this.currentUserSubject.next(response.user);
 
     // Redirecionar baseado no tipo de usuário
     if (response.user.tipo === 'profissional') {
+      console.log('🔍 Debug - Redirecionando para dashboard profissional');
       this.router.navigate(['/dashboard-profissional']);
     } else {
+      console.log('🔍 Debug - Redirecionando para home (cliente)');
       this.router.navigate(['/home']); // Clientes vão para home por enquanto
     }
   }

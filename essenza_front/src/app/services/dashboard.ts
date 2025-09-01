@@ -10,7 +10,6 @@ export interface Produto {
   dataValidade?: string;
   baseUnit: string;
   emEstoque?: boolean;
-  quantidade?: number;
 }
 
 export interface Servico {

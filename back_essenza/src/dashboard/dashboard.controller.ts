@@ -22,8 +22,14 @@ export class DashboardController {
         this.clientesService.findAll(),
       ]);
 
-      // Contar produtos com baixo estoque (menos de 10 unidades)
-      const produtosBaixoEstoque = produtos.filter(p => (p.quantidade || 0) < 10).length;
+      // Calcular produtos com baixo estoque (menos de 10 unidades)
+      let produtosBaixoEstoque = 0;
+      for (const produto of produtos) {
+        const saldo = await this.inventarioService.saldoProduto(produto.id);
+        if (saldo < 10) {
+          produtosBaixoEstoque++;
+        }
+      }
 
       // Contar movimentações de hoje
       const hoje = new Date();
@@ -57,7 +63,19 @@ export class DashboardController {
   async getProdutosBaixoEstoque() {
     try {
       const produtos = await this.produtosService.findAll();
-      return produtos.filter(p => (p.quantidade || 0) < 10);
+      const produtosComSaldo: any[] = [];
+      
+      for (const produto of produtos) {
+        const saldo = await this.inventarioService.saldoProduto(produto.id);
+        if (saldo < 10) {
+          produtosComSaldo.push({
+            ...produto,
+            saldoAtual: saldo
+          });
+        }
+      }
+      
+      return produtosComSaldo;
     } catch (error) {
       console.error('Erro ao buscar produtos com baixo estoque:', error);
       return [];
