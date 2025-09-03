@@ -62,19 +62,19 @@ export class ClienteService {
           };
 
           this.cadastrarFichaAnamnese(ficha).subscribe({
-            next: (fichaResponse) => {
+            next: (fichaResponse: any) => {
               observer.next({
                 cliente: clienteResponse,
                 fichaAnamnese: fichaResponse
               });
               observer.complete();
             },
-            error: (fichaError) => {
+            error: (fichaError: any) => {
               observer.error(fichaError);
             }
           });
         },
-        error: (clienteError) => {
+        error: (clienteError: any) => {
           observer.error(clienteError);
         }
       });

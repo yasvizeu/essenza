@@ -208,9 +208,16 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
   }
 
   reagendarAgendamento(agendamento: Agendamento): void {
-    // TODO: Implementar funcionalidade de reagendamento
-    console.log('Reagendar agendamento:', agendamento);
-    this.showInfoMessage('Funcionalidade de reagendamento em desenvolvimento.');
+    // Buscar o serviço correspondente ao agendamento
+    const servico = this.servicos.find(s => s.nome === agendamento.servicoNome || s.id === agendamento.servicoId);
+    
+    if (servico) {
+      // Abrir modal de agendamento com o serviço selecionado
+      this.selectedServicoParaAgendamento = servico;
+      this.showAgendamentoModal = true;
+    } else {
+      this.showErrorMessage('Serviço não encontrado para reagendamento.');
+    }
   }
 
   verDetalhesAgendamento(agendamento: Agendamento): void {
@@ -280,8 +287,8 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     return this.servicosService.formatDuration(minutes);
   }
 
-  goToClienteHome(): void {
-    this.router.navigate(['/cliente-home']);
+  goToHome(): void {
+    this.router.navigate(['/']);
   }
 
   // Formatação

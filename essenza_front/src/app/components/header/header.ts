@@ -43,8 +43,8 @@ export class Header implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
-  goToClienteHome(): void {
-    this.router.navigate(['/cliente-home']);
+  goToMeusAgendamentos(): void {
+    this.router.navigate(['/cliente-agendamentos']);
   }
 
   goToDashboardProfissional(): void {

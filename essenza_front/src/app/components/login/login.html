@@ -63,7 +63,7 @@
                 <span class="input-group-text bg-light border-end-0">
                   <i class="bi bi-lock text-muted"></i>
                 </span>
-                              <input [type]="showPassword ? 'text' : 'password'"
+                <input [type]="showPassword ? 'text' : 'password'"
                        class="form-control border-start-0"
                        id="senha"
                        formControlName="senha"
@@ -71,8 +71,13 @@
                        [class.is-invalid]="isFieldInvalid('senha')">
                 <button type="button"
                         class="btn btn-outline-secondary border-start-0"
-                        (click)="togglePasswordVisibility()">
-                  <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+                        (click)="togglePasswordVisibility()"
+                        [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+                        [title]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                  <i class="bi" 
+                     [class.bi-eye]="!showPassword" 
+                     [class.bi-eye-slash]="showPassword"
+                     [attr.aria-hidden]="true"></i>
                 </button>
               </div>
                               <div class="text-danger small mt-1"

@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
-  showPassword = false;
+  showPassword: boolean = false;
   userType: 'cliente' | 'profissional' = 'cliente';
 
   constructor(
@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
   // Alternar visibilidade da senha
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+    console.log('Toggle password visibility:', this.showPassword);
   }
 
   // Submeter formulário de login

@@ -231,8 +231,8 @@ export class AuthService {
       console.log('🔍 Debug - Redirecionando para dashboard profissional');
       this.router.navigate(['/dashboard-profissional']);
     } else {
-      console.log('🔍 Debug - Redirecionando para cliente-home');
-      this.router.navigate(['/cliente-home']); // Clientes vão para página home específica
+      console.log('🔍 Debug - Redirecionando para home normal');
+      this.router.navigate(['/']); // Clientes vão para home normal
     }
   }
 

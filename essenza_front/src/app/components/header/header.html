@@ -23,13 +23,7 @@
             Serviços
           </a>
         </li>
-        <!-- Menu para clientes logados -->
-        <li class="nav-item" *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'">
-          <a class="nav-link" routerLink="/cliente-agendamentos" routerLinkActive="active">
-            <i class="bi bi-calendar-check me-1"></i>
-            Meus Agendamentos
-          </a>
-        </li>
+
         <li class="nav-item">
           <a class="nav-link" routerLink="/sobre" routerLinkActive="active">
             <i class="bi bi-info-circle me-1"></i>
@@ -76,9 +70,9 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li *ngIf="currentUser?.tipo === 'cliente'">
-                <a class="dropdown-item" (click)="goToClienteHome()">
-                  <i class="bi bi-house me-2"></i>
-                  Minha Área
+                <a class="dropdown-item" (click)="goToMeusAgendamentos()">
+                  <i class="bi bi-calendar-check me-2"></i>
+                  Meus Agendamentos
                 </a>
               </li>
               <li *ngIf="currentUser?.tipo === 'profissional'">
