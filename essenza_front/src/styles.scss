@@ -8,6 +8,28 @@ body {
   background-color: #f8f9fa;
 }
 
+/* Garantir que o header não sobreponha o conteúdo */
+.navbar {
+  position: relative;
+  z-index: 1000;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Garantir que o header de boas-vindas apareça */
+.welcome-header {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

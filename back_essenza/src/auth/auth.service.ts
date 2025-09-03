@@ -215,8 +215,8 @@ export class AuthService {
     };
 
     return this.jwtService.sign(payload, { 
-      secret: process.env.JWT_SECRET || 'jwt-secret',
-      expiresIn: '1h'
+      secret: process.env.JWT_SECRET || 'sua-chave-super-secreta-para-jwt-em-producao-mude-esta-chave',
+      expiresIn: '24h'
     });
   }
 

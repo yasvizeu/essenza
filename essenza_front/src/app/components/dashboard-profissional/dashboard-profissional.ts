@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { DashboardService, Produto, Servico, Cliente, Profissional, MovimentoEstoque, SaldoProduto } from '../../services/dashboard';
+import { AgendamentosService, Agendamento } from '../../services/agendamentos';
 import { FilterPipe } from '../../pipes/filter.pipe';
 
 @Component({
@@ -24,6 +25,7 @@ export class DashboardProfissionalComponent implements OnInit {
   profissionais: Profissional[] = [];
   ultimasMovimentacoes: MovimentoEstoque[] = [];
   produtosBaixoEstoque: Produto[] = [];
+  agendamentos: Agendamento[] = [];
   
   // Estatísticas
   estatisticas = {
@@ -45,6 +47,7 @@ export class DashboardProfissionalComponent implements OnInit {
   showModalNovoProfissional = false;
   showModalBuscarClientes = false;
   showModalExecutarServico = false;
+  showModalAgendamentos = false;
 
   // Formulários
   movimentoEstoqueForm!: FormGroup;
@@ -68,6 +71,7 @@ export class DashboardProfissionalComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private dashboardService: DashboardService,
+    private agendamentosService: AgendamentosService,
     private fb: FormBuilder,
     private router: Router,
     private cdr: ChangeDetectorRef
@@ -137,7 +141,8 @@ export class DashboardProfissionalComponent implements OnInit {
       this.loadClientes(),
       this.loadProfissionais(),
       this.loadUltimasMovimentacoes(),
-      this.loadProdutosBaixoEstoque()
+      this.loadProdutosBaixoEstoque(),
+      this.loadAgendamentos()
     ]).then(() => {
       // Calcular estatísticas localmente após carregar todos os dados
       this.calcularEstatisticas();
@@ -544,5 +549,168 @@ export class DashboardProfissionalComponent implements OnInit {
   getProdutoNome(produtoId: number): string {
     const produto = this.produtos.find(p => p.id === produtoId);
     return produto?.nome || 'N/A';
+  }
+
+  // ===== GESTÃO DE AGENDAMENTOS =====
+
+  // Carregar agendamentos do profissional
+  private loadAgendamentos(): Promise<void> {
+    console.log('🔍 Debug - Carregando agendamentos...');
+    if (!this.currentUser?.id) {
+      return Promise.resolve();
+    }
+
+    return this.agendamentosService.getAgendamentosProfissional(this.currentUser.id).toPromise()
+      .then(agendamentos => {
+        console.log('🔍 Debug - Agendamentos carregados:', agendamentos);
+        this.agendamentos = this.agendamentosService.ordenarPorData(agendamentos || [], true);
+      })
+      .catch(error => {
+        console.error('Erro ao carregar agendamentos:', error);
+        this.agendamentos = [];
+      });
+  }
+
+  // Abrir modal de agendamentos
+  openModalAgendamentos(): void {
+    this.showModalAgendamentos = true;
+    this.loadAgendamentos();
+  }
+
+  // Fechar modal de agendamentos
+  closeModalAgendamentos(): void {
+    this.showModalAgendamentos = false;
+  }
+
+  // Confirmar agendamento
+  confirmarAgendamento(agendamento: Agendamento): void {
+    if (!agendamento.id) return;
+
+    this.agendamentosService.confirmarAgendamento(agendamento.id).subscribe({
+      next: (agendamentoAtualizado) => {
+        // Atualizar na lista local
+        const index = this.agendamentos.findIndex(a => a.id === agendamento.id);
+        if (index !== -1) {
+          this.agendamentos[index] = agendamentoAtualizado;
+        }
+        this.showSuccessMessage('Agendamento confirmado com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao confirmar agendamento:', error);
+        this.showErrorMessage('Erro ao confirmar agendamento. Tente novamente.');
+      }
+    });
+  }
+
+  // Cancelar agendamento
+  cancelarAgendamento(agendamento: Agendamento): void {
+    if (!agendamento.id) return;
+
+    const confirmacao = confirm('Tem certeza que deseja cancelar este agendamento?');
+    if (!confirmacao) return;
+
+    this.agendamentosService.cancelarAgendamento(agendamento.id, 'Cancelado pelo profissional').subscribe({
+      next: (agendamentoAtualizado) => {
+        // Atualizar na lista local
+        const index = this.agendamentos.findIndex(a => a.id === agendamento.id);
+        if (index !== -1) {
+          this.agendamentos[index] = agendamentoAtualizado;
+        }
+        this.showSuccessMessage('Agendamento cancelado com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao cancelar agendamento:', error);
+        this.showErrorMessage('Erro ao cancelar agendamento. Tente novamente.');
+      }
+    });
+  }
+
+  // Atualizar agendamento
+  atualizarAgendamento(agendamento: Agendamento): void {
+    // TODO: Implementar modal de edição de agendamento
+    console.log('Atualizar agendamento:', agendamento);
+    this.showInfoMessage('Funcionalidade de edição em desenvolvimento.');
+  }
+
+  // Ver detalhes do agendamento
+  verDetalhesAgendamento(agendamento: Agendamento): void {
+    // TODO: Implementar modal de detalhes
+    console.log('Ver detalhes do agendamento:', agendamento);
+  }
+
+  // Formatação de agendamentos
+  formatarDataAgendamento(data: string): string {
+    return this.agendamentosService.formatarData(data);
+  }
+
+  formatarHorarioAgendamento(data: string): string {
+    return this.agendamentosService.formatarHorario(data);
+  }
+
+  formatarDataHorarioAgendamento(data: string): string {
+    return this.agendamentosService.formatarDataHorario(data);
+  }
+
+  isHojeAgendamento(data: string): boolean {
+    return this.agendamentosService.isHoje(data);
+  }
+
+  isAmanhaAgendamento(data: string): boolean {
+    return this.agendamentosService.isAmanha(data);
+  }
+
+  isProximoAgendamento(data: string): boolean {
+    return this.agendamentosService.isProximo(data);
+  }
+
+  isPassadoAgendamento(data: string): boolean {
+    return this.agendamentosService.isPassado(data);
+  }
+
+  getStatusClassAgendamento(status: string): string {
+    return this.agendamentosService.getStatusClass(status);
+  }
+
+  getStatusTextAgendamento(status: string): string {
+    return this.agendamentosService.getStatusText(status);
+  }
+
+  getStatusPagamentoClassAgendamento(status: string): string {
+    return this.agendamentosService.getStatusPagamentoClass(status);
+  }
+
+  getStatusPagamentoTextAgendamento(status: string): string {
+    return this.agendamentosService.getStatusPagamentoText(status);
+  }
+
+  // Mensagens
+  private showSuccessMessage(message: string): void {
+    this.showNotification(message, 'success');
+  }
+
+  private showErrorMessage(message: string): void {
+    this.showNotification(message, 'danger');
+  }
+
+  private showInfoMessage(message: string): void {
+    this.showNotification(message, 'info');
+  }
+
+  private showNotification(message: string, type: string): void {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+      <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+      ${message}
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 4000);
   }
 }

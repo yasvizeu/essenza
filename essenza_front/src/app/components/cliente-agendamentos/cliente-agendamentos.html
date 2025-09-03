@@ -1,0 +1,245 @@
+<!-- Header -->
+<div class="agendamentos-header bg-gradient-primary text-white py-4">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h1 class="h3 mb-2">
+          <i class="bi bi-calendar-check me-2"></i>
+          Meus Agendamentos
+        </h1>
+        <p class="mb-0 opacity-75">
+          Gerencie seus agendamentos e visualize seu histórico
+        </p>
+      </div>
+      <div class="col-md-4 text-end">
+        <div class="d-flex gap-2 justify-content-end">
+          <button class="btn btn-outline-light btn-sm" (click)="refreshAgendamentos()">
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            Atualizar
+          </button>
+          <button class="btn btn-light btn-sm" (click)="goToNovoAgendamento()">
+            <i class="bi bi-plus-circle me-1"></i>
+            Novo Agendamento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Conteúdo Principal -->
+<div class="container py-4">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+    <p class="mt-3 text-muted">Carregando seus agendamentos...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError && !isLoading" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+    <button class="btn btn-outline-danger btn-sm ms-3" (click)="loadAgendamentos()">
+      <i class="bi bi-arrow-clockwise me-1"></i>
+      Tentar Novamente
+    </button>
+  </div>
+
+  <!-- Filtros (quando há agendamentos) -->
+  <div *ngIf="!isLoading && !hasError && agendamentos.length > 0" class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Filtrar por Status</label>
+              <select class="form-select" [(ngModel)]="filtroStatus" (change)="onFiltroStatusChange($event)">
+                <option value="todos">Todos os Status</option>
+                <option value="confirmed">Confirmados</option>
+                <option value="tentative">Pendentes</option>
+                <option value="cancelled">Cancelados</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Filtrar por Período</label>
+              <select class="form-select" [(ngModel)]="filtroPeriodo" (change)="onFiltroPeriodoChange($event)">
+                <option value="todos">Todos os Períodos</option>
+                <option value="hoje">Hoje</option>
+                <option value="semana">Próxima Semana</option>
+                <option value="mes">Próximo Mês</option>
+              </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button class="btn btn-outline-secondary w-100" (click)="goToClienteHome()">
+                <i class="bi bi-house me-1"></i>
+                Voltar ao Início
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de Agendamentos -->
+  <div *ngIf="!isLoading && !hasError && agendamentos.length > 0" class="row">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-list-ul text-primary me-2"></i>
+            Seus Agendamentos ({{ agendamentos.length }})
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="list-group list-group-flush">
+            <div *ngFor="let agendamento of agendamentos" class="list-group-item border-0 agendamento-item">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="d-flex align-items-start">
+                    <div class="agendamento-icon me-3">
+                      <i class="bi bi-calendar-event text-primary fs-4"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1">{{ agendamento.servicoNome || agendamento.title }}</h6>
+                      <p class="text-muted small mb-1">
+                        <i class="bi bi-calendar me-1"></i>
+                        {{ formatarData(agendamento.start.dateTime) }}
+                      </p>
+                      <p class="text-muted small mb-1">
+                        <i class="bi bi-clock me-1"></i>
+                        {{ formatarHorario(agendamento.start.dateTime) }}
+                      </p>
+                      <p class="text-muted small mb-0" *ngIf="agendamento.profissionalNome">
+                        <i class="bi bi-person me-1"></i>
+                        {{ agendamento.profissionalNome }}
+                      </p>
+                      <div class="mt-2">
+                        <span [class]="getStatusClass(agendamento.status || 'tentative')">
+                          {{ getStatusText(agendamento.status || 'tentative') }}
+                        </span>
+                        <span *ngIf="agendamento.statusPagamento" 
+                              [class]="getStatusPagamentoClass(agendamento.statusPagamento)" 
+                              class="ms-2">
+                          {{ getStatusPagamentoText(agendamento.statusPagamento) }}
+                        </span>
+                        <span *ngIf="isHoje(agendamento.start.dateTime)" 
+                              class="badge bg-info ms-2">
+                          Hoje
+                        </span>
+                        <span *ngIf="isAmanha(agendamento.start.dateTime)" 
+                              class="badge bg-warning ms-2">
+                          Amanhã
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 text-end">
+                  <div class="d-flex flex-column gap-2">
+                    <div class="btn-group" role="group">
+                      <button class="btn btn-outline-primary btn-sm" 
+                              (click)="verDetalhesAgendamento(agendamento)"
+                              title="Ver Detalhes">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      <button class="btn btn-outline-success btn-sm" 
+                              *ngIf="agendamento.status === 'tentative'"
+                              (click)="confirmarAgendamento(agendamento)"
+                              title="Confirmar">
+                        <i class="bi bi-check-circle"></i>
+                      </button>
+                      <button class="btn btn-outline-warning btn-sm" 
+                              *ngIf="agendamento.status === 'confirmed' && !isPassado(agendamento.start.dateTime)"
+                              (click)="reagendarAgendamento(agendamento)"
+                              title="Reagendar">
+                        <i class="bi bi-arrow-repeat"></i>
+                      </button>
+                      <button class="btn btn-outline-danger btn-sm" 
+                              *ngIf="agendamento.status !== 'cancelled' && !isPassado(agendamento.start.dateTime)"
+                              (click)="cancelarAgendamento(agendamento)"
+                              title="Cancelar">
+                        <i class="bi bi-x-circle"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="agendamento.valor" class="text-success fw-bold">
+                      R$ {{ agendamento.valor.toFixed(2).replace('.', ',') }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State com Serviços -->
+  <div *ngIf="showEmptyState && showServicos" class="row">
+    <div class="col-12">
+      <!-- Mensagem de Estado Vazio -->
+      <div class="text-center py-5 mb-4">
+        <i class="bi bi-calendar-x display-1 text-muted"></i>
+        <h3 class="mt-3 text-muted">Nenhum agendamento encontrado</h3>
+        <p class="text-muted">Que tal agendar seu primeiro tratamento?</p>
+        <button class="btn btn-primary btn-lg" (click)="goToNovoAgendamento()">
+          <i class="bi bi-plus-circle me-2"></i>
+          Fazer Primeiro Agendamento
+        </button>
+      </div>
+
+      <!-- Serviços Disponíveis -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-heart text-danger me-2"></i>
+            Serviços Disponíveis para Agendamento
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-4">
+            <div *ngFor="let servico of servicos" class="col-lg-4 col-md-6">
+              <div class="card border-0 shadow-sm h-100 servico-card" (click)="goToServico(servico)">
+                <div class="card-img-wrapper">
+                  <img [src]="getServicoImage(servico)" class="card-img-top" [alt]="servico.nome" style="height: 200px; object-fit: cover;">
+                  <div class="card-img-overlay d-flex align-items-end">
+                    <div class="w-100">
+                      <span class="badge bg-success mb-2">Disponível</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title mb-2">{{ servico.nome }}</h6>
+                  <p class="card-text text-muted small flex-grow-1">{{ servico.descricao }}</p>
+                  <div class="d-flex justify-content-between align-items-center mt-auto">
+                    <div>
+                      <span class="text-success fw-bold">{{ formatPrice(servico.preco) }}</span>
+                      <div *ngIf="servico.duracao" class="text-muted small">
+                        <i class="bi bi-clock me-1"></i>{{ formatDuration(servico.duracao) }}
+                      </div>
+                    </div>
+                                         <button class="btn btn-success btn-sm" (click)="openAgendamentoModal(servico)">
+                       <i class="bi bi-calendar-plus me-1"></i>
+                       Agendar
+                     </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Agendamento -->
+<app-agendamento-modal
+  [servico]="selectedServicoParaAgendamento"
+  [isOpen]="showAgendamentoModal"
+  (close)="closeAgendamentoModal()"
+  (agendamentoCriado)="onAgendamentoCriado($event)">
+</app-agendamento-modal>

@@ -1,0 +1,359 @@
+// Cores personalizadas
+:root {
+  --primary-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --card-shadow-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+// Header de agendamentos
+.agendamentos-header {
+  background: var(--primary-gradient);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: white;
+      color: white;
+    }
+  }
+}
+
+// Cards do dashboard
+.card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
+  }
+  
+  .card-header {
+    border-radius: 12px 12px 0 0;
+    padding: 1.25rem 1.25rem 0 1.25rem;
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+}
+
+// Itens de agendamento
+.agendamento-item {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  .agendamento-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(40, 167, 69, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+}
+
+// Botões de ação
+.btn-group {
+  .btn {
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Cards de serviços
+.servico-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-hover);
+    
+    .card-img-top {
+      transform: scale(1.05);
+    }
+  }
+  
+  .card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    
+    .card-img-top {
+      transition: transform 0.3s ease;
+    }
+    
+    .card-img-overlay {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+    }
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+// Badges personalizados
+.badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+// Estados de loading
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+// Alertas
+.alert {
+  border-radius: 8px;
+  border: none;
+  
+  &.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  &.alert-success {
+    background-color: #d1edff;
+    color: #0c5460;
+  }
+  
+  &.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+}
+
+// Filtros
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  transition: all 0.2s ease;
+  
+  &:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  }
+}
+
+// Lista de agendamentos
+.list-group {
+  .list-group-item {
+    border-radius: 0;
+    
+    &:first-child {
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+    
+    &:last-child {
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .agendamentos-header {
+    .col-md-4 {
+      margin-top: 1rem;
+    }
+    
+    .d-flex {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+  
+  .agendamento-item {
+    padding: 1rem;
+    
+    .row {
+      flex-direction: column;
+    }
+    
+    .col-md-4 {
+      margin-top: 1rem;
+      text-align: left !important;
+    }
+  }
+  
+  .servico-card {
+    .card-body {
+      padding: 0.75rem;
+    }
+  }
+  
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+    
+    .btn {
+      border-radius: 6px !important;
+      margin-bottom: 0.25rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .agendamentos-header {
+    padding: 1rem 0;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .agendamento-item {
+    padding: 0.75rem;
+    
+    .agendamento-icon {
+      width: 40px;
+      height: 40px;
+      
+      i {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+// Animações
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.agendamento-item {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+// Melhorias de acessibilidade
+.btn:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+// Estados especiais
+.agendamento-hoje {
+  border-left: 4px solid #28a745;
+  background-color: rgba(40, 167, 69, 0.05);
+}
+
+.agendamento-amanha {
+  border-left: 4px solid #ffc107;
+  background-color: rgba(255, 193, 7, 0.05);
+}
+
+.agendamento-passado {
+  opacity: 0.7;
+  background-color: #f8f9fa;
+}
+
+// Hover effects
+.agendamento-item:hover {
+  .agendamento-icon {
+    background-color: rgba(40, 167, 69, 0.2);
+    transform: scale(1.05);
+  }
+}
+
+// Loading states
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Empty state
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  
+  i {
+    opacity: 0.5;
+  }
+  
+  h3 {
+    margin-top: 1rem;
+    color: #6c757d;
+  }
+  
+  p {
+    color: #6c757d;
+    margin-bottom: 2rem;
+  }
+}
+
+// Notificações
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

@@ -156,7 +156,9 @@ export class AuthService {
 
   // Verificar se o usuário está autenticado
   isAuthenticated(): boolean {
-    return this.isAuthenticatedSubject.value;
+    const isAuth = this.isAuthenticatedSubject.value;
+    console.log('🔍 AuthService - isAuthenticated:', isAuth);
+    return isAuth;
   }
 
   // Obter usuário atual
@@ -167,7 +169,9 @@ export class AuthService {
   // Obter token de acesso
   getAccessToken(): string | null {
     if (!this.isBrowser()) return null;
-    return localStorage.getItem(this.tokenKey);
+    const token = localStorage.getItem(this.tokenKey);
+    console.log('🔍 AuthService - getAccessToken:', token ? 'Token encontrado' : 'Token não encontrado');
+    return token;
   }
 
   // Obter token de refresh
@@ -186,8 +190,11 @@ export class AuthService {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const expirationTime = payload.exp * 1000; // Converter para milissegundos
-      return Date.now() >= expirationTime;
+      const isExpired = Date.now() >= expirationTime;
+      console.log('🔍 AuthService - isTokenExpired:', isExpired);
+      return isExpired;
     } catch (error) {
+      console.log('🔍 AuthService - Erro ao verificar token:', error);
       return true;
     }
   }
@@ -224,8 +231,8 @@ export class AuthService {
       console.log('🔍 Debug - Redirecionando para dashboard profissional');
       this.router.navigate(['/dashboard-profissional']);
     } else {
-      console.log('🔍 Debug - Redirecionando para home (cliente)');
-      this.router.navigate(['/home']); // Clientes vão para home por enquanto
+      console.log('🔍 Debug - Redirecionando para cliente-home');
+      this.router.navigate(['/cliente-home']); // Clientes vão para página home específica
     }
   }
 

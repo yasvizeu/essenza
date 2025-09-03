@@ -12,6 +12,7 @@ import { ServicosModule } from './servicos/servicos.module';
 import { ProtocolosModule } from './protocolos/protocolos.module';
 import { EstoqueModule } from './estoque/estoque.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { AgendamentosModule } from './agendamentos/agendamentos.module';
 import 'dotenv/config';
 
 @Module({
@@ -31,7 +32,7 @@ import 'dotenv/config';
     synchronize: true, // Temporariamente habilitado para criar tabelas
     charset: 'utf8mb4_unicode_ci',
     // manualInitialization: true,
-  }), AuthModule, PersonasModule, ClientesModule, ProfissionalModule, FichaAnamneseModule, ProdutosModule, ServicosModule, ProtocolosModule, EstoqueModule, DashboardModule],
+  }), AuthModule, PersonasModule, ClientesModule, ProfissionalModule, FichaAnamneseModule, ProdutosModule, ServicosModule, ProtocolosModule, EstoqueModule, DashboardModule, AgendamentosModule],
   controllers: [AppController],
   providers: [AppService],
 })

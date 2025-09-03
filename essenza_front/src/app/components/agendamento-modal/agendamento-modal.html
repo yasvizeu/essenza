@@ -1,0 +1,195 @@
+<!-- Modal de Agendamento -->
+<div *ngIf="isOpen" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Header do Modal -->
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="bi bi-calendar-plus me-2"></i>
+        Agendar {{ servicoNome }}
+      </h4>
+      <button type="button" class="btn-close" (click)="closeModal()" aria-label="Fechar">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+
+    <!-- Body do Modal -->
+    <div class="modal-body">
+      <!-- Informações do Serviço -->
+      <div class="servico-info mb-4">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h5 class="mb-2">{{ servicoNome }}</h5>
+            <p class="text-muted mb-2">{{ servicoDescricao }}</p>
+            <div class="d-flex gap-3">
+              <span class="badge bg-success">
+                <i class="bi bi-currency-dollar me-1"></i>
+                {{ formatarPreco(servicoPreco) }}
+              </span>
+              <span class="badge bg-info">
+                <i class="bi bi-clock me-1"></i>
+                {{ formatarDuracao(servicoDuracao) }}
+              </span>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="servico-image">
+              <img [src]="servico?.imagem || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'" 
+                   [alt]="servicoNome" 
+                   class="img-fluid rounded">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulário de Agendamento -->
+      <form (ngSubmit)="confirmarAgendamento()" #agendamentoForm="ngForm">
+        <!-- Seleção de Profissional -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">
+            <i class="bi bi-person me-2"></i>
+            Escolha o Profissional
+          </label>
+          <!-- Debug: {{ profissionais.length }} profissionais carregados -->
+          <div class="row g-3">
+            <div *ngFor="let profissional of profissionais" class="col-md-4">
+              <div class="profissional-card" 
+                   [class.selected]="selectedProfissional?.id === profissional.id"
+                   (click)="selectProfissional(profissional)">
+                <div class="profissional-avatar">
+                  <img [src]="profissional.avatar || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'" 
+                       [alt]="profissional.nome" 
+                       class="img-fluid rounded-circle"
+                       (error)="onImageError($event, profissional)">
+                </div>
+                <div class="profissional-info">
+                  <h6 class="mb-1">{{ profissional.nome }}</h6>
+                  <small class="text-muted">{{ profissional.especialidade }}</small>
+                </div>
+                <div class="profissional-check">
+                  <i class="bi bi-check-circle-fill" *ngIf="selectedProfissional?.id === profissional.id"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seleção de Data -->
+        <div class="mb-4" *ngIf="selectedProfissional">
+          <label class="form-label fw-bold">
+            <i class="bi bi-calendar me-2"></i>
+            Escolha a Data
+          </label>
+          <select class="form-select" 
+                  [(ngModel)]="selectedData" 
+                  name="data"
+                  (change)="onDataChange()"
+                  required>
+            <option value="">Selecione uma data</option>
+            <option *ngFor="let data of datasDisponiveis" [value]="data">
+              {{ formatarData(data) }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Seleção de Horário -->
+        <div class="mb-4" *ngIf="selectedData">
+          <label class="form-label fw-bold">
+            <i class="bi bi-clock me-2"></i>
+            Escolha o Horário
+          </label>
+          
+          <!-- Loading dos horários -->
+          <div *ngIf="isLoadingDisponibilidade" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <span class="ms-2 text-muted">Verificando disponibilidade...</span>
+          </div>
+
+          <!-- Grid de horários -->
+          <div *ngIf="!isLoadingDisponibilidade" class="horarios-grid">
+            <button type="button" 
+                    *ngFor="let horario of horariosDisponiveis"
+                    class="btn btn-outline-primary horario-btn"
+                    [class.selected]="isHorarioSelecionado(horario)"
+                    [disabled]="!isHorarioDisponivel(horario)"
+                    (click)="onHorarioSelect(horario)">
+              {{ horario }}
+            </button>
+          </div>
+
+          <!-- Mensagem quando não há horários -->
+          <div *ngIf="!isLoadingDisponibilidade && horariosDisponiveis.length === 0" 
+               class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Não há horários disponíveis para esta data. Tente outra data.
+          </div>
+        </div>
+
+        <!-- Observações -->
+        <div class="mb-4" *ngIf="selectedHorario">
+          <label class="form-label fw-bold">
+            <i class="bi bi-chat-text me-2"></i>
+            Observações (Opcional)
+          </label>
+          <textarea class="form-control" 
+                    [(ngModel)]="observacoes" 
+                    name="observacoes"
+                    rows="3"
+                    placeholder="Alguma observação especial para o profissional?"></textarea>
+        </div>
+
+        <!-- Resumo do Agendamento -->
+        <div *ngIf="canConfirmAgendamento()" class="resumo-agendamento mb-4">
+          <div class="card border-success">
+            <div class="card-header bg-success text-white">
+              <h6 class="mb-0">
+                <i class="bi bi-check-circle me-2"></i>
+                Resumo do Agendamento
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <p class="mb-1"><strong>Serviço:</strong> {{ servicoNome }}</p>
+                  <p class="mb-1"><strong>Profissional:</strong> {{ selectedProfissional?.nome }}</p>
+                  <p class="mb-1"><strong>Data:</strong> {{ formatarData(selectedData) }}</p>
+                  <p class="mb-0"><strong>Horário:</strong> {{ selectedHorario }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-1"><strong>Duração:</strong> {{ formatarDuracao(servicoDuracao) }}</p>
+                  <p class="mb-1"><strong>Valor:</strong> {{ formatarPreco(servicoPreco) }}</p>
+                  <p class="mb-0" *ngIf="observacoes"><strong>Observações:</strong> {{ observacoes }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensagem de Erro -->
+        <div *ngIf="hasError" class="alert alert-danger">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          {{ errorMessage }}
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer do Modal -->
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeModal()">
+        <i class="bi bi-x-circle me-2"></i>
+        Cancelar
+      </button>
+      <button type="button" 
+              class="btn btn-success" 
+              [disabled]="!canConfirmAgendamento() || isLoading"
+              (click)="confirmarAgendamento()">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </span>
+        <i *ngIf="!isLoading" class="bi bi-calendar-check me-2"></i>
+        {{ isLoading ? 'Agendando...' : 'Confirmar Agendamento' }}
+      </button>
+    </div>
+  </div>
+</div>
