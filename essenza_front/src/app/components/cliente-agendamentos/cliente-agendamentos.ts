@@ -93,8 +93,8 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
 
   loadServicos(): void {
     this.servicosService.getServicos().subscribe({
-      next: (servicos) => {
-        this.servicos = servicos;
+      next: (response) => {
+        this.servicos = response.data;
         this.showServicos = true;
       },
       error: (error) => {

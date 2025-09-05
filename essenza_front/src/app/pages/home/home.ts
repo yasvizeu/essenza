@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ServicosService, Servico } from '../../services/servicos';
+import { ServicosService, Servico, PaginatedResponse } from '../../services/servicos';
 import { CartService, CartItem } from '../../services/cart';
 
 @Component({
@@ -19,6 +19,13 @@ export class Home implements OnInit, OnDestroy {
   quantidade = 1;
   cart: any = { items: [], total: 0, itemCount: 0 };
   private cartSubscription: any;
+  
+  // Paginação
+  currentPage = 1;
+  pageSize = 12; // 12 cards por página (3 colunas x 4 linhas)
+  totalPages = 0;
+  hasNextPage = false;
+  hasPrevPage = false;
 
   constructor(
     private servicosService: ServicosService,
@@ -66,9 +73,12 @@ export class Home implements OnInit, OnDestroy {
 
   loadServicos(): void {
     this.isLoading = true;
-    this.servicosService.getServicos().subscribe({
-      next: (servicos) => {
-        this.servicos = servicos;
+    this.servicosService.getServicos(this.currentPage, this.pageSize).subscribe({
+      next: (response: PaginatedResponse<Servico>) => {
+        this.servicos = response.data;
+        this.totalPages = response.pagination.totalPages;
+        this.hasNextPage = response.pagination.hasNext;
+        this.hasPrevPage = response.pagination.hasPrev;
         this.isLoading = false;
       },
       error: (error) => {
@@ -76,6 +86,28 @@ export class Home implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
+  }
+
+  // Métodos de paginação
+  nextPage(): void {
+    if (this.hasNextPage) {
+      this.currentPage++;
+      this.loadServicos();
+    }
+  }
+
+  prevPage(): void {
+    if (this.hasPrevPage) {
+      this.currentPage--;
+      this.loadServicos();
+    }
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadServicos();
+    }
   }
 
   openModal(servico: Servico): void {

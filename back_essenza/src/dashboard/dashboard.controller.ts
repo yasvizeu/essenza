@@ -16,7 +16,7 @@ export class DashboardController {
   @Get('estatisticas')
   async getEstatisticas() {
     try {
-      const [produtos, servicos, clientes] = await Promise.all([
+      const [produtos, servicosResponse, clientes] = await Promise.all([
         this.produtosService.findAll(),
         this.servicosService.findAll(),
         this.clientesService.findAll(),
@@ -43,7 +43,7 @@ export class DashboardController {
       return {
         totalClientes: clientes.length,
         totalProdutos: produtos.length,
-        totalServicos: servicos.length,
+        totalServicos: servicosResponse.pagination.total,
         produtosBaixoEstoque,
         movimentacoesHoje,
       };

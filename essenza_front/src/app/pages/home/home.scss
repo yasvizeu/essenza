@@ -687,3 +687,49 @@ body.modal-open {
     padding: 0.5rem 0.75rem;
   }
 }
+
+/* Skeleton Loading Animation */
+@keyframes loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-img,
+.skeleton-text {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skeleton-img {
+  border-radius: 8px 8px 0 0;
+}
+
+/* Paginação */
+.pagination {
+  .page-link {
+    color: #28a745;
+    border-color: #dee2e6;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: #1e7e34;
+      background-color: #e9ecef;
+      border-color: #28a745;
+    }
+  }
+  
+  .page-item.active .page-link {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #fff;
+    border-color: #dee2e6;
+  }
+}

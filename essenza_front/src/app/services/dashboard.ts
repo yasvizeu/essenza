@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface Produto {
   id: number;
@@ -17,6 +18,22 @@ export interface Servico {
   nome: string;
   descricao: string;
   preco: number;
+  duracao?: number;
+  categoria?: string;
+  imagem?: string;
+  disponivel?: boolean; // Temporariamente opcional
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
 }
 
 export interface Cliente {
@@ -101,7 +118,9 @@ export class DashboardService {
   
   // Buscar todos os serviços
   getServicos(): Observable<Servico[]> {
-    return this.http.get<Servico[]>(`${this.apiUrl}/servicos`);
+    return this.http.get<PaginatedResponse<Servico>>(`${this.apiUrl}/servicos`).pipe(
+      map(response => response.data)
+    );
   }
 
   // Executar serviço (baixa automática no estoque)

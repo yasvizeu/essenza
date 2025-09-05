@@ -130,10 +130,10 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   loadServicos(): void {
     this.isLoading = true;
     this.servicosService.getServicos().subscribe({
-      next: (servicos) => {
-        this.servicos = servicos;
+      next: (response) => {
+        this.servicos = response.data;
         // Simular serviços favoritos (em produção, viria do backend)
-        this.servicosFavoritos = servicos.slice(0, 3);
+        this.servicosFavoritos = response.data.slice(0, 3);
         this.isLoading = false;
       },
       error: (error) => {
