@@ -5,25 +5,16 @@ Aqui você encontrará informações sobre funcionalidades, arquitetura, uso, in
 
 📖 Índice
 
-Visão Geral
-
-Arquitetura do Sistema
-
-Instalação e Configuração
-
-Guia do Usuário
-
-API Reference
-
-Desenvolvimento
-
-Deploy
-
-Troubleshooting
-
-Contribuição
-
-Licença
+- Visão Geral
+- Arquitetura do Sistema
+- Instalação e Configuração
+- Guia do Usuário
+- API Reference
+- Desenvolvimento
+- Deploy
+- Troubleshooting
+- Contribuição
+- Licença
 
 🎯 Visão Geral
 
@@ -54,50 +45,50 @@ Integrations → Google Calendar API
 
 📦 Estrutura de Módulos
 
-Backend (NestJS)
+- Backend (NestJS)
 
-Auth → Login, registro e JWT
+- Auth → Login, registro e JWT
 
-Clientes → Cadastro, atualização e consulta
+- Clientes → Cadastro, atualização e consulta
 
-Profissionais → Gestão da equipe
+- Profissionais → Gestão da equipe
 
-Agendamentos → Sistema completo de agendamento
+- Agendamentos → Sistema completo de agendamento
 
-Fichas Anamnese → Histórico clínico digital
+- Fichas Anamnese → Histórico clínico digital
 
-Estoque → Produtos e movimentações
+- Estoque → Produtos e movimentações
 
-Protocolos → Protocolos de tratamento personalizados
+- Protocolos → Protocolos de tratamento personalizados
 
-Dashboard → Estatísticas e relatórios
+- Dashboard → Estatísticas e relatórios
 
-Frontend (Angular)
+- Frontend (Angular)
 
-Home (landing page)
+- Home (landing page)
 
-Registro/Login
+- Registro/Login
 
-Área do Cliente (perfil, agendamentos)
+- Área do Cliente (perfil, agendamentos)
 
-Dashboard Profissional (agenda, estoque, relatórios)
+- Dashboard Profissional (agenda, estoque, relatórios)
 
-Formulários interativos com validações
+- Formulários interativos com validações
 
 🚀 Instalação e Configuração
 🔑 Pré-requisitos
 
-Node.js ≥ 18
+- Node.js ≥ 18
 
-npm ≥ 8
+- npm ≥ 8
 
-MySQL ≥ 8
+- MySQL ≥ 8
 
-Angular CLI ≥ 17
+- Angular CLI ≥ 17
 
-Git
+- Git
 
-(Opcional) Docker
+- (Opcional) Docker
 
 ⚙️ Passo a Passo
 # 1. Clone o repositório
@@ -128,23 +119,19 @@ DB_NAME=essenza
 JWT_SECRET=essenza_secret
 
 👥 Guia do Usuário
+
 Para Clientes
 
-Cadastro → Preencha nome, CPF, e-mail, senha e ficha de anamnese.
-
-Agendamento → Escolha serviço, data e horário disponíveis.
-
-Gerenciamento → Consulte, reagende ou cancele seus atendimentos.
+- Cadastro → Preencha nome, CPF, e-mail, senha e ficha de anamnese.
+- Agendamento → Escolha serviço, data e horário disponíveis.
+- Gerenciamento → Consulte, reagende ou cancele seus atendimentos.
 
 Para Profissionais
 
-Dashboard → Acesse visão geral da clínica.
-
-Agenda → Veja atendimentos, confirme ou recuse.
-
-Estoque → Cadastre e controle produtos usados em protocolos.
-
-Protocolos → Crie protocolos personalizados para clientes.
+- Dashboard → Acesse visão geral da clínica.
+- Agenda → Veja atendimentos, confirme ou recuse.
+- Estoque → Cadastre e controle produtos usados em protocolos.
+- Protocolos → Crie protocolos personalizados para clientes.
 
 🔌 API Reference
 Clientes
@@ -172,23 +159,17 @@ Padrões de Código
 
 Backend:
 
-NestJS + TypeORM
-
-DTOs e Validadores (class-validator)
-
-Guards para roles
-
-Interceptors para responses
+- NestJS + TypeORM
+- DTOs e Validadores (class-validator)
+- Guards para roles
+- Interceptors para responses
 
 Frontend:
 
-Angular com Reactive Forms
-
-Serviços para lógica de negócio
-
-Guards para proteção de rotas
-
-Pipes para formatações
+- Angular com Reactive Forms
+- Serviços para lógica de negócio
+- Guards para proteção de rotas
+- Pipes para formatações
 
 Testes
 # Backend
@@ -226,13 +207,13 @@ Unauthorized (401)	Token JWT ausente ou inválido.
 Error: Table doesn't exist	Execute as migrações com npm run typeorm migration:run.
 🤝 Contribuição
 
-Faça um fork
+- Faça um fork
 
-Crie uma branch feature/minha-feature
+- Crie uma branch feature/minha-feature
 
-Commit suas mudanças
+- Commit suas mudanças
 
-Abra um Pull Request 🚀
+- Abra um Pull Request 🚀
 
 📄 Licença
 
@@ -240,4 +221,5 @@ Este projeto está sob a licença MIT.
 Sinta-se livre para usar, modificar e contribuir.
 
 ✨ Última atualização: Setembro 2025
+
 📌 Versão da documentação: 1.1.0
