@@ -1,0 +1,735 @@
+// Estilos para a página home
+
+.hero-section {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+  }
+}
+
+// Estilos para o carrossel
+#clinicaCarousel {
+  .carousel-inner {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  .carousel-item {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+      z-index: 1;
+    }
+
+    img {
+      transition: transform 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  .carousel-caption {
+    z-index: 2;
+    bottom: 20%;
+
+    h3 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  .carousel-indicators {
+    bottom: 30px;
+
+    button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid white;
+      background-color: transparent;
+      margin: 0 5px;
+      transition: all 0.3s ease;
+
+      &.active {
+        background-color: white;
+        transform: scale(1.2);
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0 20px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: white;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      filter: invert(1);
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  .carousel-control-prev {
+    left: -30px;
+  }
+
+  .carousel-control-next {
+    right: -30px;
+  }
+}
+
+// Animações para o carrossel
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.carousel-item.active {
+  animation: fadeInUp 0.6s ease;
+}
+
+// Responsividade para o carrossel
+@media (max-width: 768px) {
+  #clinicaCarousel {
+    .carousel-caption {
+      bottom: 10%;
+
+      h3 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 50px;
+      height: 50px;
+      margin: 0 10px;
+
+      .carousel-control-prev-icon,
+      .carousel-control-next-icon {
+        width: 25px;
+        height: 25px;
+      }
+    }
+
+    .carousel-control-prev {
+      left: -25px;
+    }
+
+    .carousel-control-next {
+      right: -25px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  #clinicaCarousel {
+    .carousel-caption {
+      bottom: 5%;
+
+      h3 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+    }
+
+    .carousel-indicators {
+      bottom: 15px;
+
+      button {
+        width: 10px;
+        height: 10px;
+        margin: 0 3px;
+      }
+    }
+  }
+}
+
+// Estilos para as informações adicionais
+.carousel-info {
+  .d-flex {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+
+      i {
+        color: #20c997 !important;
+      }
+    }
+  }
+
+  i {
+    transition: all 0.3s ease;
+  }
+}
+
+// Melhorias gerais para a home
+.card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+.btn {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Carrossel de Serviços */
+.carousel {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.carousel-inner {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.carousel-content {
+  display: flex;
+  height: 600px;
+  position: relative;
+}
+
+.carousel-image {
+  flex: 2;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.carousel-item:hover .carousel-image img {
+  transform: scale(1.05);
+}
+
+.carousel-text {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.95), rgba(40, 167, 69, 0.85));
+  color: white;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+}
+
+.carousel-text::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.carousel-text h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.carousel-text .lead {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 2;
+}
+
+.servico-details {
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.servico-details .badge {
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 600;
+}
+
+.carousel-text .btn {
+  position: relative;
+  z-index: 2;
+  font-weight: 600;
+  padding: 0.8rem 1.8rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  font-size: 0.95rem;
+}
+
+.carousel-text .btn:hover {
+  background: white;
+  color: #28a745;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Indicadores do carrossel */
+.carousel-indicators {
+  bottom: 20px;
+  z-index: 10;
+}
+
+.carousel-indicators button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  margin: 0 5px;
+  transition: all 0.3s ease;
+}
+
+.carousel-indicators button.active {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+/* Controles do carrossel */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0 20px;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .carousel-content {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .carousel-image {
+    height: 300px;
+  }
+  
+  .carousel-text {
+    padding: 2rem;
+  }
+  
+  .carousel-text h3 {
+    font-size: 2rem;
+  }
+  
+  .carousel-text .lead {
+    font-size: 1rem;
+  }
+  
+  .servico-details .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel-text {
+    padding: 1.5rem;
+  }
+  
+  .carousel-text h3 {
+    font-size: 1.5rem;
+  }
+  
+  .carousel-text .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+}
+.servico-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.servico-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.servico-card .card-img-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.servico-card .card-img-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.servico-card:hover .card-img-wrapper::before {
+  opacity: 1;
+}
+
+.servico-card .card-img-overlay {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+  z-index: 2;
+}
+
+/* Modal Lateral */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-sidebar {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.3s ease;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+}
+
+.modal-header .modal-title {
+  margin: 0;
+  color: #28a745;
+  font-weight: 600;
+}
+
+.modal-header .btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.modal-header .btn-close:hover {
+  background-color: #e9ecef;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+.servico-image img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.servico-info h5 {
+  color: #495057;
+  font-weight: 600;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.info-item i {
+  font-size: 1.2rem;
+}
+
+.quantidade-section h6 {
+  color: #495057;
+  font-weight: 600;
+}
+
+.quantidade-section .input-group {
+  max-width: 200px;
+}
+
+.quantidade-section .form-control {
+  text-align: center;
+  font-weight: 600;
+  border-left: none;
+  border-right: none;
+}
+
+.quantidade-section .btn {
+  border-radius: 0;
+  min-width: 40px;
+}
+
+.quantidade-section .btn:first-child {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.quantidade-section .btn:last-child {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.total-section {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.modal-footer .btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .modal-sidebar {
+    max-width: 100%;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 1rem;
+  }
+  
+  .servico-image img {
+    height: 200px;
+  }
+}
+
+/* Prevenir scroll quando modal está aberto */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Estilos para o badge de categoria */
+.badge {
+  font-size: 0.8rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+}
+
+/* Estilos para os cards responsivos */
+@media (max-width: 576px) {
+  .servico-card .card-body {
+    padding: 1rem;
+  }
+  
+  .servico-card .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Skeleton Loading Animation */
+@keyframes loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-img,
+.skeleton-text {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skeleton-img {
+  border-radius: 8px 8px 0 0;
+}
+
+/* Paginação */
+.pagination {
+  .page-link {
+    color: #28a745;
+    border-color: #dee2e6;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: #1e7e34;
+      background-color: #e9ecef;
+      border-color: #28a745;
+    }
+  }
+  
+  .page-item.active .page-link {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #fff;
+    border-color: #dee2e6;
+  }
+}

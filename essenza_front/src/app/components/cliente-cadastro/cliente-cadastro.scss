@@ -1,0 +1,207 @@
+// Estilos para o componente de cadastro de cliente
+
+.hero-section {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+// Animações para os passos
+.card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+// Estilização dos badges de progresso
+.badge {
+  transition: all 0.3s ease;
+
+  &.bg-success {
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  }
+}
+
+// Estilização da barra de progresso
+.progress {
+  border-radius: 10px;
+  background-color: #e9ecef;
+
+  .progress-bar {
+    border-radius: 10px;
+    transition: width 0.6s ease;
+  }
+}
+
+// Estilização dos formulários
+.form-control, .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  }
+
+  &.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+  }
+}
+
+// Estilização dos botões
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &.btn-success {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.btn-outline-secondary {
+    &:hover {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Estilização dos labels
+.form-label {
+  color: #495057;
+  font-weight: 600;
+
+  i {
+    color: #28a745;
+  }
+}
+
+// Estilização das mensagens de erro
+.text-danger {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+// Estilização dos placeholders
+::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+// Estilização dos cards de informação
+.card-header {
+  border-radius: 8px 8px 0 0 !important;
+  border-bottom: none;
+}
+
+// Responsividade para dispositivos móveis
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column;
+
+    .btn {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .badge {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+// Animações de entrada
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease;
+}
+
+// Estilização para campos obrigatórios
+.form-label::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+}
+
+// Estilização para campos opcionais (quando necessário)
+.form-label.optional::after {
+  content: "";
+}
+
+// Estilização para o estado de loading
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+// Estilização para mensagens de sucesso
+.alert-success {
+  border-radius: 8px;
+  border: none;
+  background-color: rgba(40, 167, 69, 0.1);
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+// Estilização para mensagens de erro
+.alert-danger {
+  border-radius: 8px;
+  border: none;
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+// Animação de carregamento para verificação de CPF
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Estilização do indicador de carregamento
+.input-group-text {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  
+  .spin {
+    color: #28a745;
+  }
+}

@@ -17,8 +17,41 @@ export class ServicosService {
     return this.servicoRepo.save(newServico);
   }
 
-  findAll() {
-    return this.servicoRepo.find();
+  async findAll(page: number = 1, limit: number = 20, categoria?: string) {
+    const skip = (page - 1) * limit;
+    
+    // Query builder para otimizar a consulta
+    const queryBuilder = this.servicoRepo
+      .createQueryBuilder('servico')
+      .select([
+        'servico.id',
+        'servico.nome', 
+        'servico.descricao',
+        'servico.preco'
+      ])
+      .where('servico.disponivel = :disponivel', { disponivel: true })
+      .skip(skip)
+      .take(limit)
+      .orderBy('servico.nome', 'ASC');
+
+    // Filtro por categoria se fornecido
+    if (categoria) {
+      queryBuilder.andWhere('servico.categoria = :categoria', { categoria });
+    }
+
+    const [servicos, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      data: servicos,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1
+      }
+    };
   }
 
   findOne(id: number) {

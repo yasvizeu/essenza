@@ -1,32 +1,61 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { AuthService } from '../services/auth';
 
-export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
-  // Adicionar token se existir
-  const token = localStorage.getItem('auth_token');
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  constructor(private authService: AuthService) {}
 
-  if (token) {
-    req = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Obter o token de autenticação
+    const token = this.authService.getAccessToken();
+    
+    console.log('🔍 AuthInterceptor - URL:', req.url);
+    console.log('🔍 AuthInterceptor - Token:', token ? 'Token encontrado' : 'Token não encontrado');
+    
+    // Se houver token, adicionar o header Authorization
+    if (token) {
+      const authReq = req.clone({
+        headers: req.headers.set('Authorization', `Bearer ${token}`)
+      });
+      console.log('🔍 AuthInterceptor - Header adicionado:', authReq.headers.get('Authorization'));
+      
+      return next.handle(authReq).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            console.log('🔍 AuthInterceptor - Token expirado, tentando renovar...');
+            return this.handle401Error(authReq, next);
+          }
+          return throwError(() => error);
+        })
+      );
+    }
+    
+    console.log('🔍 AuthInterceptor - Requisição sem token');
+    // Se não houver token, continuar com a requisição original
+    return next.handle(req);
   }
 
-  return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      console.error('Interceptor error:', error);
-      
-      // Se receber 401 (Unauthorized), fazer logout
-      if (error.status === 401) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
-        // Redirecionar para login
-        window.location.href = '/login';
-      }
-      
-      return throwError(() => error);
-    })
-  );
-};
+  private handle401Error(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return this.authService.refreshToken().pipe(
+      switchMap(() => {
+        const newToken = this.authService.getAccessToken();
+        if (newToken) {
+          const newReq = req.clone({
+            headers: req.headers.set('Authorization', `Bearer ${newToken}`)
+          });
+          console.log('🔍 AuthInterceptor - Token renovado, repetindo requisição');
+          return next.handle(newReq);
+        }
+        return throwError(() => new Error('Falha ao renovar token'));
+      }),
+      catchError((error) => {
+        console.log('🔍 AuthInterceptor - Falha ao renovar token, redirecionando para login');
+        this.authService.logout();
+        return throwError(() => error);
+      })
+    );
+  }
+}

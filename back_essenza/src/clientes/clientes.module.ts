@@ -9,6 +9,6 @@ import { FichaAnamnese } from 'src/ficha-anamnese/entities/ficha-anamnese.entity
   imports: [ TypeOrmModule.forFeature([Cliente, FichaAnamnese])],
   controllers: [ClientesController],
   providers: [ClientesService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, ClientesService],
 })
 export class ClientesModule {}

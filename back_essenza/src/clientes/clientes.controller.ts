@@ -3,7 +3,7 @@ import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 
-@Controller('clientes')
+@Controller('/clientes')
 export class ClientesController {
   private readonly logger = new Logger(ClientesController.name);
 
@@ -27,6 +27,12 @@ export class ClientesController {
   test() {
     this.logger.log('Test route called');
     return { message: 'Clientes test route working', timestamp: new Date().toISOString() };
+  }
+
+  @Get('verificar-cpf/:cpf')
+  verificarCpfExistente(@Param('cpf') cpf: string) {
+    this.logger.log(`Verificando CPF: ${cpf}`);
+    return this.clientesService.verificarCpfExistente(cpf);
   }
 
   @Get(':id')

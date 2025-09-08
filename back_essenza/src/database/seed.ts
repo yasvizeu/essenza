@@ -206,77 +206,77 @@ async function seed() {
       console.log('ℹ️ Serviços já existem, pulando...');
     }
 
-    // Criar relacionamentos serviço-produto se não existirem
-    if (existingServicos.length > 0 && existingProdutos.length > 0) {
-      console.log('Verificando relacionamentos serviço-produto...');
+    // // Criar relacionamentos serviço-produto se não existirem
+    // if (existingServicos.length > 0 && existingProdutos.length > 0) {
+    //   console.log('Verificando relacionamentos serviço-produto...');
       
-      const existingRelacionamentos = await servicoProdutoRepository.find();
+    //   const existingRelacionamentos = await servicoProdutoRepository.find();
       
-      if (existingRelacionamentos.length === 0) {
-        console.log('Criando relacionamentos serviço-produto...');
+    //   if (existingRelacionamentos.length === 0) {
+    //     console.log('Criando relacionamentos serviço-produto...');
         
-        // Buscar produtos e serviços criados
-        const produtos = await produtoRepository.find();
-        const servicos = await servicoRepository.find();
+    //     // Buscar produtos e serviços criados
+    //     const produtos = await produtoRepository.find();
+    //     const servicos = await servicoRepository.find();
         
-        // Criar relacionamentos exemplo
-        const relacionamentos = [
-          {
-            servico: servicos[0], // Limpeza de Pele
-            produto: produtos[1], // Máscara de Argila
-            qtyPerService: 30.0,
-            unit: 'g',
-            qtdPorServico: 30.0,
-            unidade: 'g',
-            desperdicioPct: 5.0
-          },
-          {
-            servico: servicos[0], // Limpeza de Pele
-            produto: produtos[2], // Sérum Vitamina C
-            qtyPerService: 5.0,
-            unit: 'ml',
-            qtdPorServico: 5.0,
-            unidade: 'ml',
-            desperdicioPct: 2.0
-          },
-          {
-            servico: servicos[1], // Tratamento Anti-idade
-            produto: produtos[2], // Sérum Vitamina C
-            qtyPerService: 8.0,
-            unit: 'ml',
-            qtdPorServico: 8.0,
-            unidade: 'ml',
-            desperdicioPct: 3.0
-          },
-          {
-            servico: servicos[1], // Tratamento Anti-idade
-            produto: produtos[4], // Hidratante Facial
-            qtyPerService: 15.0,
-            unit: 'ml',
-            qtdPorServico: 15.0,
-            unidade: 'ml',
-            desperdicioPct: 4.0
-          },
-          {
-            servico: servicos[2], // Hidratação Intensiva
-            produto: produtos[0], // Óleo de Argan
-            qtyPerService: 10.0,
-            unit: 'ml',
-            qtdPorServico: 10.0,
-            unidade: 'ml',
-            desperdicioPct: 2.0
-          }
-        ];
+    //     // Criar relacionamentos exemplo
+    //     const relacionamentos = [
+    //       {
+    //         servico: servicos[0], // Limpeza de Pele
+    //         produto: produtos[1], // Máscara de Argila
+    //         qtyPerService: 30.0,
+    //         unit: 'g',
+    //         qtdPorServico: 30.0,
+    //         unidade: 'g',
+    //         desperdicioPct: 5.0
+    //       },
+    //       {
+    //         servico: servicos[0], // Limpeza de Pele
+    //         produto: produtos[2], // Sérum Vitamina C
+    //         qtyPerService: 5.0,
+    //         unit: 'ml',
+    //         qtdPorServico: 5.0,
+    //         unidade: 'ml',
+    //         desperdicioPct: 2.0
+    //       },
+    //       {
+    //         servico: servicos[1], // Tratamento Anti-idade
+    //         produto: produtos[2], // Sérum Vitamina C
+    //         qtyPerService: 8.0,
+    //         unit: 'ml',
+    //         qtdPorServico: 8.0,
+    //         unidade: 'ml',
+    //         desperdicioPct: 3.0
+    //       },
+    //       {
+    //         servico: servicos[1], // Tratamento Anti-idade
+    //         produto: produtos[4], // Hidratante Facial
+    //         qtyPerService: 15.0,
+    //         unit: 'ml',
+    //         qtdPorServico: 15.0,
+    //         unidade: 'ml',
+    //         desperdicioPct: 4.0
+    //       },
+    //       {
+    //         servico: servicos[2], // Hidratação Intensiva
+    //         produto: produtos[0], // Óleo de Argan
+    //         qtyPerService: 10.0,
+    //         unit: 'ml',
+    //         qtdPorServico: 10.0,
+    //         unidade: 'ml',
+    //         desperdicioPct: 2.0
+    //       }
+    //     ];
 
-        for (const relData of relacionamentos) {
-          const relacionamento = servicoProdutoRepository.create(relData);
-          await servicoProdutoRepository.save(relacionamento);
-          console.log(`✅ Relacionamento criado: ${relData.servico.nome} + ${relData.produto.nome}`);
-        }
-      } else {
-        console.log('ℹ️ Relacionamentos serviço-produto já existem, pulando...');
-      }
-    }
+    //     for (const relData of relacionamentos) {
+    //       const relacionamento = servicoProdutoRepository.create(relData);
+    //       await servicoProdutoRepository.save(relacionamento);
+    //       console.log(`✅ Relacionamento criado: ${relData.servico.nome} + ${relData.produto.nome}`);
+    //     }
+    //   } else {
+    //     console.log('ℹ️ Relacionamentos serviço-produto já existem, pulando...');
+    //   }
+  //  }
 
     console.log('\n📊 Resumo do Seed:');
     console.log('Profissional:', {
@@ -293,8 +293,8 @@ async function seed() {
 
     console.log(`\n✅ Seed concluído com sucesso!`);
     console.log(`📦 Produtos criados: ${(await produtoRepository.find()).length}`);
-    console.log(`🔧 Serviços criados: ${(await servicoRepository.find()).length}`);
-    console.log(`🔗 Relacionamentos criados: ${(await servicoProdutoRepository.find()).length}`);
+    // console.log(`🔧 Serviços criados: ${(await servicoRepository.find()).length}`);
+    // console.log(`🔗 Relacionamentos criados: ${(await servicoProdutoRepository.find()).length}`);
 
   } catch (error) {
     console.error('Erro durante seed:', error);

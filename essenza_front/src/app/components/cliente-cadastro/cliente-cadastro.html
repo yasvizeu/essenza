@@ -1,0 +1,420 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Cabeçalho -->
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-success mb-3">
+          <i class="bi bi-person-plus-fill me-3"></i>
+          Cadastro de Cliente
+        </h1>
+        <p class="lead text-muted">
+          Complete seu cadastro para acessar nossos serviços e produtos naturais
+        </p>
+      </div>
+
+      <!-- Indicador de Progresso -->
+      <div class="progress mb-4" style="height: 8px;">
+        <div class="progress-bar bg-success"
+             [style.width.%]="(currentStep / totalSteps) * 100"
+             role="progressbar">
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between mb-4">
+        <span class="badge bg-success fs-6 px-3 py-2">
+          <i class="bi bi-1-circle me-2"></i>
+          Dados Pessoais
+        </span>
+        <span class="badge fs-6 px-3 py-2"
+              [class.bg-success]="currentStep >= 2"
+              [class.bg-secondary]="currentStep < 2">
+          <i class="bi bi-2-circle me-2"></i>
+          Ficha de Anamnese
+        </span>
+      </div>
+
+      <!-- Formulário de Dados Pessoais - Passo 1 -->
+      <div *ngIf="currentStep === 1" class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-person-fill me-2"></i>
+            Dados Pessoais
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="cadastroForm">
+            <div class="row">
+                             <!-- Nome Completo -->
+               <div class="col-md-12 mb-3">
+                 <label for="name" class="form-label fw-bold">
+                   <i class="bi bi-person me-2"></i>Nome Completo *
+                 </label>
+                 <input type="text"
+                        class="form-control"
+                        [class.is-valid]="isFieldValid('name')"
+                        [class.is-invalid]="hasFieldError('name')"
+                        id="name"
+                        formControlName="name"
+                        (input)="onNameChange($event)"
+                        placeholder="Digite seu nome completo">
+                 <div class="text-danger small mt-1"
+                      *ngIf="getErrorMessage('name', cadastroForm)">
+                   {{ getErrorMessage('name', cadastroForm) }}
+                 </div>
+               </div>
+
+              <!-- Email -->
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label fw-bold">
+                  <i class="bi bi-envelope me-2"></i>Email *
+                </label>
+                <input type="email"
+                       class="form-control"
+                       [class.is-valid]="isFieldValid('email')"
+                       [class.is-invalid]="hasFieldError('email')"
+                       id="email"
+                       formControlName="email"
+                       (input)="onEmailChange($event)"
+                       placeholder="seu@email.com">
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('email', cadastroForm)">
+                  {{ getErrorMessage('email', cadastroForm) }}
+                </div>
+              </div>
+
+              <!-- CPF -->
+              <div class="col-md-6 mb-3">
+                <label for="cpf" class="form-label fw-bold">
+                  <i class="bi bi-card-text me-2"></i>CPF *
+                </label>
+                <div class="input-group">
+                  <input type="text"
+                         class="form-control"
+                         [class.is-valid]="isFieldValid('cpf')"
+                         [class.is-invalid]="hasFieldError('cpf')"
+                         id="cpf"
+                         formControlName="cpf"
+                         (input)="onCpfChange($event)"
+                         placeholder="000.000.000-00"
+                         maxlength="14">
+                  <span class="input-group-text" *ngIf="isCheckingCpf">
+                    <i class="bi bi-arrow-clockwise spin"></i>
+                  </span>
+                </div>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('cpf', cadastroForm)">
+                  {{ getErrorMessage('cpf', cadastroForm) }}
+                </div>
+              </div>
+
+              <!-- Data de Nascimento -->
+              <div class="col-md-6 mb-3">
+                <label for="birthDate" class="form-label fw-bold">
+                  <i class="bi bi-calendar me-2"></i>Data de Nascimento *
+                </label>
+                <input type="date"
+                       class="form-control"
+                       [class.is-valid]="isFieldValid('birthDate')"
+                       [class.is-invalid]="hasFieldError('birthDate')"
+                       id="birthDate"
+                       formControlName="birthDate"
+                       (change)="onBirthDateChange($event)">
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('birthDate', cadastroForm)">
+                  {{ getErrorMessage('birthDate', cadastroForm) }}
+                </div>
+              </div>
+
+              <!-- Celular -->
+              <div class="col-md-6 mb-3">
+                <label for="cell" class="form-label fw-bold">
+                  <i class="bi bi-phone me-2"></i>Celular *
+                </label>
+                <input type="text"
+                       class="form-control"
+                       [class.is-valid]="isFieldValid('cell')"
+                       [class.is-invalid]="hasFieldError('cell')"
+                       id="cell"
+                       formControlName="cell"
+                       (input)="onCellChange($event)"
+                       placeholder="(11) 99999-9999"
+                       maxlength="15">
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('cell', cadastroForm)">
+                  {{ getErrorMessage('cell', cadastroForm) }}
+                </div>
+              </div>
+
+              <!-- Endereço -->
+              <div class="col-md-12 mb-3">
+                <label for="address" class="form-label fw-bold">
+                  <i class="bi bi-geo-alt me-2"></i>Endereço Completo *
+                </label>
+                <textarea class="form-control"
+                          [class.is-valid]="isFieldValid('address')"
+                          [class.is-invalid]="hasFieldError('address')"
+                          id="address"
+                          formControlName="address"
+                          (input)="onAddressChange($event)"
+                          rows="3"
+                          placeholder="Rua, número, bairro, cidade - UF, CEP"></textarea>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('address', cadastroForm)">
+                  {{ getErrorMessage('address', cadastroForm) }}
+                </div>
+              </div>
+
+                             <!-- Senha -->
+               <div class="col-md-6 mb-3">
+                 <label for="password" class="form-label fw-bold">
+                   <i class="bi bi-lock me-2"></i>Senha *
+                 </label>
+                 <div class="input-group">
+                   <input [type]="showPassword ? 'text' : 'password'"
+                          class="form-control"
+                          [class.is-valid]="isFieldValid('password')"
+                          [class.is-invalid]="hasFieldError('password')"
+                          id="password"
+                          formControlName="password"
+                          (input)="onPasswordChange($event)"
+                          placeholder="Mínimo 8 caracteres">
+                   <button class="btn btn-outline-secondary" 
+                           type="button" 
+                           (click)="togglePasswordVisibility()"
+                           [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                     <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+                   </button>
+                 </div>
+                 
+                 <!-- Feedback visual da senha -->
+                 <div class="mt-2" *ngIf="cadastroForm.get('password')?.value">
+                   <div class="row">
+                     <div class="col-12">
+                       <small class="text-muted">Requisitos da senha:</small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.minLength" 
+                              [class.text-danger]="!getPasswordStatus().requirements.minLength">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.minLength" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.minLength"></i>
+                         8+ caracteres
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasUpperCase" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasUpperCase">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasUpperCase" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasUpperCase"></i>
+                         Maiúscula
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasLowerCase" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasLowerCase">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasLowerCase" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasLowerCase"></i>
+                         Minúscula
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasNumbers" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasNumbers">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasNumbers" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasNumbers"></i>
+                         Número
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasSpecialChar" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasSpecialChar">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasSpecialChar" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasSpecialChar"></i>
+                         Especial
+                       </small>
+                     </div>
+                   </div>
+                 </div>
+                 
+                 <div class="text-danger small mt-1"
+                      *ngIf="getErrorMessage('password', cadastroForm)">
+                   {{ getErrorMessage('password', cadastroForm) }}
+                 </div>
+               </div>
+
+              <!-- Confirmar Senha -->
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label fw-bold">
+                  <i class="bi bi-lock-fill me-2"></i>Confirmar Senha *
+                </label>
+                <div class="input-group">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'"
+                         class="form-control"
+                         [class.is-valid]="isFieldValid('confirmPassword')"
+                         [class.is-invalid]="hasFieldError('confirmPassword')"
+                         id="confirmPassword"
+                         formControlName="confirmPassword"
+                         (input)="onPasswordChange($event)"
+                         placeholder="Confirme sua senha">
+                  <button class="btn btn-outline-secondary" 
+                          type="button" 
+                          (click)="toggleConfirmPasswordVisibility()"
+                          [attr.aria-label]="showConfirmPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                    <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
+                  </button>
+                </div>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('confirmPassword', cadastroForm)">
+                  {{ getErrorMessage('confirmPassword', cadastroForm) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Botão Próximo -->
+            <div class="text-end">
+              <button type="button"
+                      class="btn btn-success btn-lg px-4"
+                      (click)="nextStep()"
+                      [disabled]="!cadastroForm.valid">
+                <i class="bi bi-arrow-right me-2"></i>
+                Próximo Passo
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Formulário de Anamnese - Passo 2 -->
+      <div *ngIf="currentStep === 2" class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-clipboard2-pulse me-2"></i>
+            Ficha de Anamnese
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="anamneseForm">
+            <div class="row">
+              <!-- Problemas de Saúde -->
+              <div class="col-md-12 mb-3">
+                <label for="healthProblems" class="form-label fw-bold">
+                  <i class="bi bi-heart-pulse me-2"></i>Problemas de Saúde *
+                </label>
+                <textarea class="form-control"
+                          id="healthProblems"
+                          formControlName="healthProblems"
+                          rows="3"
+                          placeholder="Descreva problemas de saúde atuais ou passados, doenças crônicas, etc."></textarea>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('healthProblems', anamneseForm)">
+                  {{ getErrorMessage('healthProblems', anamneseForm) }}
+                </div>
+              </div>
+
+              <!-- Medicamentos -->
+              <div class="col-md-12 mb-3">
+                <label for="medications" class="form-label fw-bold">
+                  <i class="bi bi-capsule me-2"></i>Medicamentos em Uso *
+                </label>
+                <textarea class="form-control"
+                          id="medications"
+                          formControlName="medications"
+                          rows="2"
+                          placeholder="Liste medicamentos que está tomando atualmente (incluir nome e dosagem)"></textarea>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('medications', anamneseForm)">
+                  {{ getErrorMessage('medications', anamneseForm) }}
+                </div>
+              </div>
+
+              <!-- Alergias -->
+              <div class="col-md-12 mb-3">
+                <label for="allergies" class="form-label fw-bold">
+                  <i class="bi bi-exclamation-triangle me-2"></i>Alergias *
+                </label>
+                <textarea class="form-control"
+                          id="allergies"
+                          formControlName="allergies"
+                          rows="2"
+                          placeholder="Descreva alergias conhecidas (medicamentos, alimentos, produtos, etc.)"></textarea>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('allergies', anamneseForm)">
+                  {{ getErrorMessage('allergies', anamneseForm) }}
+                </div>
+              </div>
+
+              <!-- Cirurgias -->
+              <div class="col-md-12 mb-3">
+                <label for="surgeries" class="form-label fw-bold">
+                  <i class="bi bi-scissors me-2"></i>Cirurgias Realizadas *
+                </label>
+                <textarea class="form-control"
+                          id="surgeries"
+                          formControlName="surgeries"
+                          rows="2"
+                          placeholder="Liste cirurgias realizadas, data aproximada e motivo"></textarea>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('surgeries', anamneseForm)">
+                  {{ getErrorMessage('surgeries', anamneseForm) }}
+                </div>
+              </div>
+
+              <!-- Estilo de Vida -->
+              <div class="col-md-12 mb-3">
+                <label for="lifestyle" class="form-label fw-bold">
+                  <i class="bi bi-person-walking me-2"></i>Estilo de Vida *
+                </label>
+                <textarea class="form-control"
+                          id="lifestyle"
+                          formControlName="lifestyle"
+                          rows="3"
+                          placeholder="Descreva seu estilo de vida: atividade física, alimentação, sono, estresse, tabagismo, etc."></textarea>
+                <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('lifestyle', anamneseForm)">
+                  {{ getErrorMessage('lifestyle', anamneseForm) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Botões de Navegação -->
+            <div class="d-flex justify-content-between">
+              <button type="button"
+                      class="btn btn-outline-secondary btn-lg px-4"
+                      (click)="previousStep()">
+                <i class="bi bi-arrow-left me-2"></i>
+                Voltar
+              </button>
+
+              <button type="button"
+                      class="btn btn-success btn-lg px-4"
+                      (click)="onSubmit()"
+                      [disabled]="!anamneseForm.valid || isLoading">
+                <span *ngIf="!isLoading">
+                  <i class="bi bi-check-circle me-2"></i>
+                  Finalizar Cadastro
+                </span>
+                <span *ngIf="isLoading">
+                  <i class="bi bi-hourglass-split me-2"></i>
+                  Processando...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Informações Adicionais -->
+      <div class="card border-0 bg-light mt-4">
+        <div class="card-body text-center">
+          <h6 class="text-success mb-2">
+            <i class="bi bi-shield-check me-2"></i>
+            Seus dados estão seguros
+          </h6>
+          <p class="text-muted small mb-0">
+            Todas as informações fornecidas são tratadas com confidencialidade e utilizadas apenas para
+            melhorar sua experiência e segurança em nossos tratamentos.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

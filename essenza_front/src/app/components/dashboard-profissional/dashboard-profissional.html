@@ -1,0 +1,773 @@
+<!-- Header do Dashboard -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="bi bi-leaf-fill me-2"></i>
+      Essenza - Dashboard Profissional
+    </a>
+    
+    <div class="navbar-nav ms-auto">
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+          <i class="bi bi-person-circle me-2"></i>
+          {{ currentUser?.nome || 'Profissional' }}
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#" (click)="logout()">
+            <i class="bi bi-box-arrow-right me-2"></i>Sair
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75" style="z-index: 9999;">
+  <div class="spinner-border text-success" role="status">
+    <span class="visually-hidden">Carregando...</span>
+  </div>
+</div>
+
+<!-- Conteúdo Principal -->
+<div class="container-fluid py-4">
+  
+  <!-- Cards de Estatísticas -->
+  <div class="row mb-4">
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-people-fill text-primary fs-1 mb-2"></i>
+          <h5 class="card-title mb-1">{{ estatisticas.totalClientes }}</h5>
+          <p class="card-text text-muted small">Clientes</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-box-seam text-warning fs-1 mb-2"></i>
+          <h5 class="card-title mb-1">{{ estatisticas.totalProdutos }}</h5>
+          <p class="card-text text-muted small">Produtos</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-scissors text-info fs-1 mb-2"></i>
+          <h5 class="card-title mb-1">{{ estatisticas.totalServicos }}</h5>
+          <p class="card-text text-muted small">Serviços</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-exclamation-triangle text-danger fs-1 mb-2"></i>
+          <h5 class="card-title mb-1">{{ estatisticas.produtosBaixoEstoque }}</h5>
+          <p class="card-text text-muted small">Baixo Estoque</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-arrow-repeat text-success fs-1 mb-2"></i>
+          <h5 class="card-title mb-1">{{ estatisticas.movimentacoesHoje }}</h5>
+          <p class="card-text text-muted small">Movimentações Hoje</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-calendar-check text-secondary fs-1 mb-2"></i>
+          <h5 class="card-title mb-1">{{ formatarData(getCurrentDate()) }}</h5>
+          <p class="card-text text-muted small">Data Atual</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botões de Ação Rápida -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title mb-3">
+            <i class="bi bi-lightning-fill text-warning me-2"></i>
+            Ações Rápidas
+          </h6>
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-outline-success" (click)="openModalEstoque()">
+              <i class="bi bi-box-seam me-2"></i>
+              Movimentar Estoque
+            </button>
+            <button class="btn btn-outline-primary" (click)="openModalNovoProfissional()">
+              <i class="bi bi-person-plus me-2"></i>
+              Novo Profissional
+            </button>
+            <button class="btn btn-outline-info" (click)="openModalBuscarClientes()">
+              <i class="bi bi-search me-2"></i>
+              Buscar Clientes
+            </button>
+            <button class="btn btn-outline-warning" (click)="loadDashboardData()">
+              <i class="bi bi-arrow-clockwise me-2"></i>
+              Atualizar Dados
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal em Tabs -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+          <ul class="nav nav-tabs card-header-tabs" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="estoque-tab" data-bs-toggle="tab" data-bs-target="#estoque" type="button" role="tab">
+                <i class="bi bi-box-seam me-2"></i>Estoque
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="servicos-tab" data-bs-toggle="tab" data-bs-target="#servicos" type="button" role="tab">
+                <i class="bi bi-scissors me-2"></i>Serviços
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="clientes-tab" data-bs-toggle="tab" data-bs-target="#clientes" type="button" role="tab">
+                <i class="bi bi-people me-2"></i>Clientes
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="profissionais-tab" data-bs-toggle="tab" data-bs-target="#profissionais" type="button" role="tab">
+                <i class="bi bi-person-badge me-2"></i>Profissionais
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="movimentacoes-tab" data-bs-toggle="tab" data-bs-target="#movimentacoes" type="button" role="tab">
+                <i class="bi bi-arrow-repeat me-2"></i>Movimentações
+              </button>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="card-body">
+          <div class="tab-content" id="dashboardTabsContent">
+            
+            <!-- Tab Estoque -->
+            <div class="tab-pane fade show active" id="estoque" role="tabpanel">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Gestão de Estoque</h6>
+                <div class="input-group" style="width: 300px;">
+                  <span class="input-group-text"><i class="bi bi-search"></i></span>
+                  <input type="text" class="form-control" placeholder="Buscar produtos..." [(ngModel)]="filtroProdutos">
+                </div>
+              </div>
+
+              <!-- Alertas de Baixo Estoque -->
+              <div *ngIf="produtosBaixoEstoque.length > 0" class="alert alert-warning mb-3">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Atenção!</strong> {{ produtosBaixoEstoque.length }} produto(s) com baixo estoque.
+              </div>
+
+              <!-- Tabela de Produtos -->
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Produto</th>
+                      <th>Categoria</th>
+                      <th>Quantidade</th>
+                      <th>Unidade</th>
+                      <th>Validade</th>
+                      <th>Status</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let produto of produtos | filter: filtroProdutos">
+                      <td>
+                        <strong>{{ produto.nome }}</strong>
+                        <br>
+                        <small class="text-muted">{{ produto.descricao }}</small>
+                      </td>
+                      <td>{{ produto.categoria || 'N/A' }}</td>
+                                             <td [class]="getEstoqueClass(produto)">
+                         <strong>N/A</strong>
+                         <br>
+                         <small class="text-muted">Ver detalhes</small>
+                       </td>
+                      <td>{{ produto.baseUnit }}</td>
+                      <td>{{ produto.dataValidade ? formatarData(produto.dataValidade) : 'N/A' }}</td>
+                      <td>
+                        <span *ngIf="isBaixoEstoque(produto)" class="badge bg-danger">Baixo Estoque</span>
+                        <span *ngIf="!isBaixoEstoque(produto)" class="badge bg-success">OK</span>
+                      </td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-info" (click)="verDetalhesProduto(produto)">
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Loading -->
+              <div *ngIf="isLoadingProdutos" class="text-center py-4">
+                <div class="spinner-border text-success" role="status">
+                  <span class="visually-hidden">Carregando produtos...</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab Serviços -->
+            <div class="tab-pane fade" id="servicos" role="tabpanel">
+              <h6 class="mb-3">Serviços Disponíveis</h6>
+              
+              <div class="row">
+                <div class="col-md-6 col-lg-4 mb-3" *ngFor="let servico of servicos">
+                  <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                      <h6 class="card-title">{{ servico.nome }}</h6>
+                      <p class="card-text text-muted small">{{ servico.descricao }}</p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-success fw-bold">{{ formatarPreco(servico.preco) }}</span>
+                        <button class="btn btn-sm btn-success" (click)="openModalExecutarServico(servico)">
+                          <i class="bi bi-play-fill me-1"></i>Executar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab Clientes -->
+            <div class="tab-pane fade" id="clientes" role="tabpanel">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Clientes Cadastrados</h6>
+                <div class="input-group" style="width: 300px;">
+                  <span class="input-group-text"><i class="bi bi-search"></i></span>
+                  <input type="text" class="form-control" placeholder="Buscar clientes..." [(ngModel)]="filtroClientes">
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Nome</th>
+                      <th>Email</th>
+                      <th>CPF</th>
+                      <th>Telefone</th>
+                      <th>Data Nascimento</th>
+                      <th>Endereço</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let cliente of clientes | filter: filtroClientes">
+                      <td><strong>{{ cliente.nome }}</strong></td>
+                      <td>{{ cliente.email }}</td>
+                      <td>{{ formatarCPF(cliente.cpf) }}</td>
+                      <td>{{ formatarTelefone(cliente.cell) }}</td>
+                      <td>{{ formatarData(cliente.birthDate) }}</td>
+                      <td>
+                        <small class="text-muted">{{ cliente.address }}</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Loading -->
+              <div *ngIf="isLoadingClientes" class="text-center py-4">
+                <div class="spinner-border text-success" role="status">
+                  <span class="visually-hidden">Carregando clientes...</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab Profissionais -->
+            <div class="tab-pane fade" id="profissionais" role="tabpanel">
+              <h6 class="mb-3">Profissionais da Equipe</h6>
+              
+              <div class="row">
+                <div class="col-md-6 col-lg-4 mb-3" *ngFor="let profissional of profissionais">
+                  <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-person-circle fs-1 text-primary me-3"></i>
+                        <div>
+                          <h6 class="card-title mb-1">{{ profissional.nome }}</h6>
+                          <small class="text-muted">{{ profissional.especialidade || 'Sem especialidade' }}</small>
+                        </div>
+                      </div>
+                      <p class="card-text small">
+                        <i class="bi bi-envelope me-1"></i>{{ profissional.email }}<br>
+                        <i class="bi bi-telephone me-1"></i>{{ formatarTelefone(profissional.cell) }}<br>
+                        <i class="bi bi-geo-alt me-1"></i>{{ profissional.address }}
+                      </p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span *ngIf="profissional.admin" class="badge bg-warning">Admin</span>
+                        <span *ngIf="profissional.cnec" class="badge bg-info">CRM: {{ profissional.cnec }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab Movimentações -->
+            <div class="tab-pane fade" id="movimentacoes" role="tabpanel">
+              <h6 class="mb-3">Últimas Movimentações de Estoque</h6>
+              
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Data/Hora</th>
+                      <th>Produto</th>
+                      <th>Quantidade</th>
+                      <th>Motivo</th>
+                      <th>Referência</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let mov of ultimasMovimentacoes">
+                      <td>
+                        <small>
+                          {{ formatarData(mov.criadoEm) }}<br>
+                          {{ formatarHora(mov.criadoEm) }}
+                        </small>
+                      </td>
+                      <td>
+                        <strong>{{ getProdutoNome(mov.produtoId) }}</strong>
+                      </td>
+                      <td [class]="getQuantidadeClass(mov.quantidade)">
+                        <strong>{{ mov.quantidade > 0 ? '+' : '' }}{{ mov.quantidade }}</strong>
+                      </td>
+                      <td>
+                        <i [class]="'bi ' + getMotivoIcon(mov.motivo) + ' me-1'"></i>
+                        {{ mov.motivo }}
+                      </td>
+                      <td>
+                        <small *ngIf="mov.refTipo && mov.refId" class="text-muted">
+                          {{ mov.refTipo }}: {{ mov.refId }}
+                        </small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Movimentação de Estoque -->
+<div class="modal fade" id="modalEstoque" tabindex="-1" [class.show]="showModalEstoque" [style.display]="showModalEstoque ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-box-seam me-2"></i>
+          Movimentação de Estoque
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModalEstoque()"></button>
+      </div>
+      <form [formGroup]="movimentoEstoqueForm" (ngSubmit)="criarMovimentoEstoque()">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Produto</label>
+            <select class="form-select" formControlName="produtoId">
+              <option value="">Selecione um produto</option>
+              <option *ngFor="let produto of produtos" [value]="produto.id">
+                {{ produto.nome }} ({{ produto.categoria }})
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Quantidade</label>
+            <input type="number" class="form-control" formControlName="quantidade" step="0.001">
+            <small class="text-muted">Use valores positivos para entrada e negativos para saída</small>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Motivo</label>
+            <select class="form-select" formControlName="motivo">
+              <option value="">Selecione o motivo</option>
+              <option value="compra">Compra</option>
+              <option value="execucao_servico">Execução de Serviço</option>
+              <option value="ajuste">Ajuste</option>
+              <option value="transferencia_entrada">Transferência Entrada</option>
+              <option value="transferencia_saida">Transferência Saída</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Tipo de Referência</label>
+              <input type="text" class="form-control" formControlName="refTipo" placeholder="Ex: pedido, cliente">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">ID de Referência</label>
+              <input type="text" class="form-control" formControlName="refId" placeholder="Ex: 123">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModalEstoque()">Cancelar</button>
+          <button type="submit" class="btn btn-success" [disabled]="!movimentoEstoqueForm.valid">
+            <i class="bi bi-check-lg me-1"></i>Confirmar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Novo Profissional -->
+<div class="modal fade" id="modalNovoProfissional" tabindex="-1" [class.show]="showModalNovoProfissional" [style.display]="showModalNovoProfissional ? 'block' : 'none'">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-person-plus me-2"></i>
+          Cadastrar Novo Profissional
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModalNovoProfissional()"></button>
+      </div>
+      <form [formGroup]="novoProfissionalForm" (ngSubmit)="cadastrarNovoProfissional()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Nome Completo *</label>
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('nome')"
+                       [class.is-invalid]="hasFieldError('nome')"
+                       formControlName="nome"
+                       (input)="onFieldChange('nome')"
+                       placeholder="Digite o nome completo">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('nome')">
+                  {{ getErrorMessage('nome') }}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Email *</label>
+                <input type="email" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('email')"
+                       [class.is-invalid]="hasFieldError('email')"
+                       formControlName="email"
+                       (input)="onFieldChange('email')"
+                       placeholder="email@exemplo.com">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('email')">
+                  {{ getErrorMessage('email') }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Senha *</label>
+                <div class="input-group">
+                  <input [type]="showPassword ? 'text' : 'password'" 
+                         class="form-control" 
+                         [class.is-valid]="isFieldValid('senha')"
+                         [class.is-invalid]="hasFieldError('senha')"
+                         formControlName="senha"
+                         (input)="onPasswordChange($event)"
+                         placeholder="Mínimo 8 caracteres">
+                  <button class="btn btn-outline-secondary" 
+                          type="button" 
+                          (click)="togglePasswordVisibility()"
+                          [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                    <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+                  </button>
+                </div>
+                
+                <!-- Feedback visual da senha -->
+                <div class="mt-2" *ngIf="novoProfissionalForm.get('senha')?.value">
+                  <div class="row">
+                    <div class="col-12">
+                      <small class="text-muted">Requisitos da senha:</small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.minLength" 
+                             [class.text-danger]="!getPasswordStatus().requirements.minLength">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.minLength" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.minLength"></i>
+                        8+ caracteres
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasUpperCase" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasUpperCase">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasUpperCase" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasUpperCase"></i>
+                        Maiúscula
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasLowerCase" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasLowerCase">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasLowerCase" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasLowerCase"></i>
+                        Minúscula
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasNumbers" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasNumbers">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasNumbers" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasNumbers"></i>
+                        Número
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasSpecialChar" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasSpecialChar">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasSpecialChar" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasSpecialChar"></i>
+                        Especial
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('senha')">
+                  {{ getErrorMessage('senha') }}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">CPF *</label>
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('cpf')"
+                       [class.is-invalid]="hasFieldError('cpf')"
+                       formControlName="cpf"
+                       (input)="onCpfChange($event)"
+                       placeholder="000.000.000-00"
+                       maxlength="14">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('cpf')">
+                  {{ getErrorMessage('cpf') }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Data de Nascimento *</label>
+                <input type="date" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('birthDate')"
+                       [class.is-invalid]="hasFieldError('birthDate')"
+                       formControlName="birthDate"
+                       (change)="onFieldChange('birthDate')">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('birthDate')">
+                  {{ getErrorMessage('birthDate') }}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Celular *</label>
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('cell')"
+                       [class.is-invalid]="hasFieldError('cell')"
+                       formControlName="cell"
+                       (input)="onCellChange($event)"
+                       placeholder="(11) 99999-9999"
+                       maxlength="15">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('cell')">
+                  {{ getErrorMessage('cell') }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Endereço *</label>
+            <textarea class="form-control" 
+                      [class.is-valid]="isFieldValid('address')"
+                      [class.is-invalid]="hasFieldError('address')"
+                      formControlName="address"
+                      (input)="onFieldChange('address')"
+                      rows="3"
+                      placeholder="Rua, número, bairro, cidade - UF, CEP"></textarea>
+            <div class="text-danger small mt-1" *ngIf="getErrorMessage('address')">
+              {{ getErrorMessage('address') }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Especialidade</label>
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('especialidade')"
+                       [class.is-invalid]="hasFieldError('especialidade')"
+                       formControlName="especialidade"
+                       (input)="onFieldChange('especialidade')"
+                       placeholder="Ex: Dermatologia, Estética">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('especialidade')">
+                  {{ getErrorMessage('especialidade') }}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">CRM</label>
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('cnec')"
+                       [class.is-invalid]="hasFieldError('cnec')"
+                       formControlName="cnec"
+                       (input)="onFieldChange('cnec')"
+                       placeholder="Número do CRM">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('cnec')">
+                  {{ getErrorMessage('cnec') }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" formControlName="admin">
+              <label class="form-check-label">Administrador</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModalNovoProfissional()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!novoProfissionalForm.valid">
+            <i class="bi bi-check-lg me-1"></i>Cadastrar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Buscar Clientes -->
+<div class="modal fade" id="modalBuscarClientes" tabindex="-1" [class.show]="showModalBuscarClientes" [style.display]="showModalBuscarClientes ? 'block' : 'none'">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-search me-2"></i>
+          Buscar Clientes
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModalBuscarClientes()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="buscarClientesForm" (ngSubmit)="filtrarClientes()">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Digite o nome, email ou CPF do cliente..." formControlName="nome">
+            <button class="btn btn-outline-secondary" type="submit">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </form>
+        
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>Data Nascimento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cliente of clientesFiltrados">
+                <td><strong>{{ cliente.nome }}</strong></td>
+                <td>{{ cliente.email }}</td>
+                <td>{{ formatarCPF(cliente.cpf) }}</td>
+                <td>{{ formatarTelefone(cliente.cell) }}</td>
+                <td>{{ formatarData(cliente.birthDate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div *ngIf="clientesFiltrados.length === 0" class="text-center py-4">
+          <i class="bi bi-search text-muted fs-1"></i>
+          <p class="text-muted">Nenhum cliente encontrado</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModalBuscarClientes()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Executar Serviço -->
+<div class="modal fade" id="modalExecutarServico" tabindex="-1" [class.show]="showModalExecutarServico" [style.display]="showModalExecutarServico ? 'block' : 'none'">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-scissors me-2"></i>
+          Executar Serviço
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModalExecutarServico()"></button>
+      </div>
+      <form [formGroup]="executarServicoForm" (ngSubmit)="executarServico()">
+        <div class="modal-body">
+          <div *ngIf="servicoSelecionado" class="alert alert-info">
+            <strong>{{ servicoSelecionado.nome }}</strong><br>
+            <small>{{ servicoSelecionado.descricao }}</small><br>
+            <strong class="text-success">{{ formatarPreco(servicoSelecionado.preco) }}</strong>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Quantidade de Execuções</label>
+            <input type="number" class="form-control" formControlName="quantidade" min="1">
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Tipo de Referência</label>
+              <input type="text" class="form-control" formControlName="refTipo" placeholder="Ex: cliente, agendamento">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">ID de Referência</label>
+              <input type="text" class="form-control" formControlName="refId" placeholder="Ex: 123">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModalExecutarServico()">Cancelar</button>
+          <button type="submit" class="btn btn-success" [disabled]="!executarServicoForm.valid">
+            <i class="bi bi-play-fill me-1"></i>Executar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop para modais -->
+<div *ngIf="showModalEstoque || showModalNovoProfissional || showModalBuscarClientes || showModalExecutarServico" 
+     class="modal-backdrop fade show" 
+     (click)="closeModalEstoque(); closeModalNovoProfissional(); closeModalBuscarClientes(); closeModalExecutarServico()">
+</div>

@@ -3,7 +3,7 @@ import { FichaAnamneseService } from './ficha-anamnese.service';
 import { CreateFichaAnamneseDto } from './dto/create-ficha-anamnese.dto';
 import { UpdateFichaAnamneseDto } from './dto/update-ficha-anamnese.dto';
 
-@Controller('fichas')
+@Controller('/fichas')
 export class FichaAnamneseController {
   constructor(private readonly fichaAnamneseService: FichaAnamneseService) {}
 

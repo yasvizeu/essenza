@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, Query } from '@nestjs/common';
 import { ServicosService } from './servicos.service';
 import { CreateServicoDto } from './dto/create-servico.dto';
 import { UpdateServicoDto } from './dto/update-servico.dto';
@@ -16,9 +16,16 @@ export class ServicosController {
   }
 
   @Get()
-  findAll() {
-    this.logger.log('Finding all servicos');
-    const result = this.servicosService.findAll();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '20',
+    @Query('categoria') categoria?: string
+  ) {
+    this.logger.log('Finding servicos with pagination');
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 20;
+    
+    const result = this.servicosService.findAll(pageNum, limitNum, categoria);
     this.logger.log(`Result: ${JSON.stringify(result)}`);
     return result;
   }

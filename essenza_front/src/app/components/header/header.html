@@ -1,0 +1,116 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="bi bi-leaf-fill me-2"></i>
+      Essenza
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="bi bi-house-door me-1"></i>
+            Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/servicos" routerLinkActive="active">
+            <i class="bi bi-box me-1"></i>
+            Serviços
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/sobre" routerLinkActive="active">
+            <i class="bi bi-info-circle me-1"></i>
+            Sobre
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/contato" routerLinkActive="active">
+            <i class="bi bi-envelope me-1"></i>
+            Contato
+          </a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav">
+        <!-- Menu para usuários não autenticados -->
+        <ng-container *ngIf="!isAuthenticated">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/cadastro" routerLinkActive="active">
+              <i class="bi bi-person-plus me-1"></i>
+              Cadastro
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active">
+              <i class="bi bi-person-circle me-1"></i>
+              Login
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-outline-light btn-sm ms-2" routerLink="/sobre" routerLinkActive="active">
+              <i class="bi bi-info-circle me-1"></i>
+              Saiba Mais
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Menu para usuários autenticados -->
+        <ng-container *ngIf="isAuthenticated">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>
+              {{ currentUser?.nome || 'Usuário' }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li *ngIf="currentUser?.tipo === 'cliente'">
+                <a class="dropdown-item" (click)="goToMeusAgendamentos()">
+                  <i class="bi bi-calendar-check me-2"></i>
+                  Meus Agendamentos
+                </a>
+              </li>
+              <li *ngIf="currentUser?.tipo === 'profissional'">
+                <a class="dropdown-item" (click)="goToDashboardProfissional()">
+                  <i class="bi bi-speedometer2 me-2"></i>
+                  Dashboard
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-person me-2"></i>
+                  Meu Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">
+                  <i class="bi bi-gear me-2"></i>
+                  Configurações
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger" (click)="logout()">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  Sair
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <i class="bi bi-cart3 me-1"></i>
+              Carrinho
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</nav>

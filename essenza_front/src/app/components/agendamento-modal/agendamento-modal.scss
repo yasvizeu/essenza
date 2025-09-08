@@ -1,0 +1,438 @@
+// Modal de Agendamento
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+
+  .modal-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+  }
+}
+
+.modal-body {
+  padding: 2rem;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  background-color: #f8f9fa;
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// Informações do Serviço
+.servico-info {
+  .servico-image {
+    img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+  }
+
+  .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+  }
+}
+
+// Cards de Profissionais
+.profissional-card {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  background: white;
+
+  &:hover {
+    border-color: #28a745;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+  }
+
+  &.selected {
+    border-color: #28a745;
+    background-color: rgba(40, 167, 69, 0.05);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+  }
+
+  .profissional-avatar {
+    text-align: center;
+    margin-bottom: 0.75rem;
+
+    img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+    }
+  }
+
+  .profissional-info {
+    text-align: center;
+
+    h6 {
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    small {
+      font-size: 0.75rem;
+    }
+  }
+
+  .profissional-check {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: #28a745;
+    font-size: 1.25rem;
+  }
+}
+
+// Grid de Horários
+.horarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+
+  .horario-btn {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    border: 1px solid #dee2e6;
+
+    &:hover:not(:disabled) {
+      background-color: #28a745;
+      border-color: #28a745;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    &.selected {
+      background-color: #28a745;
+      border-color: #28a745;
+      color: white;
+      box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Resumo do Agendamento
+.resumo-agendamento {
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .card-header {
+      border-radius: 12px 12px 0 0;
+      border: none;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+}
+
+// Formulário
+.form-label {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #495057;
+}
+
+.form-select,
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+  }
+}
+
+// Alertas
+.alert {
+  border-radius: 8px;
+  border: none;
+  padding: 1rem;
+
+  &.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  &.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+}
+
+// Spinner
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-content {
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 1rem 1.5rem;
+
+    .modal-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+  }
+
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
+  }
+
+  .profissional-card {
+    padding: 0.75rem;
+
+    .profissional-avatar img {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  .horarios-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.25rem;
+
+    .horario-btn {
+      padding: 0.375rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  .servico-info {
+    .row {
+      flex-direction: column;
+    }
+
+    .col-md-4 {
+      margin-top: 1rem;
+      text-align: center;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-header {
+    padding: 0.75rem 1rem;
+
+    .modal-title {
+      font-size: 1.1rem;
+    }
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-footer {
+    padding: 0.75rem 1rem;
+  }
+
+  .profissional-card {
+    padding: 0.5rem;
+
+    .profissional-avatar img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .profissional-info h6 {
+      font-size: 0.9rem;
+    }
+  }
+
+  .horarios-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+
+    .horario-btn {
+      padding: 0.25rem;
+      font-size: 0.75rem;
+    }
+  }
+}
+
+// Animações
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.profissional-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.horario-btn {
+  animation: fadeIn 0.2s ease-out;
+}
+
+// Estados de loading
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+// Melhorias de acessibilidade
+.btn:focus,
+.form-select:focus,
+.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+// Scrollbar personalizada
+.horarios-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.horarios-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.horarios-grid::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.horarios-grid::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

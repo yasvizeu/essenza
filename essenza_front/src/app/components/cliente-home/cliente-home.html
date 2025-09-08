@@ -1,0 +1,354 @@
+<!-- Header de Boas-vindas -->
+"<div class="welcome-header bg-gradient-primary text-white py-4" style="display: block !important; visibility: visible !important;">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h1 class="h3 mb-2">
+          <i class="bi bi-person-circle me-2"></i>
+          Olá, {{ currentUser?.nome || 'Cliente' }}!
+        </h1>
+        <p class="mb-0 opacity-75">
+          Bem-vindo de volta à Essenza. Que tal agendar seu próximo tratamento?
+        </p>
+      </div>
+      <div class="col-md-4 text-end">
+        <div class="d-flex gap-2 justify-content-end">
+          <button class="btn btn-outline-light btn-sm" (click)="goToPerfil()">
+            <i class="bi bi-person me-1"></i>
+            Perfil
+          </button>
+          <button class="btn btn-outline-light btn-sm" (click)="logout()">
+            <i class="bi bi-box-arrow-right me-1"></i>
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard Cards -->
+<div class="container py-4">
+  <div class="row g-4 mb-5">
+    <!-- Próximos Agendamentos -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-calendar-check text-primary me-2"></i>
+              Próximos Agendamentos
+            </h5>
+            <button class="btn btn-outline-primary btn-sm" (click)="goToAgendamentos()">
+              Ver Todos
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="proximosAgendamentos.length === 0" class="text-center py-4">
+            <i class="bi bi-calendar-x display-4 text-muted"></i>
+            <p class="text-muted mt-2">Nenhum agendamento próximo</p>
+            <button class="btn btn-primary btn-sm">Agendar Serviço</button>
+          </div>
+          <div *ngFor="let agendamento of proximosAgendamentos" class="agendamento-item mb-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <h6 class="mb-1">{{ agendamento.servico }}</h6>
+                <p class="text-muted small mb-1">
+                  <i class="bi bi-calendar me-1"></i>
+                  {{ formatDate(agendamento.data) }} às {{ agendamento.horario }}
+                </p>
+                <p class="text-muted small mb-0">
+                  <i class="bi bi-person me-1"></i>
+                  {{ agendamento.profissional }}
+                </p>
+              </div>
+              <span [class]="getStatusClass(agendamento.status)">
+                {{ getStatusText(agendamento.status) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Histórico Recente -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-clock-history text-success me-2"></i>
+              Histórico Recente
+            </h5>
+            <button class="btn btn-outline-success btn-sm" (click)="goToHistorico()">
+              Ver Todos
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="historicoRecente.length === 0" class="text-center py-4">
+            <i class="bi bi-inbox display-4 text-muted"></i>
+            <p class="text-muted mt-2">Nenhum histórico disponível</p>
+          </div>
+          <div *ngFor="let item of historicoRecente" class="historico-item mb-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <h6 class="mb-1">{{ item.servico }}</h6>
+                <p class="text-muted small mb-1">
+                  <i class="bi bi-calendar me-1"></i>
+                  {{ formatDate(item.data) }}
+                </p>
+                <span [class]="getStatusClass(item.status)">
+                  {{ getStatusText(item.status) }}
+                </span>
+              </div>
+              <div class="text-end">
+                <span class="text-success fw-bold">{{ formatPrice(item.valor) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ações Rápidas -->
+  <div class="row g-4 mb-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-lightning text-warning me-2"></i>
+            Ações Rápidas
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3 col-sm-6">
+              <button class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4" (click)="goToAgendamentos()">
+                <i class="bi bi-calendar-plus display-6 mb-2"></i>
+                <span class="fw-bold">Agendar</span>
+                <small class="text-muted">Novo agendamento</small>
+              </button>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <button class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4" (click)="goToCarrinho()">
+                <i class="bi bi-cart display-6 mb-2"></i>
+                <span class="fw-bold">Carrinho</span>
+                <small class="text-muted">{{ cart.itemCount }} itens</small>
+              </button>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <button class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4" (click)="goToHistorico()">
+                <i class="bi bi-clock-history display-6 mb-2"></i>
+                <span class="fw-bold">Histórico</span>
+                <small class="text-muted">Ver tratamentos</small>
+              </button>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <button class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4" (click)="goToPerfil()">
+                <i class="bi bi-person display-6 mb-2"></i>
+                <span class="fw-bold">Perfil</span>
+                <small class="text-muted">Meus dados</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Serviços Favoritos -->
+  <div class="row g-4 mb-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-heart text-danger me-2"></i>
+              Seus Serviços Favoritos
+            </h5>
+            <button class="btn btn-outline-primary btn-sm" (click)="loadServicos()">
+              Ver Todos os Serviços
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="isLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-3 text-muted">Carregando serviços...</p>
+          </div>
+          
+          <div *ngIf="!isLoading && servicosFavoritos.length === 0" class="text-center py-4">
+            <i class="bi bi-heart display-4 text-muted"></i>
+            <p class="text-muted mt-2">Nenhum serviço favorito ainda</p>
+            <p class="text-muted small">Explore nossos serviços e adicione aos favoritos!</p>
+          </div>
+
+          <div *ngIf="!isLoading && servicosFavoritos.length > 0" class="row g-3">
+            <div *ngFor="let servico of servicosFavoritos" class="col-lg-4 col-md-6">
+              <div class="card border-0 shadow-sm h-100 servico-card" (click)="openModal(servico)">
+                <div class="card-img-wrapper">
+                  <img [src]="getServicoImage(servico)" class="card-img-top" [alt]="servico.nome" style="height: 150px; object-fit: cover;">
+                  <div class="card-img-overlay d-flex align-items-end">
+                    <div class="w-100">
+                      <span class="badge bg-success mb-2">Favorito</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title mb-2">{{ servico.nome }}</h6>
+                  <p class="card-text text-muted small flex-grow-1">{{ servico.descricao }}</p>
+                  <div class="d-flex justify-content-between align-items-center mt-auto">
+                    <div>
+                      <span class="text-success fw-bold">{{ formatPrice(servico.preco) }}</span>
+                      <div *ngIf="servico.duracao" class="text-muted small">
+                        <i class="bi bi-clock me-1"></i>{{ formatDuration(servico.duracao) }}
+                      </div>
+                    </div>
+                    <button class="btn btn-success btn-sm">
+                      <i class="bi bi-eye me-1"></i>
+                      Ver
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Todos os Serviços -->
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+          <h5 class="card-title mb-0">
+            <i class="bi bi-grid text-primary me-2"></i>
+            Todos os Serviços Disponíveis
+          </h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="isLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-3 text-muted">Carregando serviços...</p>
+          </div>
+
+          <div *ngIf="!isLoading && servicos.length === 0" class="text-center py-4">
+            <i class="bi bi-inbox display-4 text-muted"></i>
+            <h4 class="mt-3 text-muted">Nenhum serviço disponível</h4>
+            <p class="text-muted">Em breve teremos novos serviços para você!</p>
+          </div>
+
+          <div *ngIf="!isLoading && servicos.length > 0" class="row g-3">
+            <div *ngFor="let servico of servicos" class="col-lg-3 col-md-4 col-sm-6">
+              <div class="card border-0 shadow-sm h-100 servico-card" (click)="openModal(servico)">
+                <div class="card-img-wrapper">
+                  <img [src]="getServicoImage(servico)" class="card-img-top" [alt]="servico.nome" style="height: 120px; object-fit: cover;">
+                  <div class="card-img-overlay d-flex align-items-end">
+                    <div class="w-100">
+                      <span class="badge bg-success mb-2">Disponível</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title mb-2">{{ servico.nome }}</h6>
+                  <p class="card-text text-muted small flex-grow-1">{{ servico.descricao }}</p>
+                  <div class="d-flex justify-content-between align-items-center mt-auto">
+                    <div>
+                      <span class="text-success fw-bold">{{ formatPrice(servico.preco) }}</span>
+                      <div *ngIf="servico.duracao" class="text-muted small">
+                        <i class="bi bi-clock me-1"></i>{{ formatDuration(servico.duracao) }}
+                      </div>
+                    </div>
+                    <button class="btn btn-success btn-sm">
+                      <i class="bi bi-eye me-1"></i>
+                      Ver
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal do Serviço -->
+<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-sidebar" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h4 class="modal-title">{{ selectedServico?.nome }}</h4>
+      <button type="button" class="btn-close" (click)="closeModal()" aria-label="Fechar"></button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="servico-image mb-4">
+        <img [src]="getServicoImage(selectedServico!)" [alt]="selectedServico?.nome" class="img-fluid rounded">
+      </div>
+      
+      <div class="servico-info mb-4">
+        <h5 class="mb-3">Descrição do Serviço</h5>
+        <p class="text-muted">{{ selectedServico?.descricao }}</p>
+        
+        <div class="row mb-3">
+          <div class="col-6">
+            <div class="info-item">
+              <i class="bi bi-currency-dollar text-success"></i>
+              <span class="fw-bold">{{ formatPrice(selectedServico?.preco || 0) }}</span>
+            </div>
+          </div>
+          <div class="col-6" *ngIf="selectedServico?.duracao">
+            <div class="info-item">
+              <i class="bi bi-clock text-success"></i>
+              <span>{{ formatDuration(selectedServico!.duracao!) }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="selectedServico?.categoria" class="mb-3">
+          <span class="badge bg-light text-dark">{{ selectedServico!.categoria }}</span>
+        </div>
+      </div>
+      
+      <div class="quantidade-section mb-4">
+        <h6 class="mb-3">Quantidade</h6>
+        <div class="input-group">
+          <button class="btn btn-outline-secondary" type="button" (click)="decrementQuantity()">
+            <i class="bi bi-dash"></i>
+          </button>
+          <input type="number" class="form-control text-center" [(ngModel)]="quantidade" min="1" max="10">
+          <button class="btn btn-outline-secondary" type="button" (click)="incrementQuantity()">
+            <i class="bi bi-plus"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="total-section mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fw-bold">Total:</span>
+          <span class="text-success fw-bold fs-5">{{ formatPrice((selectedServico?.preco || 0) * quantidade) }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-success" (click)="addToCart()">
+        <i class="bi bi-cart-plus me-2"></i>
+        Adicionar ao Carrinho
+      </button>
+    </div>
+  </div>
+</div>

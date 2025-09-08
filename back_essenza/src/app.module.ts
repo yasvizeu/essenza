@@ -11,21 +11,28 @@ import { ProdutosModule } from './produtos/produtos.module';
 import { ServicosModule } from './servicos/servicos.module';
 import { ProtocolosModule } from './protocolos/protocolos.module';
 import { EstoqueModule } from './estoque/estoque.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { AgendamentosModule } from './agendamentos/agendamentos.module';
 import 'dotenv/config';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
+    // host: process.env.DB_HOST,
+    host: 'localhost',
+   // port: Number(process.env.DB_PORT),
+    port: 3306,
+   // username: process.env.DB_USER,
+    username: 'root',
+   // password: process.env.DB_PASS,
+    password: '',
+   // database: process.env.DB_NAME,
+    database: 'essenza',
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: false,
+    synchronize: true, // Temporariamente habilitado para criar tabelas
     charset: 'utf8mb4_unicode_ci',
     // manualInitialization: true,
-  }), AuthModule, PersonasModule, ClientesModule, ProfissionalModule, FichaAnamneseModule, ProdutosModule, ServicosModule, ProtocolosModule, EstoqueModule],
+  }), AuthModule, PersonasModule, ClientesModule, ProfissionalModule, FichaAnamneseModule, ProdutosModule, ServicosModule, ProtocolosModule, EstoqueModule, DashboardModule, AgendamentosModule],
   controllers: [AppController],
   providers: [AppService],
 })

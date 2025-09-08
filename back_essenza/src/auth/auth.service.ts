@@ -17,7 +17,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<{ user: any; token: string; refreshToken: string; expiresIn: number }> {
+  async register(registerDto: RegisterDto): Promise<{ access_token: string; refresh_token: string; user: any }> {
     const { email, senha, nome, tipo, cpf, crm, especialidade } = registerDto;
 
     // Verificar se o usuário já existe
@@ -66,15 +66,31 @@ export class AuthService {
 
     // Retornar usuário sem senha
     const { password: _, ...userWithoutSenha } = savedUser;
-    return { 
-      user: userWithoutSenha, 
-      token, 
-      refreshToken: refreshToken,
-      expiresIn: 3600
+    
+    // Estruturar resposta conforme esperado pelo frontend
+    const response = {
+      access_token: token,
+      refresh_token: refreshToken,
+      user: {
+        id: userWithoutSenha.id,
+        email: userWithoutSenha.email,
+        nome: userWithoutSenha.name, // Mapear 'name' para 'nome'
+        tipo: userWithoutSenha.type, // Mapear 'type' para 'tipo'
+        cpf: userWithoutSenha.cpf,
+        birthDate: userWithoutSenha.birthDate,
+        cell: userWithoutSenha.cell,
+        address: userWithoutSenha.address,
+        especialidade: userWithoutSenha.especialidade,
+        admin: userWithoutSenha.admin,
+        cnec: userWithoutSenha.cnec
+      }
     };
+    
+    console.log('🔍 Debug - Resposta do registro:', response);
+    return response;
   }
 
-  async login(loginDto: LoginDto): Promise<{ user: any; token: string; refreshToken: string; expiresIn: number }> {
+  async login(loginDto: LoginDto): Promise<{ access_token: string; refresh_token: string; user: any }> {
     const { email, senha, userType } = loginDto;
     
     console.log('🔍 Debug - Login attempt:', { email, userType });
@@ -121,15 +137,31 @@ export class AuthService {
 
     // Retornar usuário sem senha
     const { password: _, ...userWithoutSenha } = user;
-    return { 
-      user: userWithoutSenha, 
-      token, 
-      refreshToken: refreshToken,
-      expiresIn: 3600
+    
+    // Estruturar resposta conforme esperado pelo frontend
+    const response = {
+      access_token: token,
+      refresh_token: refreshToken,
+      user: {
+        id: userWithoutSenha.id,
+        email: userWithoutSenha.email,
+        nome: userWithoutSenha.name, // Mapear 'name' para 'nome'
+        tipo: userWithoutSenha.type, // Mapear 'type' para 'tipo'
+        cpf: userWithoutSenha.cpf,
+        birthDate: userWithoutSenha.birthDate,
+        cell: userWithoutSenha.cell,
+        address: userWithoutSenha.address,
+        especialidade: userWithoutSenha.especialidade,
+        admin: userWithoutSenha.admin,
+        cnec: userWithoutSenha.cnec
+      }
     };
+    
+    console.log('🔍 Debug - Resposta do login:', response);
+    return response;
   }
 
-  async loginProfissional(loginDto: LoginDto): Promise<{ user: any; token: string; refreshToken: string; expiresIn: number }> {
+  async loginProfissional(loginDto: LoginDto): Promise<{ access_token: string; refresh_token: string; user: any }> {
     // Forçar o tipo para profissional
     const loginData: LoginDto = { 
       ...loginDto, 
@@ -183,8 +215,8 @@ export class AuthService {
     };
 
     return this.jwtService.sign(payload, { 
-      secret: process.env.JWT_SECRET || 'jwt-secret',
-      expiresIn: '1h'
+      secret: process.env.JWT_SECRET || 'sua-chave-super-secreta-para-jwt-em-producao-mude-esta-chave',
+      expiresIn: '24h'
     });
   }
 

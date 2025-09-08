@@ -1,0 +1,174 @@
+<div class="login-container">
+  <div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+      <div class="col-lg-5 col-md-7 col-sm-9">
+        <!-- Card de Login -->
+        <div class="login-card">
+          <!-- Cabeçalho -->
+          <div class="text-center mb-4">
+            <div class="logo-container mb-3">
+              <i class="bi bi-leaf-fill text-success display-4"></i>
+            </div>
+            <h2 class="fw-bold text-dark mb-2">Bem-vindo de volta!</h2>
+            <p class="text-muted">Faça login para acessar sua conta</p>
+          </div>
+
+          <!-- Seletor de Tipo de Usuário -->
+          <div class="user-type-selector mb-4">
+            <div class="btn-group w-100" role="group">
+              <input type="radio" class="btn-check" name="userType" id="cliente"
+                     [checked]="userType === 'cliente'" (change)="toggleUserType()">
+              <label class="btn btn-outline-success" for="cliente">
+                <i class="bi bi-person me-2"></i>Cliente
+              </label>
+
+              <input type="radio" class="btn-check" name="userType" id="profissional"
+                     [checked]="userType === 'profissional'" (change)="toggleUserType()">
+              <label class="btn btn-outline-success" for="profissional">
+                <i class="bi bi-briefcase me-2"></i>Profissional
+              </label>
+            </div>
+          </div>
+
+          <!-- Formulário de Login -->
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email -->
+            <div class="form-group mb-3">
+              <label for="email" class="form-label fw-semibold">
+                <i class="bi bi-envelope me-2 text-success"></i>Email
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-envelope text-muted"></i>
+                </span>
+                <input type="email"
+                       class="form-control border-start-0"
+                       id="email"
+                       formControlName="email"
+                       placeholder="seu@email.com"
+                       [class.is-invalid]="isFieldInvalid('email')">
+              </div>
+              <div class="text-danger small mt-1"
+                   *ngIf="getErrorMessage('email')">
+                {{ getErrorMessage('email') }}
+              </div>
+            </div>
+
+            <!-- Senha -->
+                         <div class="form-group mb-3">
+               <label for="senha" class="form-label fw-semibold">
+                 <i class="bi bi-lock me-2 text-success"></i>Senha
+               </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="bi bi-lock text-muted"></i>
+                </span>
+                <input [type]="showPassword ? 'text' : 'password'"
+                       class="form-control border-start-0"
+                       id="senha"
+                       formControlName="senha"
+                       placeholder="Digite sua senha"
+                       [class.is-invalid]="isFieldInvalid('senha')">
+                <button type="button"
+                        class="btn btn-outline-secondary border-start-0"
+                        (click)="togglePasswordVisibility()"
+                        [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+                        [title]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                  <i class="bi" 
+                     [class.bi-eye]="!showPassword" 
+                     [class.bi-eye-slash]="showPassword"
+                     [attr.aria-hidden]="true"></i>
+                </button>
+              </div>
+                              <div class="text-danger small mt-1"
+                     *ngIf="getErrorMessage('senha')">
+                  {{ getErrorMessage('senha') }}
+                </div>
+            </div>
+
+            <!-- Opções Adicionais -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="rememberMe" formControlName="rememberMe">
+                <label class="form-check-label text-muted small" for="rememberMe">
+                  Lembrar de mim
+                </label>
+              </div>
+              <a href="#" class="text-success text-decoration-none small">
+                Esqueceu a senha?
+              </a>
+            </div>
+
+            <!-- Mensagem de Erro -->
+            <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              {{ errorMessage }}
+            </div>
+
+            <!-- Botão de Login -->
+            <button type="submit"
+                    class="btn btn-success w-100 py-2 mb-3"
+                    [disabled]="isLoading || !loginForm.valid">
+              <span *ngIf="!isLoading">
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+                Entrar
+              </span>
+              <span *ngIf="isLoading">
+                <i class="bi bi-hourglass-split me-2"></i>
+                Entrando...
+              </span>
+            </button>
+          </form>
+
+          <!-- Separador -->
+          <div class="separator my-4">
+            <span class="separator-text">ou</span>
+          </div>
+
+          <!-- Botão de Cadastro -->
+          <div class="text-center">
+            <p class="text-muted mb-2">Não tem uma conta?</p>
+            <button type="button"
+                    class="btn btn-outline-success w-100 py-2"
+                    (click)="goToCadastro()">
+              <i class="bi bi-person-plus me-2"></i>
+              Criar Conta
+            </button>
+          </div>
+
+          <!-- Informações Adicionais -->
+          <div class="mt-4 text-center">
+            <small class="text-muted">
+              <i class="bi bi-shield-check me-1"></i>
+              Seus dados estão seguros e protegidos
+            </small>
+          </div>
+        </div>
+
+        <!-- Card de Informações -->
+        <div class="info-card mt-4">
+          <div class="row text-center">
+            <div class="col-4">
+              <div class="info-item">
+                <i class="bi bi-shield-check text-success fs-4"></i>
+                <small class="d-block text-muted">Seguro</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="info-item">
+                <i class="bi bi-lightning text-success fs-4"></i>
+                <small class="d-block text-muted">Rápido</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="info-item">
+                <i class="bi bi-people text-success fs-4"></i>
+                <small class="d-block text-muted">Confiável</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
