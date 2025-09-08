@@ -16,6 +16,7 @@ Aqui você encontrará informações sobre funcionalidades, arquitetura, uso, in
 - Contribuição
 - Licença
 
+
 🎯 Visão Geral
 
 O Essenza é um sistema completo que ajuda clínicas de estética a:
@@ -28,6 +29,7 @@ O Essenza é um sistema completo que ajuda clínicas de estética a:
 
 🔒 Foco em segurança, boas práticas de desenvolvimento e experiência do usuário.
 
+
 🏗️ Arquitetura do Sistema
 🔧 Stack Tecnológica
 Frontend  → Angular 20 + TailwindCSS
@@ -36,12 +38,14 @@ Database  → MySQL 8
 Services  → Microserviço Spring Boot (envio de e-mails)
 Integrations → Google Calendar API
 
+
 🔎 Diagrama Simplificado
 [ Angular Front ] ←→ [ NestJS API ] ←→ [ MySQL ]
                           ↓
                  [ Spring Boot Service ]
                           ↓
                 [ E-mails / Notificações ]
+
 
 📦 Estrutura de Módulos
 
@@ -74,6 +78,7 @@ Integrations → Google Calendar API
 - Dashboard Profissional (agenda, estoque, relatórios)
 
 - Formulários interativos com validações
+
 
 🚀 Instalação e Configuração
 🔑 Pré-requisitos
@@ -152,6 +157,7 @@ POST /auth/login
 POST /auth/register
 
 
+
 📌 Veja a coleção Postman em: /docs/Essenza_API.postman_collection.json
 
 💻 Desenvolvimento
@@ -223,3 +229,4 @@ Sinta-se livre para usar, modificar e contribuir.
 ✨ Última atualização: Setembro 2025
 
 📌 Versão da documentação: 1.1.0
+
