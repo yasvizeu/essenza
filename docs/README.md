@@ -17,6 +17,7 @@ Aqui você encontrará informações sobre funcionalidades, arquitetura, uso, in
 - Licença
 
 
+
 🎯 Visão Geral
 
 O Essenza é um sistema completo que ajuda clínicas de estética a:
@@ -229,4 +230,5 @@ Sinta-se livre para usar, modificar e contribuir.
 ✨ Última atualização: Setembro 2025
 
 📌 Versão da documentação: 1.1.0
+
 
