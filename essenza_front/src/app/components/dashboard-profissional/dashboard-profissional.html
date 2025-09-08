@@ -451,13 +451,31 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Nome Completo *</label>
-                <input type="text" class="form-control" formControlName="nome">
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('nome')"
+                       [class.is-invalid]="hasFieldError('nome')"
+                       formControlName="nome"
+                       (input)="onFieldChange('nome')"
+                       placeholder="Digite o nome completo">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('nome')">
+                  {{ getErrorMessage('nome') }}
+                </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Email *</label>
-                <input type="email" class="form-control" formControlName="email">
+                <input type="email" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('email')"
+                       [class.is-invalid]="hasFieldError('email')"
+                       formControlName="email"
+                       (input)="onFieldChange('email')"
+                       placeholder="email@exemplo.com">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('email')">
+                  {{ getErrorMessage('email') }}
+                </div>
               </div>
             </div>
           </div>
@@ -465,13 +483,90 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Senha *</label>
-                <input type="password" class="form-control" formControlName="senha">
+                <div class="input-group">
+                  <input [type]="showPassword ? 'text' : 'password'" 
+                         class="form-control" 
+                         [class.is-valid]="isFieldValid('senha')"
+                         [class.is-invalid]="hasFieldError('senha')"
+                         formControlName="senha"
+                         (input)="onPasswordChange($event)"
+                         placeholder="Mínimo 8 caracteres">
+                  <button class="btn btn-outline-secondary" 
+                          type="button" 
+                          (click)="togglePasswordVisibility()"
+                          [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                    <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+                  </button>
+                </div>
+                
+                <!-- Feedback visual da senha -->
+                <div class="mt-2" *ngIf="novoProfissionalForm.get('senha')?.value">
+                  <div class="row">
+                    <div class="col-12">
+                      <small class="text-muted">Requisitos da senha:</small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.minLength" 
+                             [class.text-danger]="!getPasswordStatus().requirements.minLength">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.minLength" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.minLength"></i>
+                        8+ caracteres
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasUpperCase" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasUpperCase">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasUpperCase" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasUpperCase"></i>
+                        Maiúscula
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasLowerCase" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasLowerCase">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasLowerCase" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasLowerCase"></i>
+                        Minúscula
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasNumbers" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasNumbers">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasNumbers" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasNumbers"></i>
+                        Número
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small [class.text-success]="getPasswordStatus().requirements.hasSpecialChar" 
+                             [class.text-danger]="!getPasswordStatus().requirements.hasSpecialChar">
+                        <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasSpecialChar" 
+                           [class.bi-x-circle]="!getPasswordStatus().requirements.hasSpecialChar"></i>
+                        Especial
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('senha')">
+                  {{ getErrorMessage('senha') }}
+                </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">CPF *</label>
-                <input type="text" class="form-control" formControlName="cpf">
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('cpf')"
+                       [class.is-invalid]="hasFieldError('cpf')"
+                       formControlName="cpf"
+                       (input)="onCpfChange($event)"
+                       placeholder="000.000.000-00"
+                       maxlength="14">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('cpf')">
+                  {{ getErrorMessage('cpf') }}
+                </div>
               </div>
             </div>
           </div>
@@ -479,31 +574,76 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Data de Nascimento *</label>
-                <input type="date" class="form-control" formControlName="birthDate">
+                <input type="date" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('birthDate')"
+                       [class.is-invalid]="hasFieldError('birthDate')"
+                       formControlName="birthDate"
+                       (change)="onFieldChange('birthDate')">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('birthDate')">
+                  {{ getErrorMessage('birthDate') }}
+                </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Celular *</label>
-                <input type="text" class="form-control" formControlName="cell">
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('cell')"
+                       [class.is-invalid]="hasFieldError('cell')"
+                       formControlName="cell"
+                       (input)="onCellChange($event)"
+                       placeholder="(11) 99999-9999"
+                       maxlength="15">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('cell')">
+                  {{ getErrorMessage('cell') }}
+                </div>
               </div>
             </div>
           </div>
           <div class="mb-3">
             <label class="form-label">Endereço *</label>
-            <input type="text" class="form-control" formControlName="address">
+            <textarea class="form-control" 
+                      [class.is-valid]="isFieldValid('address')"
+                      [class.is-invalid]="hasFieldError('address')"
+                      formControlName="address"
+                      (input)="onFieldChange('address')"
+                      rows="3"
+                      placeholder="Rua, número, bairro, cidade - UF, CEP"></textarea>
+            <div class="text-danger small mt-1" *ngIf="getErrorMessage('address')">
+              {{ getErrorMessage('address') }}
+            </div>
           </div>
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Especialidade</label>
-                <input type="text" class="form-control" formControlName="especialidade">
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('especialidade')"
+                       [class.is-invalid]="hasFieldError('especialidade')"
+                       formControlName="especialidade"
+                       (input)="onFieldChange('especialidade')"
+                       placeholder="Ex: Dermatologia, Estética">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('especialidade')">
+                  {{ getErrorMessage('especialidade') }}
+                </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">CRM</label>
-                <input type="text" class="form-control" formControlName="cnec">
+                <input type="text" 
+                       class="form-control" 
+                       [class.is-valid]="isFieldValid('cnec')"
+                       [class.is-invalid]="hasFieldError('cnec')"
+                       formControlName="cnec"
+                       (input)="onFieldChange('cnec')"
+                       placeholder="Número do CRM">
+                <div class="text-danger small mt-1" *ngIf="getErrorMessage('cnec')">
+                  {{ getErrorMessage('cnec') }}
+                </div>
               </div>
             </div>
           </div>

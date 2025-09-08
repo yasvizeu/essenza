@@ -51,8 +51,11 @@
                  </label>
                  <input type="text"
                         class="form-control"
+                        [class.is-valid]="isFieldValid('name')"
+                        [class.is-invalid]="hasFieldError('name')"
                         id="name"
                         formControlName="name"
+                        (input)="onNameChange($event)"
                         placeholder="Digite seu nome completo">
                  <div class="text-danger small mt-1"
                       *ngIf="getErrorMessage('name', cadastroForm)">
@@ -67,6 +70,8 @@
                 </label>
                 <input type="email"
                        class="form-control"
+                       [class.is-valid]="isFieldValid('email')"
+                       [class.is-invalid]="hasFieldError('email')"
                        id="email"
                        formControlName="email"
                        (input)="onEmailChange($event)"
@@ -82,14 +87,20 @@
                 <label for="cpf" class="form-label fw-bold">
                   <i class="bi bi-card-text me-2"></i>CPF *
                 </label>
-                <input type="text"
-                       class="form-control"
-                       id="cpf"
-                       formControlName="cpf"
-                       (input)="formatarCPF($event)"
-                       (blur)="onCpfChange($event)"
-                       placeholder="000.000.000-00"
-                       maxlength="14">
+                <div class="input-group">
+                  <input type="text"
+                         class="form-control"
+                         [class.is-valid]="isFieldValid('cpf')"
+                         [class.is-invalid]="hasFieldError('cpf')"
+                         id="cpf"
+                         formControlName="cpf"
+                         (input)="onCpfChange($event)"
+                         placeholder="000.000.000-00"
+                         maxlength="14">
+                  <span class="input-group-text" *ngIf="isCheckingCpf">
+                    <i class="bi bi-arrow-clockwise spin"></i>
+                  </span>
+                </div>
                 <div class="text-danger small mt-1"
                      *ngIf="getErrorMessage('cpf', cadastroForm)">
                   {{ getErrorMessage('cpf', cadastroForm) }}
@@ -103,8 +114,11 @@
                 </label>
                 <input type="date"
                        class="form-control"
+                       [class.is-valid]="isFieldValid('birthDate')"
+                       [class.is-invalid]="hasFieldError('birthDate')"
                        id="birthDate"
-                       formControlName="birthDate">
+                       formControlName="birthDate"
+                       (change)="onBirthDateChange($event)">
                 <div class="text-danger small mt-1"
                      *ngIf="getErrorMessage('birthDate', cadastroForm)">
                   {{ getErrorMessage('birthDate', cadastroForm) }}
@@ -118,10 +132,11 @@
                 </label>
                 <input type="text"
                        class="form-control"
+                       [class.is-valid]="isFieldValid('cell')"
+                       [class.is-invalid]="hasFieldError('cell')"
                        id="cell"
                        formControlName="cell"
-                       (input)="formatarCelular($event)"
-                       (blur)="onCellChange($event)"
+                       (input)="onCellChange($event)"
                        placeholder="(11) 99999-9999"
                        maxlength="15">
                 <div class="text-danger small mt-1"
@@ -136,8 +151,11 @@
                   <i class="bi bi-geo-alt me-2"></i>Endereço Completo *
                 </label>
                 <textarea class="form-control"
+                          [class.is-valid]="isFieldValid('address')"
+                          [class.is-invalid]="hasFieldError('address')"
                           id="address"
                           formControlName="address"
+                          (input)="onAddressChange($event)"
                           rows="3"
                           placeholder="Rua, número, bairro, cidade - UF, CEP"></textarea>
                 <div class="text-danger small mt-1"
@@ -151,11 +169,72 @@
                  <label for="password" class="form-label fw-bold">
                    <i class="bi bi-lock me-2"></i>Senha *
                  </label>
-                 <input type="password"
-                        class="form-control"
-                        id="password"
-                        formControlName="password"
-                        placeholder="Mínimo 8 caracteres">
+                 <div class="input-group">
+                   <input [type]="showPassword ? 'text' : 'password'"
+                          class="form-control"
+                          [class.is-valid]="isFieldValid('password')"
+                          [class.is-invalid]="hasFieldError('password')"
+                          id="password"
+                          formControlName="password"
+                          (input)="onPasswordChange($event)"
+                          placeholder="Mínimo 8 caracteres">
+                   <button class="btn btn-outline-secondary" 
+                           type="button" 
+                           (click)="togglePasswordVisibility()"
+                           [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                     <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+                   </button>
+                 </div>
+                 
+                 <!-- Feedback visual da senha -->
+                 <div class="mt-2" *ngIf="cadastroForm.get('password')?.value">
+                   <div class="row">
+                     <div class="col-12">
+                       <small class="text-muted">Requisitos da senha:</small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.minLength" 
+                              [class.text-danger]="!getPasswordStatus().requirements.minLength">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.minLength" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.minLength"></i>
+                         8+ caracteres
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasUpperCase" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasUpperCase">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasUpperCase" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasUpperCase"></i>
+                         Maiúscula
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasLowerCase" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasLowerCase">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasLowerCase" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasLowerCase"></i>
+                         Minúscula
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasNumbers" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasNumbers">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasNumbers" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasNumbers"></i>
+                         Número
+                       </small>
+                     </div>
+                     <div class="col-6">
+                       <small [class.text-success]="getPasswordStatus().requirements.hasSpecialChar" 
+                              [class.text-danger]="!getPasswordStatus().requirements.hasSpecialChar">
+                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasSpecialChar" 
+                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasSpecialChar"></i>
+                         Especial
+                       </small>
+                     </div>
+                   </div>
+                 </div>
+                 
                  <div class="text-danger small mt-1"
                       *ngIf="getErrorMessage('password', cadastroForm)">
                    {{ getErrorMessage('password', cadastroForm) }}
@@ -167,11 +246,22 @@
                 <label for="confirmPassword" class="form-label fw-bold">
                   <i class="bi bi-lock-fill me-2"></i>Confirmar Senha *
                 </label>
-                <input type="password"
-                       class="form-control"
-                       id="confirmPassword"
-                       formControlName="confirmPassword"
-                       placeholder="Confirme sua senha">
+                <div class="input-group">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'"
+                         class="form-control"
+                         [class.is-valid]="isFieldValid('confirmPassword')"
+                         [class.is-invalid]="hasFieldError('confirmPassword')"
+                         id="confirmPassword"
+                         formControlName="confirmPassword"
+                         (input)="onPasswordChange($event)"
+                         placeholder="Confirme sua senha">
+                  <button class="btn btn-outline-secondary" 
+                          type="button" 
+                          (click)="toggleConfirmPasswordVisibility()"
+                          [attr.aria-label]="showConfirmPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                    <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
+                  </button>
+                </div>
                 <div class="text-danger small mt-1"
                      *ngIf="getErrorMessage('confirmPassword', cadastroForm)">
                   {{ getErrorMessage('confirmPassword', cadastroForm) }}

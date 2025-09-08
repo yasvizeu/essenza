@@ -38,4 +38,9 @@ export class ClientesService {
   remove(id: number) {
     return this.clienteRepo.delete(id);
   }
+
+  async verificarCpfExistente(cpf: string): Promise<{ exists: boolean }> {
+    const cliente = await this.clienteRepo.findOneBy({ cpf });
+    return { exists: !!cliente };
+  }
 }

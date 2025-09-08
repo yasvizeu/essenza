@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { DashboardService, Produto, Servico, Cliente, Profissional, MovimentoEstoque, SaldoProduto } from '../../services/dashboard';
@@ -105,15 +105,15 @@ export class DashboardProfissionalComponent implements OnInit {
 
     this.novoProfissionalForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      nome: ['', [Validators.required, Validators.minLength(3)]],
-      senha: ['', [Validators.required, Validators.minLength(8)]],
-      cpf: ['', [Validators.required]],
-      birthDate: ['', [Validators.required]],
-      cell: ['', [Validators.required]],
-      address: ['', [Validators.required, Validators.minLength(10)]],
-      especialidade: [''],
+      nome: ['', [Validators.required, Validators.minLength(3), this.nameValidator]],
+      senha: ['', [Validators.required, Validators.minLength(8), this.passwordStrengthValidator]],
+      cpf: ['', [Validators.required, this.cpfValidator]],
+      birthDate: ['', [Validators.required, this.birthDateValidator]],
+      cell: ['', [Validators.required, this.cellValidator]],
+      address: ['', [Validators.required, Validators.minLength(10), this.addressValidator]],
+      especialidade: ['', this.especialidadeValidator],
       admin: [false],
-      cnec: ['']
+      cnec: ['', this.cnecValidator]
     });
 
     this.buscarClientesForm = this.fb.group({
@@ -712,5 +712,319 @@ export class DashboardProfissionalComponent implements OnInit {
         notification.parentNode.removeChild(notification);
       }
     }, 4000);
+  }
+
+  // ===== VALIDADORES PERSONALIZADOS =====
+
+  // Validador de nome
+  nameValidator(control: AbstractControl): { [key: string]: any } | null {
+    const name = control.value;
+    if (!name) return null;
+
+    const errors: any = {};
+    if (name.length < 3) errors.nameTooShort = true;
+    if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) errors.nameInvalidChars = true;
+    if (name.trim().split(' ').length < 2) errors.nameNeedSurname = true;
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
+  // Validador de força da senha
+  passwordStrengthValidator(control: AbstractControl): { [key: string]: any } | null {
+    const password = control.value;
+    if (!password) return null;
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasMinLength = password.length >= 8;
+
+    const errors: any = {};
+    if (!hasMinLength) errors.passwordMinLength = true;
+    if (!hasUpperCase) errors.passwordNoUpperCase = true;
+    if (!hasLowerCase) errors.passwordNoLowerCase = true;
+    if (!hasNumbers) errors.passwordNoNumbers = true;
+    if (!hasSpecialChar) errors.passwordNoSpecialChar = true;
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
+  // Validador de CPF
+  cpfValidator(control: AbstractControl): { [key: string]: any } | null {
+    const cpf = control.value;
+    if (!cpf) return null;
+
+    const cleanCpf = cpf.replace(/\D/g, '');
+    if (cleanCpf.length !== 11) return { cpfInvalidLength: true };
+    if (!this.validarCPF(cpf)) return { cpfInvalid: true };
+
+    return null;
+  }
+
+  // Validador de data de nascimento
+  birthDateValidator(control: AbstractControl): { [key: string]: any } | null {
+    const birthDate = control.value;
+    if (!birthDate) return null;
+
+    const date = new Date(birthDate);
+    const today = new Date();
+    const age = today.getFullYear() - date.getFullYear();
+    const monthDiff = today.getMonth() - date.getMonth();
+
+    const errors: any = {};
+    if (isNaN(date.getTime())) errors.birthDateInvalid = true;
+    if (age < 18 || (age === 18 && monthDiff < 0)) errors.birthDateTooYoung = true;
+    if (age > 120) errors.birthDateTooOld = true;
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
+  // Validador de celular
+  cellValidator(control: AbstractControl): { [key: string]: any } | null {
+    const cell = control.value;
+    if (!cell) return null;
+
+    const cleanCell = cell.replace(/\D/g, '');
+    const errors: any = {};
+    
+    if (cleanCell.length !== 11) errors.cellInvalidLength = true;
+    if (!/^[1-9]{2}[2-9][0-9]{8}$/.test(cleanCell)) errors.cellInvalidFormat = true;
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
+  // Validador de endereço
+  addressValidator(control: AbstractControl): { [key: string]: any } | null {
+    const address = control.value;
+    if (!address) return null;
+
+    const errors: any = {};
+    if (address.length < 10) errors.addressTooShort = true;
+    if (!/^[a-zA-ZÀ-ÿ0-9\s,.-]+$/.test(address)) errors.addressInvalidChars = true;
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
+  // Validador de especialidade
+  especialidadeValidator(control: AbstractControl): { [key: string]: any } | null {
+    const especialidade = control.value;
+    if (!especialidade) return null;
+
+    const errors: any = {};
+    if (especialidade.length < 3) errors.especialidadeTooShort = true;
+    if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(especialidade)) errors.especialidadeInvalidChars = true;
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
+  // Validador de CRM/CNEC
+  cnecValidator(control: AbstractControl): { [key: string]: any } | null {
+    const cnec = control.value;
+    if (!cnec) return null;
+
+    const errors: any = {};
+    if (cnec.length < 4) errors.cnecTooShort = true;
+    if (!/^[0-9]+$/.test(cnec)) errors.cnecInvalidFormat = true;
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
+  // ===== FUNÇÕES DE VALIDAÇÃO EM TEMPO REAL =====
+
+  // Validação em tempo real para todos os campos
+  onFieldChange(fieldName: string): void {
+    const control = this.novoProfissionalForm.get(fieldName);
+    if (control) {
+      control.markAsTouched();
+      control.updateValueAndValidity();
+    }
+  }
+
+  // Validação de CPF em tempo real
+  onCpfChange(event: any): void {
+    this.formatarCPFInput(event);
+    this.onFieldChange('cpf');
+  }
+
+  // Validação de celular em tempo real
+  onCellChange(event: any): void {
+    this.formatarCelularInput(event);
+    this.onFieldChange('cell');
+  }
+
+  // Validação de senha em tempo real
+  onPasswordChange(event: any): void {
+    this.onFieldChange('senha');
+  }
+
+  // ===== FUNÇÕES DE FORMATAÇÃO =====
+
+  // Formatar CPF automaticamente (para input)
+  formatarCPFInput(event: any): void {
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length <= 11) {
+      value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+      event.target.value = value;
+    }
+  }
+
+  // Formatar celular automaticamente (para input)
+  formatarCelularInput(event: any): void {
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length <= 11) {
+      value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      event.target.value = value;
+    }
+  }
+
+  // ===== FUNÇÕES DE VALIDAÇÃO AUXILIARES =====
+
+  // Validar CPF
+  validarCPF(cpf: string): boolean {
+    cpf = cpf.replace(/\D/g, '');
+    if (cpf.length !== 11) return false;
+    if (/^(\d)\1+$/.test(cpf)) return false;
+
+    let soma = 0;
+    for (let i = 0; i < 9; i++) {
+      soma += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let resto = 11 - (soma % 11);
+    let dv1 = resto < 2 ? 0 : resto;
+
+    soma = 0;
+    for (let i = 0; i < 10; i++) {
+      soma += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    resto = 11 - (soma % 11);
+    let dv2 = resto < 2 ? 0 : resto;
+
+    return parseInt(cpf.charAt(9)) === dv1 && parseInt(cpf.charAt(10)) === dv2;
+  }
+
+  // Obter status da senha para feedback visual
+  getPasswordStatus(): { valid: boolean, requirements: any } {
+    const password = this.novoProfissionalForm.get('senha')?.value || '';
+    
+    const requirements = {
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
+      hasNumbers: /\d/.test(password),
+      hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+
+    const valid = Object.values(requirements).every(req => req === true);
+    
+    return { valid, requirements };
+  }
+
+  // Verificar se um campo é válido
+  isFieldValid(fieldName: string): boolean {
+    const control = this.novoProfissionalForm.get(fieldName);
+    return control ? control.valid && control.touched : false;
+  }
+
+  // Verificar se um campo tem erro
+  hasFieldError(fieldName: string): boolean {
+    const control = this.novoProfissionalForm.get(fieldName);
+    return control ? control.invalid && control.touched : false;
+  }
+
+  // Controle de visualização de senha
+  showPassword = false;
+
+  // Alternar visualização da senha
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  // Obter mensagens de erro para campos específicos
+  getErrorMessage(controlName: string): string {
+    const control = this.novoProfissionalForm.get(controlName);
+    if (control && control.errors && control.touched) {
+      // Erros básicos
+      if (control.errors['required']) {
+        return 'Este campo é obrigatório';
+      }
+      
+      // Erros de email
+      if (control.errors['email']) {
+        return 'Email inválido';
+      }
+      
+      // Erros de nome
+      if (control.errors['nameTooShort']) {
+        return 'Nome deve ter pelo menos 3 caracteres';
+      } else if (control.errors['nameInvalidChars']) {
+        return 'Nome deve conter apenas letras e espaços';
+      } else if (control.errors['nameNeedSurname']) {
+        return 'Digite seu nome completo (nome e sobrenome)';
+      }
+      
+      // Erros de CPF
+      if (control.errors['cpfInvalidLength']) {
+        return 'CPF deve ter 11 dígitos';
+      } else if (control.errors['cpfInvalid']) {
+        return 'CPF inválido';
+      }
+      
+      // Erros de data de nascimento
+      if (control.errors['birthDateInvalid']) {
+        return 'Data de nascimento inválida';
+      } else if (control.errors['birthDateTooYoung']) {
+        return 'Profissional deve ter pelo menos 18 anos';
+      } else if (control.errors['birthDateTooOld']) {
+        return 'Data de nascimento inválida';
+      }
+      
+      // Erros de celular
+      if (control.errors['cellInvalidLength']) {
+        return 'Celular deve ter 11 dígitos';
+      } else if (control.errors['cellInvalidFormat']) {
+        return 'Formato de celular inválido';
+      }
+      
+      // Erros de endereço
+      if (control.errors['addressTooShort']) {
+        return 'Endereço deve ter pelo menos 10 caracteres';
+      } else if (control.errors['addressInvalidChars']) {
+        return 'Endereço contém caracteres inválidos';
+      }
+      
+      // Erros de especialidade
+      if (control.errors['especialidadeTooShort']) {
+        return 'Especialidade deve ter pelo menos 3 caracteres';
+      } else if (control.errors['especialidadeInvalidChars']) {
+        return 'Especialidade deve conter apenas letras e espaços';
+      }
+      
+      // Erros de CRM/CNEC
+      if (control.errors['cnecTooShort']) {
+        return 'CRM deve ter pelo menos 4 dígitos';
+      } else if (control.errors['cnecInvalidFormat']) {
+        return 'CRM deve conter apenas números';
+      }
+      
+      // Erros de senha
+      if (control.errors['passwordMinLength']) {
+        return 'Senha deve ter pelo menos 8 caracteres';
+      } else if (control.errors['passwordNoUpperCase']) {
+        return 'Senha deve conter pelo menos 1 letra maiúscula';
+      } else if (control.errors['passwordNoLowerCase']) {
+        return 'Senha deve conter pelo menos 1 letra minúscula';
+      } else if (control.errors['passwordNoNumbers']) {
+        return 'Senha deve conter pelo menos 1 número';
+      } else if (control.errors['passwordNoSpecialChar']) {
+        return 'Senha deve conter pelo menos 1 caractere especial (!@#$%^&*...)';
+      }
+      
+      // Erro de comprimento mínimo genérico
+      if (control.errors['minlength']) {
+        return `Mínimo de ${control.errors['minlength'].requiredLength} caracteres`;
+      }
+    }
+    return '';
   }
 }

@@ -6,7 +6,7 @@ export interface Cliente {
   email: string;
   name: string; // Mudado de 'nome' para 'name' para corresponder ao backend
   password: string; // Mudado de 'senha' para 'password' para corresponder ao backend
-  type: 'cliente' | 'profissional'; // Mudado de 'tipo' para 'type' para corresponder ao backend
+  type: 'cliente' | 'profissional'; // Campo necessário para identificar a tabela
   cpf: string;
   birthDate: string;
   cell: string;
@@ -89,6 +89,12 @@ export class ClienteService {
   // Buscar ficha de anamnese por ID do cliente
   buscarFichaAnamnese(clienteId: number): Observable<FichaAnamnese> {
     return this.http.get<FichaAnamnese>(`${this.apiUrl}/fichas?clienteId=${clienteId}`);
+  }
+
+  // Verificar se CPF já existe
+  verificarCpfExistente(cpf: string): Observable<{ exists: boolean }> {
+    const cleanCpf = cpf.replace(/\D/g, '');
+    return this.http.get<{ exists: boolean }>(`${this.apiUrl}/clientes/verificar-cpf/${cleanCpf}`);
   }
 
   // Atualizar cliente

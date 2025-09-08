@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsBoolean, isNotEmpty, IsString, IsEmail, IsStrongPassword, IsIdentityCard, IsDate, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsBoolean, isNotEmpty, IsString, IsEmail, IsStrongPassword, IsIdentityCard, IsDate, IsDateString, IsOptional, IsIn } from 'class-validator';
 import { IsCpf } from 'src/validators/is_cpf.decorator';
 export class CreatePersonaDto {
     @IsNotEmpty()
@@ -7,7 +7,6 @@ export class CreatePersonaDto {
 
     @IsNotEmpty()
     @IsString()
-    @IsDateString()
     birthDate: string;
 
     @IsNotEmpty()
@@ -19,7 +18,7 @@ export class CreatePersonaDto {
     email: string;
 
     @IsNotEmpty()
-    @IsStrongPassword()
+    @IsString()
     password: string;
 
     @IsNotEmpty()
@@ -27,6 +26,11 @@ export class CreatePersonaDto {
     cell: string;
     
     @IsString()
+    @IsOptional()
     address: string;
-    type: 'cliente'| 'profissional';
+
+    @IsNotEmpty()
+    @IsString()
+    @IsIn(['cliente', 'profissional'], { message: 'Tipo deve ser cliente ou profissional' })
+    type: 'cliente' | 'profissional';
 }

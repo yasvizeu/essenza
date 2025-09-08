@@ -29,6 +29,12 @@ export class ClientesController {
     return { message: 'Clientes test route working', timestamp: new Date().toISOString() };
   }
 
+  @Get('verificar-cpf/:cpf')
+  verificarCpfExistente(@Param('cpf') cpf: string) {
+    this.logger.log(`Verificando CPF: ${cpf}`);
+    return this.clientesService.verificarCpfExistente(cpf);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     this.logger.log(`Finding cliente with id: ${id}`);

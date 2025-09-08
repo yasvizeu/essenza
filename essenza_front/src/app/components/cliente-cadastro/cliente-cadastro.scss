@@ -181,3 +181,27 @@
   color: #721c24;
   border-left: 4px solid #dc3545;
 }
+
+// Animação de carregamento para verificação de CPF
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Estilização do indicador de carregamento
+.input-group-text {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  
+  .spin {
+    color: #28a745;
+  }
+}
