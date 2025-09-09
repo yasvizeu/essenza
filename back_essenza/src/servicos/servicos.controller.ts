@@ -3,7 +3,7 @@ import { ServicosService } from './servicos.service';
 import { CreateServicoDto } from './dto/create-servico.dto';
 import { UpdateServicoDto } from './dto/update-servico.dto';
 
-@Controller('servicos')
+@Controller('servico')
 export class ServicosController {
   private readonly logger = new Logger(ServicosController.name);
 

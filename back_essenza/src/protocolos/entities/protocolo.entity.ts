@@ -5,23 +5,23 @@ export class Protocolo {
   sort(arg0: (a: any, b: any) => number): Protocolo | null {
     throw new Error('Method not implemented.');
   }
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    nome: string;
+  @Column()
+  nome: string;
 
-    @Column()
-    descricao: string;
+  @Column()
+  descricao: string;
 
-    @Column({ type: 'text', nullable: true })
-    observacoes: string;
+  @Column({ type: 'text', nullable: true })
+  observacoes: string;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    dataCriacao: Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  dataCriacao: Date;
 
-    //steps = relaçao com o pivot
-    @OneToMany('ProtocoloServico', (ps: any) => ps.protocolo, { cascade: true })
-    servicos: any[];
-    steps: Protocolo | null;
+  //steps = relaçao com o pivot
+  @OneToMany('ProtocoloServico', (ps: any) => ps.protocolo, { cascade: true })
+  servicos: any[];
+  steps: Protocolo | null;
 }
