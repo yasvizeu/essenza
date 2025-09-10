@@ -378,7 +378,7 @@
       <div class="total-section mb-4">
         <div class="d-flex justify-content-between align-items-center">
           <span class="fw-bold">Total:</span>
-          <span class="text-success fw-bold fs-5">{{ formatPrice((selectedServico?.preco || 0) * quantidade) }}</span>
+          <span class="text-success fw-bold fs-5">{{ formatPrice(calculateTotalPrice(selectedServico, quantidade)) }}</span>
         </div>
       </div>
     </div>

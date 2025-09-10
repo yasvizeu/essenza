@@ -28,6 +28,20 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   proximosAgendamentos: any[] = [];
   historicoRecente: any[] = [];
   servicosFavoritos: Servico[] = [];
+  pedidosPendentes: any[] = [];
+
+  // Modal de agendamento
+  showAgendamentoModal = false;
+  servicoParaAgendar: any = null;
+  profissionais: any[] = [];
+  profissionalSelecionado: any = null;
+  datasDisponiveis: string[] = [];
+  dataSelecionada: string = '';
+  horariosDisponiveis: string[] = [];
+  horarioSelecionado: string = '';
+  observacoesAgendamento: string = '';
+  isLoadingAgendamento = false;
+  isConfirmandoAgendamento = false;
 
   constructor(
     private authService: AuthService,
@@ -49,9 +63,12 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     this.loadServicos();
     this.loadDashboardData();
     
-    this.cartSubscription = this.cartService.getCartObservable().subscribe(cart => {
+    this.cartSubscription = this.cartService.cart$.subscribe(cart => {
       this.cart = cart;
     });
+
+    // Carregar carrinho se autenticado
+    this.cartService.loadCartIfAuthenticated();
   }
 
   // Método para recarregar dados quando necessário
@@ -68,6 +85,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   private loadDashboardData(): void {
     this.loadProximosAgendamentos();
     this.loadHistoricoRecente();
+    this.loadPedidosPendentes();
   }
 
   private loadProximosAgendamentos(): void {
@@ -127,14 +145,38 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadPedidosPendentes(): void {
+    if (!this.currentUser?.id) return;
+
+    // Simular pedidos pendentes (em produção, viria do backend)
+    // Por enquanto, vamos simular com dados mockados
+    this.pedidosPendentes = [
+      {
+        id: 1,
+        servico: 'Limpeza de Pele Profunda',
+        preco: 120,
+        dataCompra: new Date().toISOString().split('T')[0],
+        status: 'pago'
+      },
+      {
+        id: 2,
+        servico: 'Hidratação Intensiva',
+        preco: 95,
+        dataCompra: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        status: 'pago'
+      }
+    ];
+  }
+
   loadServicos(): void {
     this.isLoading = true;
-    this.servicosService.getServicos().subscribe({
+    this.servicosService.getServicos(1, 12).subscribe({
       next: (response) => {
         this.servicos = response.data;
         // Simular serviços favoritos (em produção, viria do backend)
         this.servicosFavoritos = response.data.slice(0, 3);
         this.isLoading = false;
+        console.log('🔍 Debug - Serviços carregados no cliente-home:', this.servicos.length);
       },
       error: (error) => {
         console.error('Erro ao carregar serviços:', error);
@@ -158,38 +200,19 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
 
   addToCart(): void {
     if (this.selectedServico && this.quantidade > 0) {
-      const cartItem: Omit<CartItem, 'quantidade'> = {
-        id: this.selectedServico.id,
-        nome: this.selectedServico.nome,
-        descricao: this.selectedServico.descricao,
-        preco: this.selectedServico.preco,
-        tipo: 'servico',
-        imagem: this.selectedServico.imagem
-      };
-
-      this.cartService.addItem(cartItem, this.quantidade);
-      this.closeModal();
-      this.showSuccessMessage();
+      this.cartService.addToCart(this.selectedServico, this.quantidade).subscribe({
+        next: () => {
+          this.closeModal();
+          this.showSuccessMessage('Serviço adicionado ao carrinho com sucesso!');
+        },
+        error: (error) => {
+          console.error('Erro ao adicionar ao carrinho:', error);
+          alert('Erro ao adicionar ao carrinho. Tente novamente.');
+        }
+      });
     }
   }
 
-  showSuccessMessage(): void {
-    const notification = document.createElement('div');
-    notification.className = 'alert alert-success position-fixed';
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    notification.innerHTML = `
-      <i class="bi bi-check-circle me-2"></i>
-      Serviço adicionado ao carrinho com sucesso!
-    `;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 3000);
-  }
 
   incrementQuantity(): void {
     this.quantidade++;
@@ -201,12 +224,19 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatPrice(price: number): string {
+  formatPrice(price: number | string): string {
     return this.servicosService.formatPrice(price);
   }
 
   formatDuration(minutes: number): string {
     return this.servicosService.formatDuration(minutes);
+  }
+
+  // Calcular preço total (preço * quantidade)
+  calculateTotalPrice(servico: Servico | null, quantidade: number): number {
+    if (!servico?.preco) return 0;
+    const numericPrice = typeof servico.preco === 'string' ? parseFloat(servico.preco) : servico.preco;
+    return isNaN(numericPrice) ? 0 : numericPrice * quantidade;
   }
 
   getServicoImage(servico: Servico): string {
@@ -248,9 +278,7 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   }
 
   goToCarrinho(): void {
-    // TODO: Implementar página de carrinho
-    console.log('Navegar para carrinho - página ainda não implementada');
-    // this.router.navigate(['/carrinho']);
+    this.router.navigate(['/carrinho']);
   }
 
   logout(): void {
@@ -288,5 +316,183 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
       default:
         return status;
     }
+  }
+
+  // Métodos para pedidos
+  agendarServico(pedido: any): void {
+    this.servicoParaAgendar = pedido;
+    this.showAgendamentoModal = true;
+    this.loadProfissionais();
+    document.body.classList.add('modal-open');
+  }
+
+  verDetalhesPedido(pedido: any): void {
+    // Implementar visualização de detalhes do pedido
+    console.log('Ver detalhes do pedido:', pedido);
+  }
+
+  scrollToServicos(): void {
+    const servicosSection = document.querySelector('.servicos-section');
+    if (servicosSection) {
+      servicosSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  // Métodos para status de pedidos
+  getPedidoStatusClass(status: string): string {
+    switch (status) {
+      case 'pago':
+        return 'badge bg-success';
+      case 'pendente':
+        return 'badge bg-warning';
+      case 'cancelado':
+        return 'badge bg-danger';
+      default:
+        return 'badge bg-secondary';
+    }
+  }
+
+  getPedidoStatusText(status: string): string {
+    switch (status) {
+      case 'pago':
+        return 'Pago';
+      case 'pendente':
+        return 'Pendente';
+      case 'cancelado':
+        return 'Cancelado';
+      default:
+        return status;
+    }
+  }
+
+  // Métodos para agendamento
+  loadProfissionais(): void {
+    this.isLoadingAgendamento = true;
+    
+    // Simular carregamento de profissionais (em produção, viria do backend)
+    setTimeout(() => {
+      this.profissionais = [
+        { id: 1, nome: 'Dr. Ana Silva', especialidade: 'Dermatologia' },
+        { id: 2, nome: 'Dra. Maria Santos', especialidade: 'Estética Facial' },
+        { id: 3, nome: 'Dr. João Costa', especialidade: 'Tratamentos Corporais' }
+      ];
+      this.isLoadingAgendamento = false;
+    }, 1000);
+  }
+
+  selecionarProfissional(profissional: any): void {
+    this.profissionalSelecionado = profissional;
+    this.dataSelecionada = '';
+    this.horarioSelecionado = '';
+    this.loadDatasDisponiveis();
+  }
+
+  loadDatasDisponiveis(): void {
+    // Gerar próximas 7 datas disponíveis
+    const datas = [];
+    const hoje = new Date();
+    
+    for (let i = 1; i <= 7; i++) {
+      const data = new Date(hoje);
+      data.setDate(hoje.getDate() + i);
+      datas.push(data.toISOString().split('T')[0]);
+    }
+    
+    this.datasDisponiveis = datas;
+  }
+
+  selecionarData(data: string): void {
+    this.dataSelecionada = data;
+    this.horarioSelecionado = '';
+    this.loadHorariosDisponiveis();
+  }
+
+  loadHorariosDisponiveis(): void {
+    // Simular horários disponíveis (em produção, viria do backend)
+    this.horariosDisponiveis = [
+      '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'
+    ];
+  }
+
+  selecionarHorario(horario: string): void {
+    this.horarioSelecionado = horario;
+  }
+
+  closeAgendamentoModal(): void {
+    this.showAgendamentoModal = false;
+    this.servicoParaAgendar = null;
+    this.profissionalSelecionado = null;
+    this.dataSelecionada = '';
+    this.horarioSelecionado = '';
+    this.observacoesAgendamento = '';
+    this.profissionais = [];
+    this.datasDisponiveis = [];
+    this.horariosDisponiveis = [];
+    document.body.classList.remove('modal-open');
+  }
+
+  confirmarAgendamento(): void {
+    if (!this.horarioSelecionado) return;
+
+    this.isConfirmandoAgendamento = true;
+
+    // Simular confirmação do agendamento (em produção, faria requisição para o backend)
+    setTimeout(() => {
+      this.isConfirmandoAgendamento = false;
+      this.closeAgendamentoModal();
+      
+      // Mostrar mensagem de sucesso
+      this.showSuccessMessage('Agendamento confirmado com sucesso!');
+      
+      // Recarregar dados do dashboard
+      this.loadDashboardData();
+    }, 2000);
+  }
+
+  // Métodos para editar/cancelar agendamentos
+  canEditAgendamento(agendamento: any): boolean {
+    const dataAgendamento = new Date(agendamento.data);
+    const hoje = new Date();
+    const diffTime = dataAgendamento.getTime() - hoje.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays >= 1; // Pode editar se for pelo menos 24h antes
+  }
+
+  canCancelAgendamento(agendamento: any): boolean {
+    return this.canEditAgendamento(agendamento);
+  }
+
+  editarAgendamento(agendamento: any): void {
+    // Implementar edição de agendamento
+    console.log('Editar agendamento:', agendamento);
+    this.showSuccessMessage('Funcionalidade de edição será implementada em breve!');
+  }
+
+  cancelarAgendamento(agendamento: any): void {
+    if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
+      // Implementar cancelamento de agendamento
+      console.log('Cancelar agendamento:', agendamento);
+      this.showSuccessMessage('Agendamento cancelado com sucesso!');
+      this.loadDashboardData();
+    }
+  }
+
+  showSuccessMessage(message: string): void {
+    const notification = document.createElement('div');
+    notification.className = 'alert alert-success position-fixed';
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+      <i class="bi bi-check-circle me-2"></i>
+      ${message}
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 3000);
   }
 }

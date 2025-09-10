@@ -76,7 +76,62 @@ export class AgendamentosService {
 
   // Buscar agendamentos do cliente
   getAgendamentosCliente(clienteId: number): Observable<Agendamento[]> {
-    return this.http.get<Agendamento[]>(`${this.apiUrl}/agendamentos/cliente/${clienteId}`);
+    // Mock data por enquanto - em produção, usar o endpoint real
+    const mockAgendamentos: Agendamento[] = [
+      {
+        id: '1',
+        title: 'Limpeza de Pele Profunda',
+        description: 'Tratamento facial completo',
+        start: {
+          dateTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+          timeZone: 'America/Sao_Paulo'
+        },
+        end: {
+          dateTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(),
+          timeZone: 'America/Sao_Paulo'
+        },
+        servicoId: 1,
+        servicoNome: 'Limpeza de Pele Profunda',
+        clienteId: clienteId,
+        clienteNome: 'Cliente Teste',
+        profissionalId: 1,
+        profissionalNome: 'Dr. Ana Silva',
+        valor: 120,
+        observacoes: 'Primeira sessão',
+        status: 'confirmed',
+        statusPagamento: 'pago'
+      },
+      {
+        id: '2',
+        title: 'Hidratação Intensiva',
+        description: 'Tratamento de hidratação profunda',
+        start: {
+          dateTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+          timeZone: 'America/Sao_Paulo'
+        },
+        end: {
+          dateTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000 + 45 * 60 * 1000).toISOString(),
+          timeZone: 'America/Sao_Paulo'
+        },
+        servicoId: 3,
+        servicoNome: 'Hidratação Intensiva',
+        clienteId: clienteId,
+        clienteNome: 'Cliente Teste',
+        profissionalId: 1,
+        profissionalNome: 'Dr. Ana Silva',
+        valor: 95,
+        observacoes: 'Sessão de manutenção',
+        status: 'confirmed',
+        statusPagamento: 'pago'
+      }
+    ];
+
+    return new Observable(observer => {
+      setTimeout(() => {
+        observer.next(mockAgendamentos);
+        observer.complete();
+      }, 1000); // Simular delay de rede
+    });
   }
 
   // Buscar agendamentos do profissional

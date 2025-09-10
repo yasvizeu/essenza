@@ -7,7 +7,7 @@ export interface Servico {
   id: number;
   nome: string;
   descricao: string;
-  preco: number;
+  preco: number | string; // Pode vir como string do DECIMAL do MySQL
   duracao?: number; // em minutos
   categoria?: string;
   imagem?: string;
@@ -37,37 +37,38 @@ export class ServicosService {
 
   constructor(private http: HttpClient) {}
 
+  // Método para limpar cache e forçar reload
+  clearCache(): void {
+    this.servicosCache = [];
+    this.servicosSubject.next([]);
+  }
+
   // Buscar todos os serviços com cache e paginação
   getServicos(page: number = 1, limit: number = 20, categoria?: string): Observable<PaginatedResponse<Servico>> {
-    // Se já temos os dados em cache e é a primeira página sem filtros, retorna imediatamente
-    if (this.servicosCache && this.servicosCache.length > 0 && page === 1 && !categoria) {
-      return of({
-        data: this.servicosCache,
-        pagination: {
-          page: 1,
-          limit: this.servicosCache.length,
-          total: this.servicosCache.length,
-          totalPages: 1,
-          hasNext: false,
-          hasPrev: false
-        }
-      });
-    }
-
     // Busca do servidor
     const params: any = { 
       page: page.toString(), 
-      limit: limit.toString()
+      limit: limit.toString(),
+      _t: Date.now().toString() // Timestamp para evitar cache
     };
     if (categoria) params.categoria = categoria;
 
-    return this.http.get<PaginatedResponse<Servico>>(`${this.apiUrl}/servicos`, { params }).pipe(
+    console.log('🔄 ServicosService - Fazendo requisição para:', `${this.apiUrl}/servico`);
+    console.log('🔄 ServicosService - Parâmetros:', params);
+    
+    return this.http.get<PaginatedResponse<Servico>>(`${this.apiUrl}/servico`, { 
+      params
+    }).pipe(
       tap(response => {
-        // Cache apenas a primeira página sem filtros
-        if (page === 1 && !categoria) {
-          this.servicosCache = response.data;
-          this.servicosSubject.next(response.data);
-        }
+        console.log('✅ ServicosService - Resposta recebida:', response);
+        console.log('✅ ServicosService - Dados:', response.data);
+        console.log('✅ ServicosService - Quantidade:', response.data?.length);
+        
+        // Sempre atualizar o cache com os dados recebidos
+        this.servicosCache = response.data;
+        this.servicosSubject.next(response.data);
+        
+        console.log('✅ ServicosService - Cache atualizado:', this.servicosCache);
       }),
       catchError(error => {
         console.error('Erro ao carregar serviços:', error);
@@ -94,17 +95,21 @@ export class ServicosService {
 
   // Buscar serviço por ID
   getServicoById(id: number): Observable<Servico> {
-    return this.http.get<Servico>(`${this.apiUrl}/servicos/${id}`);
+    return this.http.get<Servico>(`${this.apiUrl}/servico/${id}`);
   }
 
   // Buscar serviços por categoria
   getServicosByCategoria(categoria: string): Observable<Servico[]> {
-    return this.http.get<Servico[]>(`${this.apiUrl}/servicos?categoria=${categoria}`);
+    return this.http.get<Servico[]>(`${this.apiUrl}/servico?categoria=${categoria}`);
   }
 
   // Formatar preço
-  formatPrice(price: number): string {
-    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+  formatPrice(price: number | string): string {
+    const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+    if (isNaN(numericPrice)) {
+      return 'R$ 0,00';
+    }
+    return `R$ ${numericPrice.toFixed(2).replace('.', ',')}`;
   }
 
   // Formatar duração

@@ -1,0 +1,168 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4">
+        <i class="bi bi-cart3 me-2"></i>
+        Meu Carrinho
+      </h2>
+
+      <!-- Carrinho vazio -->
+      <div *ngIf="isEmpty()" class="text-center py-5">
+        <i class="bi bi-cart-x display-1 text-muted"></i>
+        <h4 class="mt-3 text-muted">Seu carrinho está vazio</h4>
+        <p class="text-muted">Adicione alguns serviços para começar!</p>
+        <button class="btn btn-primary btn-lg" (click)="continueShopping()">
+          <i class="bi bi-arrow-left me-2"></i>
+          Continuar Comprando
+        </button>
+      </div>
+
+      <!-- Carrinho com itens -->
+      <div *ngIf="!isEmpty()" class="row">
+        <!-- Lista de itens -->
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">
+                <i class="bi bi-list-ul me-2"></i>
+                Itens do Carrinho ({{ getTotalItems() }})
+              </h5>
+              <button 
+                class="btn btn-outline-danger btn-sm" 
+                (click)="clearCart()"
+                title="Limpar carrinho">
+                <i class="bi bi-trash me-1"></i>
+                Limpar
+              </button>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Serviço</th>
+                      <th class="text-center">Quantidade</th>
+                      <th class="text-end">Preço Unit.</th>
+                      <th class="text-end">Total</th>
+                      <th class="text-center">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of (cart$ | async)?.items; trackBy: trackByServicoId">
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="me-3">
+                            <i class="bi bi-scissors fs-4 text-primary"></i>
+                          </div>
+                          <div>
+                            <h6 class="mb-1">{{ item.servico.nome }}</h6>
+                            <small class="text-muted">{{ item.servico.descricao }}</small>
+                            <div *ngIf="item.servico.categoria" class="mt-1">
+                              <span class="badge bg-secondary">{{ item.servico.categoria }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="text-center">
+                        <div class="input-group input-group-sm" style="width: 100px;">
+                          <button 
+                            class="btn btn-outline-secondary" 
+                            type="button"
+                            (click)="updateQuantity(item.id, { target: { value: item.quantidade - 1 } })">
+                            <i class="bi bi-dash"></i>
+                          </button>
+                          <input 
+                            type="number" 
+                            class="form-control text-center" 
+                            [value]="item.quantidade"
+                            min="1"
+                            max="99"
+                            (change)="updateQuantity(item.id, $event)">
+                          <button 
+                            class="btn btn-outline-secondary" 
+                            type="button"
+                            (click)="updateQuantity(item.id, { target: { value: item.quantidade + 1 } })">
+                            <i class="bi bi-plus"></i>
+                          </button>
+                        </div>
+                      </td>
+                      <td class="text-end">
+                        <span class="fw-bold">{{ formatPrice(item.precoUnitario) }}</span>
+                      </td>
+                      <td class="text-end">
+                        <span class="fw-bold text-primary">{{ formatPrice(item.precoTotal) }}</span>
+                      </td>
+                      <td class="text-center">
+                        <button 
+                          class="btn btn-outline-danger btn-sm"
+                          (click)="removeItem(item.id)"
+                          title="Remover item">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumo do pedido -->
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="bi bi-receipt me-2"></i>
+                Resumo do Pedido
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal:</span>
+                <span>{{ formatPrice(getTotal()) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Taxa de serviço:</span>
+                <span>R$ 0,00</span>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between mb-3">
+                <strong>Total:</strong>
+                <strong class="text-primary fs-5">{{ formatPrice(getTotal()) }}</strong>
+              </div>
+
+              <!-- Botões de ação -->
+              <div class="d-grid gap-2">
+                <button 
+                  class="btn btn-primary btn-lg"
+                  (click)="checkout()">
+                  <i class="bi bi-credit-card me-2"></i>
+                  Finalizar Compra
+                </button>
+                <button 
+                  class="btn btn-outline-secondary"
+                  (click)="continueShopping()">
+                  <i class="bi bi-arrow-left me-2"></i>
+                  Continuar Comprando
+                </button>
+              </div>
+
+              <!-- Informações de segurança -->
+              <div class="mt-4">
+                <div class="d-flex align-items-center text-muted small">
+                  <i class="bi bi-shield-check me-2"></i>
+                  <span>Compra 100% segura</span>
+                </div>
+                <div class="d-flex align-items-center text-muted small mt-1">
+                  <i class="bi bi-truck me-2"></i>
+                  <span>Agendamento imediato</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

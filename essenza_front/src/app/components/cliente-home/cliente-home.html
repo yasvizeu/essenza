@@ -30,6 +30,62 @@
 <!-- Dashboard Cards -->
 <div class="container py-4">
   <div class="row g-4 mb-5">
+    <!-- Meus Pedidos (Serviços Comprados) -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pb-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-bag-check text-success me-2"></i>
+              Meus Pedidos
+            </h5>
+            <button class="btn btn-outline-success btn-sm" (click)="goToCarrinho()">
+              Ver Carrinho
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="pedidosPendentes.length === 0" class="text-center py-4">
+            <i class="bi bi-bag-x display-4 text-muted"></i>
+            <p class="text-muted mt-2">Nenhum pedido pendente</p>
+            <p class="text-muted small">Compre serviços para agendar seus tratamentos</p>
+            <button class="btn btn-success btn-sm" (click)="scrollToServicos()">
+              <i class="bi bi-cart-plus me-1"></i>
+              Comprar Serviços
+            </button>
+          </div>
+          <div *ngFor="let pedido of pedidosPendentes" class="pedido-item mb-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <h6 class="mb-1">{{ pedido.servico }}</h6>
+                <p class="text-muted small mb-1">
+                  <i class="bi bi-currency-dollar me-1"></i>
+                  {{ formatPrice(pedido.preco) }}
+                </p>
+                <p class="text-muted small mb-2">
+                  <i class="bi bi-calendar me-1"></i>
+                  Comprado em {{ formatDate(pedido.dataCompra) }}
+                </p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-primary btn-sm" (click)="agendarServico(pedido)">
+                    <i class="bi bi-calendar-plus me-1"></i>
+                    Agendar
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" (click)="verDetalhesPedido(pedido)">
+                    <i class="bi bi-eye me-1"></i>
+                    Detalhes
+                  </button>
+                </div>
+              </div>
+              <span [class]="getPedidoStatusClass(pedido.status)">
+                {{ getPedidoStatusText(pedido.status) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Próximos Agendamentos -->
     <div class="col-lg-6">
       <div class="card border-0 shadow-sm h-100">
@@ -48,7 +104,7 @@
           <div *ngIf="proximosAgendamentos.length === 0" class="text-center py-4">
             <i class="bi bi-calendar-x display-4 text-muted"></i>
             <p class="text-muted mt-2">Nenhum agendamento próximo</p>
-            <button class="btn btn-primary btn-sm">Agendar Serviço</button>
+            <p class="text-muted small">Agende seus tratamentos após a compra</p>
           </div>
           <div *ngFor="let agendamento of proximosAgendamentos" class="agendamento-item mb-3">
             <div class="d-flex justify-content-between align-items-start">
@@ -58,54 +114,24 @@
                   <i class="bi bi-calendar me-1"></i>
                   {{ formatDate(agendamento.data) }} às {{ agendamento.horario }}
                 </p>
-                <p class="text-muted small mb-0">
+                <p class="text-muted small mb-2">
                   <i class="bi bi-person me-1"></i>
                   {{ agendamento.profissional }}
                 </p>
+                <div class="d-flex gap-2">
+                  <button *ngIf="canEditAgendamento(agendamento)" class="btn btn-warning btn-sm" (click)="editarAgendamento(agendamento)">
+                    <i class="bi bi-pencil me-1"></i>
+                    Editar
+                  </button>
+                  <button *ngIf="canCancelAgendamento(agendamento)" class="btn btn-outline-danger btn-sm" (click)="cancelarAgendamento(agendamento)">
+                    <i class="bi bi-x-circle me-1"></i>
+                    Cancelar
+                  </button>
+                </div>
               </div>
               <span [class]="getStatusClass(agendamento.status)">
                 {{ getStatusText(agendamento.status) }}
               </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Histórico Recente -->
-    <div class="col-lg-6">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-header bg-white border-0 pb-0">
-          <div class="d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">
-              <i class="bi bi-clock-history text-success me-2"></i>
-              Histórico Recente
-            </h5>
-            <button class="btn btn-outline-success btn-sm" (click)="goToHistorico()">
-              Ver Todos
-            </button>
-          </div>
-        </div>
-        <div class="card-body">
-          <div *ngIf="historicoRecente.length === 0" class="text-center py-4">
-            <i class="bi bi-inbox display-4 text-muted"></i>
-            <p class="text-muted mt-2">Nenhum histórico disponível</p>
-          </div>
-          <div *ngFor="let item of historicoRecente" class="historico-item mb-3">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <h6 class="mb-1">{{ item.servico }}</h6>
-                <p class="text-muted small mb-1">
-                  <i class="bi bi-calendar me-1"></i>
-                  {{ formatDate(item.data) }}
-                </p>
-                <span [class]="getStatusClass(item.status)">
-                  {{ getStatusText(item.status) }}
-                </span>
-              </div>
-              <div class="text-end">
-                <span class="text-success fw-bold">{{ formatPrice(item.valor) }}</span>
-              </div>
             </div>
           </div>
         </div>
@@ -136,7 +162,7 @@
               <button class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4" (click)="goToCarrinho()">
                 <i class="bi bi-cart display-6 mb-2"></i>
                 <span class="fw-bold">Carrinho</span>
-                <small class="text-muted">{{ cart.itemCount }} itens</small>
+                <small class="text-muted">{{ cart.totalItems }} itens</small>
               </button>
             </div>
             <div class="col-md-3 col-sm-6">
@@ -336,7 +362,7 @@
       <div class="total-section mb-4">
         <div class="d-flex justify-content-between align-items-center">
           <span class="fw-bold">Total:</span>
-          <span class="text-success fw-bold fs-5">{{ formatPrice((selectedServico?.preco || 0) * quantidade) }}</span>
+          <span class="text-success fw-bold fs-5">{{ formatPrice(calculateTotalPrice(selectedServico, quantidade)) }}</span>
         </div>
       </div>
     </div>
@@ -348,6 +374,114 @@
       <button type="button" class="btn btn-success" (click)="addToCart()">
         <i class="bi bi-cart-plus me-2"></i>
         Adicionar ao Carrinho
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Agendamento -->
+<div *ngIf="showAgendamentoModal" class="modal-overlay" (click)="closeAgendamentoModal()">
+  <div class="modal-sidebar" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h4 class="modal-title">
+        <i class="bi bi-calendar-plus me-2"></i>
+        Agendar {{ servicoParaAgendar?.nome }}
+      </h4>
+      <button type="button" class="btn-close" (click)="closeAgendamentoModal()" aria-label="Fechar"></button>
+    </div>
+    
+    <div class="modal-body">
+      <div *ngIf="isLoadingAgendamento" class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-3 text-muted">Carregando disponibilidade...</p>
+      </div>
+
+      <div *ngIf="!isLoadingAgendamento">
+        <!-- Seleção de Profissional -->
+        <div class="mb-4">
+          <h6 class="mb-3">Escolha o Profissional</h6>
+          <div class="row g-3">
+            <div *ngFor="let profissional of profissionais" class="col-md-6">
+              <div class="card h-100" 
+                   [class.border-primary]="profissionalSelecionado?.id === profissional.id"
+                   style="cursor: pointer;"
+                   (click)="selecionarProfissional(profissional)">
+                <div class="card-body text-center">
+                  <i class="bi bi-person-circle display-4 text-primary mb-2"></i>
+                  <h6 class="card-title">{{ profissional.nome }}</h6>
+                  <p class="text-muted small">{{ profissional.especialidade }}</p>
+                  <span *ngIf="profissionalSelecionado?.id === profissional.id" class="badge bg-primary">
+                    Selecionado
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seleção de Data -->
+        <div class="mb-4" *ngIf="profissionalSelecionado">
+          <h6 class="mb-3">Escolha a Data</h6>
+          <div class="row g-2">
+            <div *ngFor="let data of datasDisponiveis" class="col-md-3 col-sm-4">
+              <button class="btn w-100" 
+                      [class.btn-primary]="dataSelecionada === data"
+                      [class.btn-outline-primary]="dataSelecionada !== data"
+                      (click)="selecionarData(data)">
+                {{ formatDate(data) }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seleção de Horário -->
+        <div class="mb-4" *ngIf="dataSelecionada">
+          <h6 class="mb-3">Escolha o Horário</h6>
+          <div class="row g-2">
+            <div *ngFor="let horario of horariosDisponiveis" class="col-md-3 col-sm-4">
+              <button class="btn w-100" 
+                      [class.btn-success]="horarioSelecionado === horario"
+                      [class.btn-outline-success]="horarioSelecionado !== horario"
+                      (click)="selecionarHorario(horario)">
+                {{ horario }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Observações -->
+        <div class="mb-4" *ngIf="horarioSelecionado">
+          <h6 class="mb-3">Observações (Opcional)</h6>
+          <textarea class="form-control" 
+                    [(ngModel)]="observacoesAgendamento" 
+                    placeholder="Alguma observação especial para o profissional?"
+                    rows="3"></textarea>
+        </div>
+
+        <!-- Resumo do Agendamento -->
+        <div *ngIf="horarioSelecionado" class="alert alert-info">
+          <h6 class="alert-heading">Resumo do Agendamento</h6>
+          <p class="mb-1"><strong>Serviço:</strong> {{ servicoParaAgendar?.nome }}</p>
+          <p class="mb-1"><strong>Profissional:</strong> {{ profissionalSelecionado?.nome }}</p>
+          <p class="mb-1"><strong>Data:</strong> {{ formatDate(dataSelecionada) }}</p>
+          <p class="mb-0"><strong>Horário:</strong> {{ horarioSelecionado }}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary me-2" (click)="closeAgendamentoModal()">
+        Cancelar
+      </button>
+      <button type="button" 
+              class="btn btn-success" 
+              [disabled]="!horarioSelecionado || isConfirmandoAgendamento"
+              (click)="confirmarAgendamento()">
+        <span *ngIf="isConfirmandoAgendamento" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <i *ngIf="!isConfirmandoAgendamento" class="bi bi-check-circle me-2"></i>
+        {{ isConfirmandoAgendamento ? 'Confirmando...' : 'Confirmar Agendamento' }}
       </button>
     </div>
   </div>

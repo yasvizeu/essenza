@@ -1,0 +1,250 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Cabeçalho -->
+      <div class="text-center mb-4">
+        <h2>
+          <i class="bi bi-credit-card me-2"></i>
+          Finalizar Pagamento
+        </h2>
+        <p class="text-muted">Complete seu pedido de forma segura</p>
+      </div>
+
+      <!-- Resumo do pedido -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-receipt me-2"></i>
+            Resumo do Pedido
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row" *ngIf="cart$ | async as cart">
+            <div class="col-md-8">
+              <div *ngFor="let item of cart.items" class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <div>
+                  <h6 class="mb-1">{{ item.servico.nome }}</h6>
+                  <small class="text-muted">Qtd: {{ item.quantidade }}</small>
+                </div>
+                <span class="fw-bold">{{ formatPrice(item.precoTotal) }}</span>
+              </div>
+            </div>
+            <div class="col-md-4 text-end">
+              <div class="fs-5 fw-bold text-primary">
+                Total: {{ formatPrice(getTotal()) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulário de pagamento -->
+      <form [formGroup]="paymentForm" (ngSubmit)="processPayment()">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="bi bi-shield-check me-2"></i>
+              Dados de Pagamento
+            </h5>
+          </div>
+          <div class="card-body">
+            <!-- Método de pagamento -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <label class="form-label fw-bold">Método de Pagamento</label>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        id="pix" 
+                        value="pix" 
+                        formControlName="metodoPagamento">
+                      <label class="form-check-label" for="pix">
+                        <i class="bi bi-qr-code me-2"></i>
+                        PIX
+                        <small class="d-block text-muted">Aprovação instantânea</small>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-check">
+                      <input 
+                        class="form-check-input" 
+                        type="radio" 
+                        id="cartao" 
+                        value="cartao" 
+                        formControlName="metodoPagamento">
+                      <label class="form-check-label" for="cartao">
+                        <i class="bi bi-credit-card me-2"></i>
+                        Cartão de Crédito
+                        <small class="d-block text-muted">Visa, Mastercard, Elo</small>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dados do PIX -->
+            <div *ngIf="selectedPaymentMethod === 'pix'" class="row mb-4">
+              <div class="col-12">
+                <label for="chavePix" class="form-label fw-bold">Chave PIX</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="chavePix"
+                  formControlName="chavePix"
+                  placeholder="Digite sua chave PIX (email, telefone, CPF ou chave aleatória)"
+                  (input)="formatPixKey($event)"
+                  [class.is-invalid]="hasFieldError('chavePix')">
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('chavePix') }}
+                </div>
+                <div class="form-text">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Aceitamos email, telefone, CPF ou chave aleatória
+                </div>
+              </div>
+            </div>
+
+            <!-- Dados do cartão -->
+            <div *ngIf="selectedPaymentMethod === 'cartao'" class="row mb-4">
+              <div class="col-12">
+                <label for="numeroCartao" class="form-label fw-bold">Número do Cartão</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="numeroCartao"
+                  formControlName="numeroCartao"
+                  placeholder="0000 0000 0000 0000"
+                  maxlength="19"
+                  (input)="formatCardNumber($event)"
+                  [class.is-invalid]="hasFieldError('numeroCartao')">
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('numeroCartao') }}
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="selectedPaymentMethod === 'cartao'" class="row mb-4">
+              <div class="col-md-8">
+                <label for="nomeCartao" class="form-label fw-bold">Nome no Cartão</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="nomeCartao"
+                  formControlName="nomeCartao"
+                  placeholder="Nome como está no cartão"
+                  [class.is-invalid]="hasFieldError('nomeCartao')">
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('nomeCartao') }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="validadeCartao" class="form-label fw-bold">Validade</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="validadeCartao"
+                  formControlName="validadeCartao"
+                  placeholder="MM/AA"
+                  maxlength="5"
+                  (input)="formatExpiry($event)"
+                  [class.is-invalid]="hasFieldError('validadeCartao')">
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('validadeCartao') }}
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="selectedPaymentMethod === 'cartao'" class="row mb-4">
+              <div class="col-md-6">
+                <label for="cvvCartao" class="form-label fw-bold">CVV</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="cvvCartao"
+                  formControlName="cvvCartao"
+                  placeholder="000"
+                  maxlength="4"
+                  (input)="formatCvv($event)"
+                  [class.is-invalid]="hasFieldError('cvvCartao')">
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('cvvCartao') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Dados de contato -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="email" class="form-label fw-bold">Email</label>
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email"
+                  formControlName="email"
+                  [class.is-invalid]="hasFieldError('email')">
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('email') }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="telefone" class="form-label fw-bold">Telefone</label>
+                <input 
+                  type="tel" 
+                  class="form-control" 
+                  id="telefone"
+                  formControlName="telefone"
+                  [class.is-invalid]="hasFieldError('telefone')">
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('telefone') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Informações de segurança -->
+            <div class="alert alert-info">
+              <i class="bi bi-shield-check me-2"></i>
+              <strong>Pagamento 100% Seguro</strong>
+              <p class="mb-0 mt-2">
+                Seus dados são protegidos com criptografia SSL e não são armazenados em nossos servidores.
+                {{ selectedPaymentMethod === 'pix' ? 'O PIX é processado instantaneamente.' : 'O cartão será processado de forma segura.' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de ação -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="d-flex justify-content-between">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                (click)="backToCart()">
+                <i class="bi bi-arrow-left me-2"></i>
+                Voltar ao Carrinho
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg"
+                [disabled]="isLoading">
+                <span *ngIf="!isLoading">
+                  <i class="bi bi-credit-card me-2"></i>
+                  Pagar {{ formatPrice(getTotal()) }}
+                </span>
+                <span *ngIf="isLoading">
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Processando...
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

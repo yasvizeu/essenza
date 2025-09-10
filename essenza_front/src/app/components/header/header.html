@@ -17,11 +17,38 @@
             Home
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/servicos" routerLinkActive="active">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-box me-1"></i>
             Serviços
           </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" routerLink="/servicos" [queryParams]="{categoria: 'facial'}">
+                <i class="bi bi-face-smile me-2"></i>
+                Facial
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/servicos" [queryParams]="{categoria: 'corporal'}">
+                <i class="bi bi-person me-2"></i>
+                Corporal
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="/servicos" [queryParams]="{categoria: 'massagem'}">
+                <i class="bi bi-heart me-2"></i>
+                Massagem Relaxante
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" routerLink="/servicos">
+                <i class="bi bi-grid me-2"></i>
+                Todos os Serviços
+              </a>
+            </li>
+          </ul>
         </li>
 
         <li class="nav-item">

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsBoolean, isNotEmpty, IsString, IsEmail, IsStrongPassword, IsIdentityCard, IsDate, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsBoolean, IsString, IsDateString, IsEnum, IsOptional, Min, IsPositive } from 'class-validator';
 
 export class CreateServicoDto {
 
@@ -12,18 +12,31 @@ export class CreateServicoDto {
 
     @IsNotEmpty()
     @IsNumber()
+    @IsPositive()
+    @Min(0.01)
     preco: number;
 
     @IsNotEmpty()
     @IsBoolean()
-    ativo: boolean;
+    disponivel: boolean;
 
     @IsNotEmpty()
-    @IsDateString()
-    dataInicio: string;
+    @IsEnum(['facial', 'corporal', 'massagem'])
+    categoria: string;
 
+    @IsOptional()
     @IsDateString()
-    dataFim: string;
+    dataInicio?: string;
+
+    @IsOptional()
+    @IsDateString()
+    dataFim?: string;
+
+    @IsOptional()
+    @IsNumber()
+    duracao?: number;
+
+
 
     
 }

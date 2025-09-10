@@ -173,27 +173,82 @@ async function seed() {
         {
           nome: 'Limpeza de Pele Profunda',
           descricao: 'Limpeza completa com extração de cravos e espinhas',
-          preco: 120.00
+          preco: 120.00,
+          categoria: 'facial',
+          duracao: 60,
+          disponivel: true
         },
         {
           nome: 'Tratamento Anti-idade',
           descricao: 'Tratamento com produtos específicos para rugas e linhas de expressão',
-          preco: 180.00
+          preco: 180.00,
+          categoria: 'facial',
+          duracao: 90,
+          disponivel: true
         },
         {
           nome: 'Hidratação Intensiva',
           descricao: 'Hidratação profunda com máscaras e séruns',
-          preco: 95.00
+          preco: 95.00,
+          categoria: 'facial',
+          duracao: 45,
+          disponivel: true
         },
         {
           nome: 'Peeling Químico',
           descricao: 'Renovação celular com ácidos específicos',
-          preco: 250.00
+          preco: 250.00,
+          categoria: 'facial',
+          duracao: 75,
+          disponivel: true
         },
         {
           nome: 'Tratamento para Acne',
           descricao: 'Tratamento específico para peles acneicas',
-          preco: 150.00
+          preco: 150.00,
+          categoria: 'facial',
+          duracao: 60,
+          disponivel: true
+        },
+        {
+          nome: 'Massagem Relaxante',
+          descricao: 'Massagem terapêutica para relaxamento e bem-estar',
+          preco: 120.00,
+          categoria: 'massagem',
+          duracao: 60,
+          disponivel: true
+        },
+        {
+          nome: 'Drenagem Linfática',
+          descricao: 'Técnica de massagem para redução de inchaço',
+          preco: 100.00,
+          categoria: 'massagem',
+          duracao: 50,
+          disponivel: true
+        },
+        {
+          nome: 'Massagem com Pedras Quentes',
+          descricao: 'Massagem terapêutica com pedras vulcânicas aquecidas',
+          preco: 180.00,
+          categoria: 'massagem',
+          duracao: 80,
+          disponivel: true
+        },
+        {
+          nome: 'Tratamento Corporal Redutor',
+          descricao: 'Tratamento para redução de medidas e celulite',
+          preco: 200.00,
+          categoria: 'corporal',
+          duracao: 90,
+          disponivel: true
+        },
+        {
+          nome: 'Hidratação Corporal',
+          descricao: 'Hidratação profunda para todo o corpo',
+          preco: 80.00,
+          categoria: 'corporal',
+          duracao: 45,
+          disponivel: true
         }
       ];
 

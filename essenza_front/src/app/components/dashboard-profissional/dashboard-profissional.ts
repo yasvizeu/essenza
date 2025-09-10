@@ -498,8 +498,12 @@ export class DashboardProfissionalComponent implements OnInit {
   }
 
   // Formatar preço
-  formatarPreco(preco: number): string {
-    return `R$ ${preco.toFixed(2).replace('.', ',')}`;
+  formatarPreco(preco: number | string): string {
+    const numericPrice = typeof preco === 'string' ? parseFloat(preco) : preco;
+    if (isNaN(numericPrice)) {
+      return 'R$ 0,00';
+    }
+    return `R$ ${numericPrice.toFixed(2).replace('.', ',')}`;
   }
 
   // Verificar se produto está com baixo estoque

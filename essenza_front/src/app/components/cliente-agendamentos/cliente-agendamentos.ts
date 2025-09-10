@@ -279,7 +279,7 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     return 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';
   }
 
-  formatPrice(price: number): string {
+  formatPrice(price: number | string): string {
     return this.servicosService.formatPrice(price);
   }
 
