@@ -1,4 +1,4 @@
-📚 Essenza – Documentação Completa
+📚 Essenza
 
 Bem-vindo(a) à documentação do Essenza, um sistema de gestão inteligente para clínicas de estética e beleza.
 Aqui você encontrará informações sobre funcionalidades, arquitetura, uso, instalação e boas práticas de desenvolvimento.
