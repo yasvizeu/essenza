@@ -17,7 +17,7 @@ export interface Servico {
   id: number;
   nome: string;
   descricao: string;
-  preco: number;
+  preco: number | string; // Pode vir como string do DECIMAL do MySQL
   duracao?: number;
   categoria?: string;
   imagem?: string;
@@ -118,7 +118,7 @@ export class DashboardService {
   
   // Buscar todos os serviços
   getServicos(): Observable<Servico[]> {
-    return this.http.get<PaginatedResponse<Servico>>(`${this.apiUrl}/servicos`).pipe(
+    return this.http.get<PaginatedResponse<Servico>>(`${this.apiUrl}/servico`).pipe(
       map(response => response.data)
     );
   }

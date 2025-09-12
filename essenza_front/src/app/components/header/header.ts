@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { CartService } from '../../services/cart';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -14,10 +15,13 @@ import { Subscription } from 'rxjs';
 export class Header implements OnInit, OnDestroy {
   isAuthenticated = false;
   currentUser: any = null;
+  cartItemCount = 0;
   private authSubscription: Subscription = new Subscription();
+  private cartSubscription: Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
+    private cartService: CartService,
     private router: Router
   ) {}
 
@@ -33,10 +37,18 @@ export class Header implements OnInit, OnDestroy {
         this.currentUser = user;
       })
     );
+
+    // Subscrever ao carrinho para atualizar o contador
+    this.cartSubscription.add(
+      this.cartService.cart$.subscribe(cart => {
+        this.cartItemCount = cart.totalItems;
+      })
+    );
   }
 
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();
+    this.cartSubscription.unsubscribe();
   }
 
   logout(): void {

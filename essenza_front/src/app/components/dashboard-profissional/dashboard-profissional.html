@@ -149,6 +149,11 @@
               </button>
             </li>
             <li class="nav-item" role="presentation">
+              <button class="nav-link" id="agenda-tab" data-bs-toggle="tab" data-bs-target="#agenda" type="button" role="tab">
+                <i class="bi bi-calendar3 me-2"></i>Agenda
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
               <button class="nav-link" id="movimentacoes-tab" data-bs-toggle="tab" data-bs-target="#movimentacoes" type="button" role="tab">
                 <i class="bi bi-arrow-repeat me-2"></i>Movimentações
               </button>
@@ -319,6 +324,195 @@
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab Agenda -->
+            <div class="tab-pane fade" id="agenda" role="tabpanel">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="mb-0">
+                  <i class="bi bi-calendar3 me-2"></i>
+                  Agenda de Atendimentos
+                </h6>
+                <div class="d-flex gap-2">
+                  <div class="input-group" style="width: 250px;">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Buscar agendamentos..." [(ngModel)]="filtroAgendamentos">
+                  </div>
+                  <button class="btn btn-outline-success" (click)="loadAgendamentos()">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Atualizar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filtros de Data -->
+              <div class="row mb-3">
+                <div class="col-md-3">
+                  <label class="form-label">Data Início</label>
+                  <input type="date" class="form-control" [(ngModel)]="filtroDataInicio" (change)="filtrarAgendamentosPorData()">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Data Fim</label>
+                  <input type="date" class="form-control" [(ngModel)]="filtroDataFim" (change)="filtrarAgendamentosPorData()">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Status</label>
+                  <select class="form-select" [(ngModel)]="filtroStatus" (change)="filtrarAgendamentosPorStatus()">
+                    <option value="">Todos os status</option>
+                    <option value="confirmed">Confirmados</option>
+                    <option value="tentative">Pendentes</option>
+                    <option value="cancelled">Cancelados</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Status Pagamento</label>
+                  <select class="form-select" [(ngModel)]="filtroStatusPagamento" (change)="filtrarAgendamentosPorStatusPagamento()">
+                    <option value="">Todos os pagamentos</option>
+                    <option value="pago">Pagos</option>
+                    <option value="pendente">Pendentes</option>
+                    <option value="cancelado">Cancelados</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Resumo da Agenda -->
+              <div class="row mb-4">
+                <div class="col-md-3">
+                  <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                      <i class="bi bi-calendar-check text-success fs-1 mb-2"></i>
+                      <h5 class="card-title mb-1">{{ agendamentosHoje.length }}</h5>
+                      <p class="card-text text-muted small">Hoje</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                      <i class="bi bi-calendar-plus text-info fs-1 mb-2"></i>
+                      <h5 class="card-title mb-1">{{ agendamentosAmanha.length }}</h5>
+                      <p class="card-text text-muted small">Amanhã</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                      <i class="bi bi-clock text-warning fs-1 mb-2"></i>
+                      <h5 class="card-title mb-1">{{ agendamentosPendentes.length }}</h5>
+                      <p class="card-text text-muted small">Pendentes</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                      <i class="bi bi-currency-dollar text-success fs-1 mb-2"></i>
+                      <h5 class="card-title mb-1">{{ formatarPreco(receitaTotal) }}</h5>
+                      <p class="card-text text-muted small">Receita Total</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lista de Agendamentos -->
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Data/Hora</th>
+                      <th>Cliente</th>
+                      <th>Serviço</th>
+                      <th>Valor</th>
+                      <th>Status</th>
+                      <th>Pagamento</th>
+                      <th>Observações</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let agendamento of agendamentosFiltrados" 
+                        [class.table-warning]="isHojeAgendamento(agendamento.startDateTime ?? '')"
+                        [class.table-info]="isAmanhaAgendamento(agendamento.startDateTime ?? '')"
+                        [class.table-danger]="isPassadoAgendamento(agendamento.startDateTime ?? '')">
+                      <td>
+                        <div class="d-flex flex-column">
+                          <strong>{{ formatarDataAgendamento(agendamento.startDateTime ?? '') }}</strong>
+                          <small class="text-muted">{{ formatarHorarioAgendamento(agendamento.startDateTime ?? '') }}</small>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex flex-column">
+                          <strong>{{ agendamento.cliente?.nome || agendamento.clienteNome || 'N/A' }}</strong>
+                          <small class="text-muted">{{ formatarTelefone(agendamento.cliente?.cell || '') }}</small>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex flex-column">
+                          <strong>{{ agendamento.servico?.nome || agendamento.servicoNome || 'N/A' }}</strong>
+                          <small class="text-muted">{{ agendamento.servico?.descricao || '' }}</small>
+                        </div>
+                      </td>
+                      <td>
+                        <strong class="text-success">{{ formatarPreco(agendamento.valor || 0) }}</strong>
+                      </td>
+                      <td>
+                        <span [class]="getStatusClassAgendamento(agendamento.status || 'tentative')">
+                          {{ getStatusTextAgendamento(agendamento.status || 'tentative') }}
+                        </span>
+                      </td>
+                      <td>
+                        <span [class]="getStatusPagamentoClassAgendamento(agendamento.statusPagamento || 'pendente')">
+                          {{ getStatusPagamentoTextAgendamento(agendamento.statusPagamento || 'pendente') }}
+                        </span>
+                      </td>
+                      <td>
+                        <small class="text-muted">{{ agendamento.observacoes || 'Nenhuma' }}</small>
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-sm btn-outline-info" 
+                                  (click)="verDetalhesAgendamento(agendamento)"
+                                  title="Ver detalhes">
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-success" 
+                                  *ngIf="agendamento.status === 'tentative'"
+                                  (click)="confirmarAgendamento(agendamento)"
+                                  title="Confirmar">
+                            <i class="bi bi-check-lg"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-warning" 
+                                  *ngIf="agendamento.status !== 'cancelled'"
+                                  (click)="atualizarAgendamento(agendamento)"
+                                  title="Editar">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" 
+                                  *ngIf="agendamento.status !== 'cancelled'"
+                                  (click)="cancelarAgendamento(agendamento)"
+                                  title="Cancelar">
+                            <i class="bi bi-x-lg"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Mensagem quando não há agendamentos -->
+              <div *ngIf="agendamentosFiltrados.length === 0" class="text-center py-5">
+                <i class="bi bi-calendar-x text-muted fs-1 mb-3"></i>
+                <h5 class="text-muted">Nenhum agendamento encontrado</h5>
+                <p class="text-muted">Não há agendamentos para os filtros selecionados.</p>
+              </div>
+
+              <!-- Loading -->
+              <div *ngIf="isLoadingAgendamentos" class="text-center py-4">
+                <div class="spinner-border text-success" role="status">
+                  <span class="visually-hidden">Carregando agendamentos...</span>
                 </div>
               </div>
             </div>

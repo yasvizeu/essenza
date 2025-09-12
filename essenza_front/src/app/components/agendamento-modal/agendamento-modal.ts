@@ -1,16 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AgendamentosService, NovoAgendamento, Disponibilidade } from '../../services/agendamentos';
+import { Router } from '@angular/router';
 import { ServicosService, Servico } from '../../services/servicos';
-import { AuthService } from '../../services/auth';
+import { CartService } from '../../services/cart';
+import { AgendamentosService } from '../../services/agendamentos';
 
-export interface Profissional {
-  id: number;
-  nome: string;
-  especialidade?: string;
-  avatar?: string;
-}
 
 @Component({
   selector: 'app-agendamento-modal',
@@ -22,318 +17,147 @@ export interface Profissional {
 export class AgendamentoModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() servico: Servico | null = null;
   @Input() isOpen = false;
+  @Input() isEditMode = false;
+  @Input() agendamentoOriginal: any = null;
   @Output() close = new EventEmitter<void>();
   @Output() agendamentoCriado = new EventEmitter<any>();
 
-  // Dados do formulário
-  selectedProfissional: Profissional | null = null;
-  selectedData: string = '';
-  selectedHorario: string = '';
-  observacoes: string = '';
-
   // Estados
-  isLoading = false;
-  isLoadingDisponibilidade = false;
   hasError = false;
   errorMessage = '';
 
-  // Dados
-  profissionais: Profissional[] = [];
-  disponibilidade: Disponibilidade | null = null;
-  horariosDisponiveis: string[] = [];
-  datasDisponiveis: string[] = [];
+  // Formulário de agendamento
+  dataSelecionada = '';
+  horarioSelecionado = '';
+  profissionalSelecionado = '';
+  observacoes = '';
 
-  // Configurações
-  readonly diasAntecedencia = 30; // Dias que podem ser agendados com antecedência
-  readonly horarioInicio = 8; // 8:00
-  readonly horarioFim = 18; // 18:00
-  readonly intervaloMinutos = 30; // Intervalo de 30 minutos
+  // Dados para o formulário
+  horariosDisponiveis = [
+    '08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'
+  ];
+
+  profissionaisDisponiveis = [
+    { id: 1, nome: 'Dr. Ana Silva' },
+    { id: 2, nome: 'Dra. Maria Santos' },
+    { id: 3, nome: 'Dr. João Oliveira' }
+  ];
 
   constructor(
-    private agendamentosService: AgendamentosService,
     private servicosService: ServicosService,
-    private authService: AuthService
+    private cartService: CartService,
+    private agendamentosService: AgendamentosService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    console.log('🔍 Modal inicializado:', { servico: this.servico, isOpen: this.isOpen });
+    console.log('🔍 Modal inicializado:', { servico: this.servico, isOpen: this.isOpen, isEditMode: this.isEditMode });
+    if (this.isEditMode && this.agendamentoOriginal) {
+      this.preencherFormularioEdicao();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('🔍 Mudanças detectadas:', changes);
-    if (changes['servico'] && this.servico) {
-      this.initializeModal();
+    if (changes['isEditMode'] && this.isEditMode && this.agendamentoOriginal) {
+      this.preencherFormularioEdicao();
     }
-    if (changes['isOpen'] && this.isOpen && this.servico) {
-      this.initializeModal();
+  }
+
+  preencherFormularioEdicao(): void {
+    if (!this.agendamentoOriginal) return;
+    
+    const dataAgendamento = this.agendamentoOriginal.startDateTime || this.agendamentoOriginal.start?.dateTime;
+    if (dataAgendamento) {
+      const data = new Date(dataAgendamento);
+      this.dataSelecionada = data.toISOString().split('T')[0];
+      this.horarioSelecionado = data.toTimeString().slice(0, 5);
     }
+    
+    if (this.agendamentoOriginal.profissionalId) {
+      this.profissionalSelecionado = this.agendamentoOriginal.profissionalId.toString();
+    }
+    
+    if (this.agendamentoOriginal.observacoes) {
+      this.observacoes = this.agendamentoOriginal.observacoes;
+    }
+    
+    console.log('🔍 Debug - Formulário preenchido para edição:', {
+      dataSelecionada: this.dataSelecionada,
+      horarioSelecionado: this.horarioSelecionado,
+      profissionalSelecionado: this.profissionalSelecionado,
+      observacoes: this.observacoes
+    });
   }
 
   ngOnDestroy(): void {
     // Cleanup se necessário
   }
 
-  private initializeModal(): void {
-    console.log('🔍 Inicializando modal:', { servico: this.servico, isOpen: this.isOpen });
-    if (this.servico && this.isOpen) {
-      console.log('🔍 Carregando dados do modal...');
-      this.loadProfissionais();
-      this.generateDatasDisponiveis();
-    }
-  }
-
-  private loadProfissionais(): void {
-    console.log('🔍 Carregando profissionais...');
-    // TODO: Implementar carregamento de profissionais do backend
-    // Por enquanto, usando dados mockados
-    this.profissionais = [
-      {
-        id: 1,
-        nome: 'Dra. Maria Silva',
-        especialidade: 'Dermatologia Estética',
-        avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-      },
-      {
-        id: 2,
-        nome: 'Dra. Ana Costa',
-        especialidade: 'Estética Facial',
-        avatar: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-      },
-      {
-        id: 3,
-        nome: 'Dr. João Santos',
-        especialidade: 'Estética Corporal',
-        avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-      }
-    ];
-  }
-
-  private generateDatasDisponiveis(): void {
-    const datas: string[] = [];
-    const hoje = new Date();
-    
-    for (let i = 1; i <= this.diasAntecedencia; i++) {
-      const data = new Date(hoje);
-      data.setDate(hoje.getDate() + i);
-      
-      // Não incluir domingos (0) e sábados (6)
-      if (data.getDay() !== 0 && data.getDay() !== 6) {
-        datas.push(data.toISOString().split('T')[0]);
-      }
-    }
-    
-    this.datasDisponiveis = datas;
-  }
-
-  selectProfissional(profissional: Profissional): void {
-    console.log('🔍 Selecionando profissional:', profissional);
-    this.selectedProfissional = profissional;
-    this.onProfissionalChange();
-  }
-
-  onProfissionalChange(): void {
-    console.log('🔍 Profissional selecionado:', this.selectedProfissional);
-    if (this.selectedProfissional && this.selectedData) {
-      this.loadDisponibilidade();
-    }
-    this.selectedHorario = '';
-    this.horariosDisponiveis = [];
-  }
-
-  onDataChange(): void {
-    if (this.selectedProfissional && this.selectedData) {
-      this.loadDisponibilidade();
-    }
-    this.selectedHorario = '';
-    this.horariosDisponiveis = [];
-  }
-
-  private loadDisponibilidade(): void {
-    if (!this.selectedProfissional || !this.selectedData) return;
-
-    this.isLoadingDisponibilidade = true;
-    this.hasError = false;
-
-    // Buscar agendamentos existentes para o profissional na data selecionada
-    this.agendamentosService.getAgendamentosProfissional(this.selectedProfissional.id).subscribe({
-      next: (agendamentos) => {
-        this.processarDisponibilidade(agendamentos);
-        this.isLoadingDisponibilidade = false;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar disponibilidade:', error);
-        // Em caso de erro, usar simulação
-        this.simulateDisponibilidade();
-        this.isLoadingDisponibilidade = false;
-      }
-    });
-  }
-
-  private processarDisponibilidade(agendamentos: any[]): void {
-    console.log('🔍 Processando disponibilidade:', { agendamentos, selectedData: this.selectedData });
-    
-    // Filtrar agendamentos da data selecionada
-    const agendamentosDoDia = agendamentos.filter(ag => {
-      const dataAgendamento = new Date(ag.start.dateTime).toISOString().split('T')[0];
-      return dataAgendamento === this.selectedData && ag.status !== 'cancelled';
-    });
-
-    console.log('🔍 Agendamentos do dia:', agendamentosDoDia);
-
-    // Extrair horários ocupados
-    const horariosOcupados = agendamentosDoDia.map(ag => {
-      const dataHora = new Date(ag.start.dateTime);
-      return `${dataHora.getHours().toString().padStart(2, '0')}:${dataHora.getMinutes().toString().padStart(2, '0')}`;
-    });
-
-    console.log('🔍 Horários ocupados:', horariosOcupados);
-
-    // Gerar todos os horários possíveis e filtrar os disponíveis
-    const todosHorarios = this.generateHorariosDisponiveis();
-    this.horariosDisponiveis = todosHorarios.filter(horario => 
-      !horariosOcupados.includes(horario)
-    );
-
-    console.log('🔍 Horários disponíveis:', this.horariosDisponiveis);
-  }
-
-  private simulateDisponibilidade(): void {
-    // Simular horários disponíveis (removendo alguns aleatoriamente)
-    const todosHorarios = this.generateHorariosDisponiveis();
-    const horariosOcupados = this.getHorariosOcupados();
-    
-    this.horariosDisponiveis = todosHorarios.filter(horario => 
-      !horariosOcupados.includes(horario)
-    );
-  }
-
-  private generateHorariosDisponiveis(): string[] {
-    const horarios: string[] = [];
-    
-    for (let hora = this.horarioInicio; hora < this.horarioFim; hora++) {
-      for (let minuto = 0; minuto < 60; minuto += this.intervaloMinutos) {
-        const horario = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
-        horarios.push(horario);
-      }
-    }
-    
-    return horarios;
-  }
-
-  private getHorariosOcupados(): string[] {
-    // Simular alguns horários ocupados
-    const ocupados = ['09:00', '10:30', '14:00', '15:30'];
-    return ocupados;
-  }
-
-  onHorarioSelect(horario: string): void {
-    console.log('🔍 Horário selecionado:', horario);
-    this.selectedHorario = horario;
-  }
-
-  onImageError(event: any, profissional: Profissional): void {
-    console.log('🔍 Erro ao carregar imagem do profissional:', profissional.nome);
-    // Definir uma imagem de fallback
-    event.target.src = 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80';
-  }
-
-  canConfirmAgendamento(): boolean {
-    return !!(
-      this.servico &&
-      this.selectedProfissional &&
-      this.selectedData &&
-      this.selectedHorario &&
-      this.authService.isAuthenticated() &&
-      this.authService.isCliente()
-    );
-  }
-
-  confirmarAgendamento(): void {
-    console.log('🔍 Iniciando confirmação de agendamento...');
-    console.log('🔍 Usuário autenticado:', this.authService.isAuthenticated());
-    console.log('🔍 É cliente:', this.authService.isCliente());
-    console.log('🔍 Token:', this.authService.getAccessToken() ? 'Token presente' : 'Token ausente');
-    console.log('🔍 Token completo:', this.authService.getAccessToken());
-    
-    // Verificar se o token está expirado
-    if (this.authService.isTokenExpired()) {
-      console.log('🔍 Token expirado, fazendo logout...');
-      this.authService.logout();
-      this.showError('Sua sessão expirou. Faça login novamente.');
-      return;
-    }
-    
-    // Verificar se o usuário está realmente logado
-    if (!this.authService.isAuthenticated() || !this.authService.isCliente()) {
-      this.showError('Você precisa estar logado como cliente para agendar');
-      return;
-    }
-    
-    if (!this.canConfirmAgendamento()) {
-      this.showError('Preencha todos os campos obrigatórios');
-      return;
-    }
-
-    const currentUser = this.authService.getCurrentUser();
-    console.log('🔍 Usuário atual:', currentUser);
-    if (!currentUser) {
-      this.showError('Usuário não encontrado');
-      return;
-    }
-
-    this.isLoading = true;
-    this.hasError = false;
-
-    // Criar data/hora de início e fim
-    const dataHoraInicio = new Date(`${this.selectedData}T${this.selectedHorario}:00`);
-    const dataHoraFim = new Date(dataHoraInicio);
-    dataHoraFim.setMinutes(dataHoraFim.getMinutes() + (this.servico!.duracao || 60));
-
-    const novoAgendamento = {
-      title: `${this.servico!.nome} - ${currentUser.nome}`,
-      description: this.observacoes || `Agendamento de ${this.servico!.nome}`,
-      startDateTime: dataHoraInicio.toISOString(),
-      endDateTime: dataHoraFim.toISOString(),
-      timeZone: 'America/Sao_Paulo',
-      location: 'Essenza - Clínica de Estética',
-      status: 'tentative' as const,
-      statusPagamento: 'pendente' as const,
-      valor: this.servico!.preco,
-      observacoes: this.observacoes,
-      clienteId: currentUser.id,
-      profissionalId: this.selectedProfissional!.id,
-      servicoId: this.servico!.id
-    };
-
-    this.agendamentosService.criarAgendamento(novoAgendamento as any).subscribe({
-      next: (agendamento) => {
-        this.isLoading = false;
-        this.showSuccess('Agendamento criado com sucesso!');
-        this.agendamentoCriado.emit(agendamento);
-        this.closeModal();
-      },
-      error: (error) => {
-        this.isLoading = false;
-        console.error('Erro ao criar agendamento:', error);
-        this.showError('Erro ao criar agendamento. Tente novamente.');
-      }
-    });
-  }
 
   closeModal(): void {
+    this.hasError = false;
+    this.errorMessage = '';
     this.resetForm();
     this.close.emit();
   }
 
-  private resetForm(): void {
-    this.selectedProfissional = null;
-    this.selectedData = '';
-    this.selectedHorario = '';
+  resetForm(): void {
+    this.dataSelecionada = '';
+    this.horarioSelecionado = '';
+    this.profissionalSelecionado = '';
     this.observacoes = '';
-    this.disponibilidade = null;
-    this.horariosDisponiveis = [];
-    this.hasError = false;
-    this.errorMessage = '';
+  }
+
+  getMinDate(): string {
+    const hoje = new Date();
+    return hoje.toISOString().split('T')[0];
+  }
+
+  podeAgendar(): boolean {
+    return !!(this.dataSelecionada && this.horarioSelecionado && this.profissionalSelecionado);
+  }
+
+  confirmarAgendamento(): void {
+    if (!this.podeAgendar() || !this.servico) {
+      this.showError('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    if (this.isEditMode && this.agendamentoOriginal) {
+      // Modo de edição
+      const agendamentoEditado = {
+        id: this.agendamentoOriginal.id,
+        servicoId: this.servico.id,
+        servicoNome: this.servico.nome,
+        data: this.dataSelecionada,
+        horario: this.horarioSelecionado,
+        profissionalId: parseInt(this.profissionalSelecionado),
+        observacoes: this.observacoes,
+        status: this.agendamentoOriginal.status,
+        statusPagamento: this.agendamentoOriginal.statusPagamento
+      };
+
+      console.log('🔍 Debug - Editando agendamento:', agendamentoEditado);
+      this.agendamentoCriado.emit(agendamentoEditado);
+    } else {
+      // Modo de criação
+      const agendamento = {
+        servicoId: this.servico.id,
+        servicoNome: this.servico.nome,
+        data: this.dataSelecionada,
+        horario: this.horarioSelecionado,
+        profissionalId: parseInt(this.profissionalSelecionado),
+        observacoes: this.observacoes,
+        status: 'tentative',
+        statusPagamento: 'pago' // Já foi pago
+      };
+
+      console.log('🔍 Debug - Criando agendamento:', agendamento);
+      this.agendamentoCriado.emit(agendamento);
+    }
+
+    this.closeModal();
   }
 
   private showError(message: string): void {
@@ -361,16 +185,6 @@ export class AgendamentoModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   // Formatação
-  formatarData(data: string): string {
-    const date = new Date(data);
-    return date.toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    });
-  }
-
   formatarPreco(preco: number): string {
     return this.servicosService.formatPrice(preco);
   }
@@ -379,22 +193,15 @@ export class AgendamentoModalComponent implements OnInit, OnDestroy, OnChanges {
     return this.servicosService.formatDuration(minutes);
   }
 
-  // Verificações
-  isHorarioDisponivel(horario: string): boolean {
-    return this.horariosDisponiveis.includes(horario);
-  }
-
-  isHorarioSelecionado(horario: string): boolean {
-    return this.selectedHorario === horario;
-  }
-
   // Getters
   get servicoNome(): string {
     return this.servico?.nome || '';
   }
 
   get servicoPreco(): number {
-    return this.servico?.preco || 0;
+    if (!this.servico?.preco) return 0;
+    const numericPrice = typeof this.servico.preco === 'string' ? parseFloat(this.servico.preco) : this.servico.preco;
+    return isNaN(numericPrice) ? 0 : numericPrice;
   }
 
   get servicoDuracao(): number {
@@ -404,4 +211,5 @@ export class AgendamentoModalComponent implements OnInit, OnDestroy, OnChanges {
   get servicoDescricao(): string {
     return this.servico?.descricao || '';
   }
+
 }

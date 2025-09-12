@@ -6,15 +6,21 @@ import { DashboardProfissionalComponent } from './components/dashboard-profissio
 import { ClienteHomeComponent } from './components/cliente-home/cliente-home';
 import { ClienteAgendamentosComponent } from './components/cliente-agendamentos/cliente-agendamentos';
 import { Sobre } from './pages/sobre/sobre';
+import { CartComponent } from './components/cart/cart';
+import { PagamentoComponent } from './pages/pagamento/pagamento';
+import { ServicosComponent } from './pages/servicos/servicos';
 
 export const routes: Routes = [
   { path: '', component: Home },
   { path: 'home', component: Home },
+  { path: 'servicos', component: ServicosComponent },
   { path: 'cliente-home', component: ClienteHomeComponent },
   { path: 'cliente-agendamentos', component: ClienteAgendamentosComponent },
   { path: 'sobre', component: Sobre },
   { path: 'cadastro', component: ClienteCadastroComponent },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard-profissional', component: DashboardProfissionalComponent },
+  { path: 'carrinho', component: CartComponent },
+  { path: 'pagamento', component: PagamentoComponent },
   { path: '**', redirectTo: '' }
 ];

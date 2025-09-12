@@ -34,7 +34,7 @@ export class Home implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadServicos();
-    this.cartSubscription = this.cartService.getCartObservable().subscribe(cart => {
+    this.cartSubscription = this.cartService.cart$.subscribe(cart => {
       this.cart = cart;
     });
     
@@ -73,16 +73,25 @@ export class Home implements OnInit, OnDestroy {
 
   loadServicos(): void {
     this.isLoading = true;
+    console.log('🔄 Home - Iniciando carregamento de serviços...');
+    
     this.servicosService.getServicos(this.currentPage, this.pageSize).subscribe({
       next: (response: PaginatedResponse<Servico>) => {
+        console.log('✅ Home - Resposta recebida:', response);
+        console.log('✅ Home - Dados:', response.data);
+        console.log('✅ Home - Quantidade:', response.data?.length);
+        
         this.servicos = response.data;
         this.totalPages = response.pagination.totalPages;
         this.hasNextPage = response.pagination.hasNext;
         this.hasPrevPage = response.pagination.hasPrev;
         this.isLoading = false;
+        
+        console.log('✅ Home - Serviços atribuídos:', this.servicos);
+        console.log('✅ Home - isLoading:', this.isLoading);
       },
       error: (error) => {
-        console.error('Erro ao carregar serviços:', error);
+        console.error('❌ Home - Erro ao carregar serviços:', error);
         this.isLoading = false;
       }
     });
@@ -133,20 +142,16 @@ export class Home implements OnInit, OnDestroy {
 
   addToCart(): void {
     if (this.selectedServico && this.quantidade > 0) {
-      const cartItem: Omit<CartItem, 'quantidade'> = {
-        id: this.selectedServico.id,
-        nome: this.selectedServico.nome,
-        descricao: this.selectedServico.descricao,
-        preco: this.selectedServico.preco,
-        tipo: 'servico',
-        imagem: this.selectedServico.imagem
-      };
-
-      this.cartService.addItem(cartItem, this.quantidade);
-      this.closeModal();
-      
-      // Mostrar mensagem de sucesso
-      this.showSuccessMessage();
+      this.cartService.addToCart(this.selectedServico, this.quantidade).subscribe({
+        next: () => {
+          this.closeModal();
+          this.showSuccessMessage();
+        },
+        error: (error) => {
+          console.error('Erro ao adicionar ao carrinho:', error);
+          alert('Erro ao adicionar ao carrinho. Tente novamente.');
+        }
+      });
     }
   }
 
@@ -180,12 +185,19 @@ export class Home implements OnInit, OnDestroy {
     }
   }
 
-  formatPrice(price: number): string {
+  formatPrice(price: number | string): string {
     return this.servicosService.formatPrice(price);
   }
 
   formatDuration(minutes: number): string {
     return this.servicosService.formatDuration(minutes);
+  }
+
+  // Calcular preço total (preço * quantidade)
+  calculateTotalPrice(servico: Servico | null, quantidade: number): number {
+    if (!servico?.preco) return 0;
+    const numericPrice = typeof servico.preco === 'string' ? parseFloat(servico.preco) : servico.preco;
+    return isNaN(numericPrice) ? 0 : numericPrice * quantidade;
   }
 
   getServicoImage(servico: Servico): string {

@@ -27,7 +27,10 @@ export class ServicosService {
         'servico.id',
         'servico.nome', 
         'servico.descricao',
-        'servico.preco'
+        'servico.preco',
+        'servico.categoria',
+        'servico.duracao',
+        'servico.imagem'
       ])
       .where('servico.disponivel = :disponivel', { disponivel: true })
       .skip(skip)

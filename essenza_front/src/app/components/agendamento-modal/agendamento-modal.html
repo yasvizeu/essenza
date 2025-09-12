@@ -1,11 +1,12 @@
-<!-- Modal de Agendamento -->
+<!-- Modal de Agendamento de Serviço -->
 <div *ngIf="isOpen" class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <!-- Header do Modal -->
     <div class="modal-header">
       <h4 class="modal-title">
-        <i class="bi bi-calendar-plus me-2"></i>
-        Agendar {{ servicoNome }}
+        <i class="bi bi-calendar-plus me-2" *ngIf="!isEditMode"></i>
+        <i class="bi bi-pencil me-2" *ngIf="isEditMode"></i>
+        {{ isEditMode ? 'Editar' : 'Agendar' }} {{ servicoNome }}
       </h4>
       <button type="button" class="btn-close" (click)="closeModal()" aria-label="Fechar">
         <i class="bi bi-x"></i>
@@ -42,136 +43,80 @@
       </div>
 
       <!-- Formulário de Agendamento -->
-      <form (ngSubmit)="confirmarAgendamento()" #agendamentoForm="ngForm">
-        <!-- Seleção de Profissional -->
-        <div class="mb-4">
-          <label class="form-label fw-bold">
-            <i class="bi bi-person me-2"></i>
-            Escolha o Profissional
-          </label>
-          <!-- Debug: {{ profissionais.length }} profissionais carregados -->
-          <div class="row g-3">
-            <div *ngFor="let profissional of profissionais" class="col-md-4">
-              <div class="profissional-card" 
-                   [class.selected]="selectedProfissional?.id === profissional.id"
-                   (click)="selectProfissional(profissional)">
-                <div class="profissional-avatar">
-                  <img [src]="profissional.avatar || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'" 
-                       [alt]="profissional.nome" 
-                       class="img-fluid rounded-circle"
-                       (error)="onImageError($event, profissional)">
-                </div>
-                <div class="profissional-info">
-                  <h6 class="mb-1">{{ profissional.nome }}</h6>
-                  <small class="text-muted">{{ profissional.especialidade }}</small>
-                </div>
-                <div class="profissional-check">
-                  <i class="bi bi-check-circle-fill" *ngIf="selectedProfissional?.id === profissional.id"></i>
-                </div>
+      <div class="formulario-agendamento mb-4">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center mb-4">
+                  <i class="bi bi-calendar-event me-2"></i>
+                  Escolha Data e Horário
+                </h5>
+                
+                <form>
+                  <div class="row g-3">
+                    <!-- Seleção de Data -->
+                    <div class="col-md-6">
+                      <label for="dataAgendamento" class="form-label">Data do Agendamento</label>
+                      <input type="date" 
+                             class="form-control" 
+                             id="dataAgendamento"
+                             [min]="getMinDate()"
+                             [(ngModel)]="dataSelecionada"
+                             name="dataAgendamento">
+                    </div>
+                    
+                    <!-- Seleção de Horário -->
+                    <div class="col-md-6">
+                      <label for="horarioAgendamento" class="form-label">Horário</label>
+                      <select class="form-select" 
+                              id="horarioAgendamento"
+                              [(ngModel)]="horarioSelecionado"
+                              name="horarioAgendamento">
+                        <option value="">Selecione um horário</option>
+                        <option *ngFor="let horario of horariosDisponiveis" [value]="horario">
+                          {{ horario }}
+                        </option>
+                      </select>
+                    </div>
+                    
+                    <!-- Seleção de Profissional -->
+                    <div class="col-12">
+                      <label for="profissionalAgendamento" class="form-label">Profissional</label>
+                      <select class="form-select" 
+                              id="profissionalAgendamento"
+                              [(ngModel)]="profissionalSelecionado"
+                              name="profissionalAgendamento">
+                        <option value="">Selecione um profissional</option>
+                        <option *ngFor="let profissional of profissionaisDisponiveis" [value]="profissional.id">
+                          {{ profissional.nome }}
+                        </option>
+                      </select>
+                    </div>
+                    
+                    <!-- Observações -->
+                    <div class="col-12">
+                      <label for="observacoes" class="form-label">Observações (opcional)</label>
+                      <textarea class="form-control" 
+                                id="observacoes"
+                                rows="3"
+                                [(ngModel)]="observacoes"
+                                name="observacoes"
+                                placeholder="Alguma observação especial para o seu agendamento?"></textarea>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Seleção de Data -->
-        <div class="mb-4" *ngIf="selectedProfissional">
-          <label class="form-label fw-bold">
-            <i class="bi bi-calendar me-2"></i>
-            Escolha a Data
-          </label>
-          <select class="form-select" 
-                  [(ngModel)]="selectedData" 
-                  name="data"
-                  (change)="onDataChange()"
-                  required>
-            <option value="">Selecione uma data</option>
-            <option *ngFor="let data of datasDisponiveis" [value]="data">
-              {{ formatarData(data) }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Seleção de Horário -->
-        <div class="mb-4" *ngIf="selectedData">
-          <label class="form-label fw-bold">
-            <i class="bi bi-clock me-2"></i>
-            Escolha o Horário
-          </label>
-          
-          <!-- Loading dos horários -->
-          <div *ngIf="isLoadingDisponibilidade" class="text-center py-3">
-            <div class="spinner-border spinner-border-sm text-primary" role="status">
-              <span class="visually-hidden">Carregando...</span>
-            </div>
-            <span class="ms-2 text-muted">Verificando disponibilidade...</span>
-          </div>
-
-          <!-- Grid de horários -->
-          <div *ngIf="!isLoadingDisponibilidade" class="horarios-grid">
-            <button type="button" 
-                    *ngFor="let horario of horariosDisponiveis"
-                    class="btn btn-outline-primary horario-btn"
-                    [class.selected]="isHorarioSelecionado(horario)"
-                    [disabled]="!isHorarioDisponivel(horario)"
-                    (click)="onHorarioSelect(horario)">
-              {{ horario }}
-            </button>
-          </div>
-
-          <!-- Mensagem quando não há horários -->
-          <div *ngIf="!isLoadingDisponibilidade && horariosDisponiveis.length === 0" 
-               class="alert alert-warning">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            Não há horários disponíveis para esta data. Tente outra data.
-          </div>
-        </div>
-
-        <!-- Observações -->
-        <div class="mb-4" *ngIf="selectedHorario">
-          <label class="form-label fw-bold">
-            <i class="bi bi-chat-text me-2"></i>
-            Observações (Opcional)
-          </label>
-          <textarea class="form-control" 
-                    [(ngModel)]="observacoes" 
-                    name="observacoes"
-                    rows="3"
-                    placeholder="Alguma observação especial para o profissional?"></textarea>
-        </div>
-
-        <!-- Resumo do Agendamento -->
-        <div *ngIf="canConfirmAgendamento()" class="resumo-agendamento mb-4">
-          <div class="card border-success">
-            <div class="card-header bg-success text-white">
-              <h6 class="mb-0">
-                <i class="bi bi-check-circle me-2"></i>
-                Resumo do Agendamento
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <p class="mb-1"><strong>Serviço:</strong> {{ servicoNome }}</p>
-                  <p class="mb-1"><strong>Profissional:</strong> {{ selectedProfissional?.nome }}</p>
-                  <p class="mb-1"><strong>Data:</strong> {{ formatarData(selectedData) }}</p>
-                  <p class="mb-0"><strong>Horário:</strong> {{ selectedHorario }}</p>
-                </div>
-                <div class="col-md-6">
-                  <p class="mb-1"><strong>Duração:</strong> {{ formatarDuracao(servicoDuracao) }}</p>
-                  <p class="mb-1"><strong>Valor:</strong> {{ formatarPreco(servicoPreco) }}</p>
-                  <p class="mb-0" *ngIf="observacoes"><strong>Observações:</strong> {{ observacoes }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mensagem de Erro -->
-        <div *ngIf="hasError" class="alert alert-danger">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          {{ errorMessage }}
-        </div>
-      </form>
+      <!-- Mensagem de Erro -->
+      <div *ngIf="hasError" class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+      </div>
     </div>
 
     <!-- Footer do Modal -->
@@ -181,14 +126,12 @@
         Cancelar
       </button>
       <button type="button" 
-              class="btn btn-success" 
-              [disabled]="!canConfirmAgendamento() || isLoading"
+              class="btn btn-primary"
+              [disabled]="!podeAgendar()"
               (click)="confirmarAgendamento()">
-        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status">
-          <span class="visually-hidden">Carregando...</span>
-        </span>
-        <i *ngIf="!isLoading" class="bi bi-calendar-check me-2"></i>
-        {{ isLoading ? 'Agendando...' : 'Confirmar Agendamento' }}
+        <i class="bi bi-calendar-check me-2" *ngIf="!isEditMode"></i>
+        <i class="bi bi-check-circle me-2" *ngIf="isEditMode"></i>
+        {{ isEditMode ? 'Salvar Alterações' : 'Confirmar Agendamento' }}
       </button>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 
-@Entity()
+@Entity('servico')
 export class Servico {
     @PrimaryGeneratedColumn()
     id: number;
@@ -11,14 +11,14 @@ export class Servico {
     @Column()
     descricao: string;
 
-    @Column()
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
     preco: number;
 
     @Column({ default: true })
     disponivel: boolean;
 
-    @Column({ nullable: true })
-    categoria?: string;
+    @Column({ nullable: false })
+    categoria: string;
 
     @Column({ nullable: true })
     duracao?: number;

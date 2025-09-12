@@ -1,7 +1,7 @@
 // src/protocols/protocol-service.entity.ts  (pivot com atributos)
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, Unique, Index } from 'typeorm';
 
-@Entity('protocol_services')
+@Entity('protocolo_servico')
 @Unique(['protocolo', 'servico']) // não repetir o mesmo serviço no protocolo
 @Unique(['protocolo', 'ordem'])   // manter ordem única dentro do protocolo
 export class ProtocoloServico {

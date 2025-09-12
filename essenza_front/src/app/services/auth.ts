@@ -85,9 +85,14 @@ export class AuthService {
     const token = this.getAccessToken();
     const user = this.getCurrentUser();
 
+    console.log('🔍 AuthService - checkAuthStatus:', { token: !!token, user: !!user });
+
     if (token && user) {
       this.isAuthenticatedSubject.next(true);
       this.currentUserSubject.next(user);
+      console.log('🔍 AuthService - Usuário autenticado restaurado:', user);
+    } else {
+      console.log('🔍 AuthService - Nenhum usuário autenticado encontrado');
     }
   }
 
