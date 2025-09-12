@@ -68,7 +68,7 @@
                           <button 
                             class="btn btn-outline-secondary" 
                             type="button"
-                            (click)="updateQuantity(item.id, { target: { value: item.quantidade - 1 } })">
+                            (click)="decrementQuantity(item.id, item.quantidade)">
                             <i class="bi bi-dash"></i>
                           </button>
                           <input 
@@ -81,7 +81,7 @@
                           <button 
                             class="btn btn-outline-secondary" 
                             type="button"
-                            (click)="updateQuantity(item.id, { target: { value: item.quantidade + 1 } })">
+                            (click)="incrementQuantity(item.id, item.quantidade)">
                             <i class="bi bi-plus"></i>
                           </button>
                         </div>

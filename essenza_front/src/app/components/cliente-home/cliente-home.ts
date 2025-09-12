@@ -97,15 +97,15 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
         const hoje = new Date();
         this.proximosAgendamentos = agendamentos
           .filter(ag => {
-            const dataAgendamento = new Date(ag.start.dateTime);
+            const dataAgendamento = new Date(ag.startDateTime || '');
             return dataAgendamento >= hoje && ag.status !== 'cancelled';
           })
           .slice(0, 3)
           .map(ag => ({
             id: ag.id,
             servico: ag.servicoNome || 'Serviço',
-            data: ag.start.dateTime.split('T')[0], // Extrair apenas a data
-            horario: ag.start.dateTime.split('T')[1]?.substring(0, 5) || '00:00', // Extrair apenas o horário
+            data: (ag.startDateTime || '').split('T')[0], // Extrair apenas a data
+            horario: (ag.startDateTime || '').split('T')[1]?.substring(0, 5) || '00:00', // Extrair apenas o horário
             profissional: ag.profissionalNome || 'Profissional',
             status: ag.status === 'confirmed' ? 'confirmado' : ag.status === 'tentative' ? 'pendente' : 'cancelado'
           }));
@@ -126,14 +126,14 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
         const hoje = new Date();
         this.historicoRecente = agendamentos
           .filter(ag => {
-            const dataAgendamento = new Date(ag.start.dateTime);
+            const dataAgendamento = new Date(ag.startDateTime || '');
             return dataAgendamento < hoje && ag.status === 'confirmed';
           })
           .slice(0, 3)
           .map(ag => ({
             id: ag.id,
             servico: ag.servicoNome || 'Serviço',
-            data: ag.start.dateTime.split('T')[0], // Extrair apenas a data
+            data: (ag.startDateTime || '').split('T')[0], // Extrair apenas a data
             valor: ag.valor || 0,
             status: 'concluído'
           }));
@@ -186,10 +186,12 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   }
 
   openModal(servico: Servico): void {
+    console.log('🔍 Debug - Abrindo modal para serviço:', servico);
     this.selectedServico = servico;
     this.quantidade = 1;
     this.showModal = true;
     document.body.classList.add('modal-open');
+    console.log('🔍 Debug - showModal:', this.showModal);
   }
 
   closeModal(): void {
@@ -278,7 +280,17 @@ export class ClienteHomeComponent implements OnInit, OnDestroy {
   }
 
   goToCarrinho(): void {
+    console.log('🔍 Debug - Navegando para carrinho');
     this.router.navigate(['/carrinho']);
+  }
+
+  testModal(): void {
+    console.log('🔍 Debug - Testando modal');
+    if (this.servicos.length > 0) {
+      this.openModal(this.servicos[0]);
+    } else {
+      console.log('🔍 Debug - Nenhum serviço disponível para testar');
+    }
   }
 
   logout(): void {

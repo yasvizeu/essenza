@@ -1,11 +1,12 @@
-<!-- Modal de Compra de Serviço -->
+<!-- Modal de Agendamento de Serviço -->
 <div *ngIf="isOpen" class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <!-- Header do Modal -->
     <div class="modal-header">
       <h4 class="modal-title">
-        <i class="bi bi-cart-plus me-2"></i>
-        Comprar {{ servicoNome }}
+        <i class="bi bi-calendar-plus me-2" *ngIf="!isEditMode"></i>
+        <i class="bi bi-pencil me-2" *ngIf="isEditMode"></i>
+        {{ isEditMode ? 'Editar' : 'Agendar' }} {{ servicoNome }}
       </h4>
       <button type="button" class="btn-close" (click)="closeModal()" aria-label="Fechar">
         <i class="bi bi-x"></i>
@@ -41,46 +42,70 @@
         </div>
       </div>
 
-      <!-- Opção de Compra -->
-      <div class="opcoes-compra mb-4">
+      <!-- Formulário de Agendamento -->
+      <div class="formulario-agendamento mb-4">
         <div class="row justify-content-center">
           <div class="col-md-8">
             <div class="card">
-              <div class="card-body text-center">
-                <i class="bi bi-cart-plus display-4 text-success mb-3"></i>
-                <h5 class="card-title">Comprar Serviço</h5>
-                <p class="card-text text-muted mb-4">
-                  Adicione este serviço ao seu carrinho. Após o pagamento, você poderá agendar a data e horário desejados.
-                </p>
+              <div class="card-body">
+                <h5 class="card-title text-center mb-4">
+                  <i class="bi bi-calendar-event me-2"></i>
+                  Escolha Data e Horário
+                </h5>
                 
-                <!-- Informação sobre o processo -->
-                <div class="alert alert-info mb-4">
-                  <i class="bi bi-info-circle me-2"></i>
-                  <strong>Como funciona:</strong> Compre o serviço → Pague → Agende sua data preferida
-                </div>
-
-                <div *ngIf="!isInCart()">
-                  <button type="button" 
-                          class="btn btn-success btn-lg w-100"
-                          (click)="adicionarAoCarrinho()">
-                    <i class="bi bi-cart-plus me-2"></i>
-                    Adicionar ao Carrinho
-                  </button>
-                </div>
-                <div *ngIf="isInCart()" class="d-flex gap-2">
-                  <button type="button" 
-                          class="btn btn-outline-success flex-fill"
-                          (click)="adicionarAoCarrinho()">
-                    <i class="bi bi-plus me-1"></i>
-                    +1 ({{ getQuantityInCart() }})
-                  </button>
-                  <button type="button" 
-                          class="btn btn-success flex-fill"
-                          (click)="irParaCarrinho()">
-                    <i class="bi bi-cart me-1"></i>
-                    Ver Carrinho
-                  </button>
-                </div>
+                <form>
+                  <div class="row g-3">
+                    <!-- Seleção de Data -->
+                    <div class="col-md-6">
+                      <label for="dataAgendamento" class="form-label">Data do Agendamento</label>
+                      <input type="date" 
+                             class="form-control" 
+                             id="dataAgendamento"
+                             [min]="getMinDate()"
+                             [(ngModel)]="dataSelecionada"
+                             name="dataAgendamento">
+                    </div>
+                    
+                    <!-- Seleção de Horário -->
+                    <div class="col-md-6">
+                      <label for="horarioAgendamento" class="form-label">Horário</label>
+                      <select class="form-select" 
+                              id="horarioAgendamento"
+                              [(ngModel)]="horarioSelecionado"
+                              name="horarioAgendamento">
+                        <option value="">Selecione um horário</option>
+                        <option *ngFor="let horario of horariosDisponiveis" [value]="horario">
+                          {{ horario }}
+                        </option>
+                      </select>
+                    </div>
+                    
+                    <!-- Seleção de Profissional -->
+                    <div class="col-12">
+                      <label for="profissionalAgendamento" class="form-label">Profissional</label>
+                      <select class="form-select" 
+                              id="profissionalAgendamento"
+                              [(ngModel)]="profissionalSelecionado"
+                              name="profissionalAgendamento">
+                        <option value="">Selecione um profissional</option>
+                        <option *ngFor="let profissional of profissionaisDisponiveis" [value]="profissional.id">
+                          {{ profissional.nome }}
+                        </option>
+                      </select>
+                    </div>
+                    
+                    <!-- Observações -->
+                    <div class="col-12">
+                      <label for="observacoes" class="form-label">Observações (opcional)</label>
+                      <textarea class="form-control" 
+                                id="observacoes"
+                                rows="3"
+                                [(ngModel)]="observacoes"
+                                name="observacoes"
+                                placeholder="Alguma observação especial para o seu agendamento?"></textarea>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -98,7 +123,15 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="closeModal()">
         <i class="bi bi-x-circle me-2"></i>
-        Fechar
+        Cancelar
+      </button>
+      <button type="button" 
+              class="btn btn-primary"
+              [disabled]="!podeAgendar()"
+              (click)="confirmarAgendamento()">
+        <i class="bi bi-calendar-check me-2" *ngIf="!isEditMode"></i>
+        <i class="bi bi-check-circle me-2" *ngIf="isEditMode"></i>
+        {{ isEditMode ? 'Salvar Alterações' : 'Confirmar Agendamento' }}
       </button>
     </div>
   </div>

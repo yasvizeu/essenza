@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -19,7 +19,8 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.cart$ = this.cartService.cart$;
   }
@@ -36,12 +37,47 @@ export class CartComponent implements OnInit {
   // Atualizar quantidade de um item
   updateQuantity(itemId: number, event: any): void {
     const quantidade = parseInt(event.target.value);
+    console.log('🔍 Debug - updateQuantity no componente, itemId:', itemId, 'quantidade:', quantidade);
+    
     this.cartService.updateQuantity(itemId, quantidade).subscribe({
       next: () => {
-        console.log('Quantidade atualizada com sucesso');
+        console.log('🔍 Debug - Quantidade atualizada com sucesso no componente');
+        // Forçar detecção de mudanças
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Erro ao atualizar quantidade:', error);
+        console.error('🔍 Debug - Erro ao atualizar quantidade no componente:', error);
+        alert('Erro ao atualizar quantidade. Tente novamente.');
+      }
+    });
+  }
+
+  // Incrementar quantidade
+  incrementQuantity(itemId: number, currentQuantity: number): void {
+    console.log('🔍 Debug - incrementQuantity chamado, itemId:', itemId, 'quantidade atual:', currentQuantity);
+    const newQuantity = currentQuantity + 1;
+    this.updateQuantityDirect(itemId, newQuantity);
+  }
+
+  // Decrementar quantidade
+  decrementQuantity(itemId: number, currentQuantity: number): void {
+    console.log('🔍 Debug - decrementQuantity chamado, itemId:', itemId, 'quantidade atual:', currentQuantity);
+    const newQuantity = Math.max(1, currentQuantity - 1);
+    this.updateQuantityDirect(itemId, newQuantity);
+  }
+
+  // Atualizar quantidade diretamente
+  private updateQuantityDirect(itemId: number, quantidade: number): void {
+    console.log('🔍 Debug - updateQuantityDirect no componente, itemId:', itemId, 'quantidade:', quantidade);
+    
+    this.cartService.updateQuantity(itemId, quantidade).subscribe({
+      next: () => {
+        console.log('🔍 Debug - Quantidade atualizada com sucesso no componente (direto)');
+        // Forçar detecção de mudanças
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('🔍 Debug - Erro ao atualizar quantidade no componente (direto):', error);
         alert('Erro ao atualizar quantidade. Tente novamente.');
       }
     });
@@ -51,10 +87,11 @@ export class CartComponent implements OnInit {
   removeItem(itemId: number): void {
     this.cartService.removeFromCart(itemId).subscribe({
       next: () => {
-        console.log('Item removido com sucesso');
+        console.log('🔍 Debug - Item removido com sucesso');
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Erro ao remover item:', error);
+        console.error('🔍 Debug - Erro ao remover item:', error);
         alert('Erro ao remover item. Tente novamente.');
       }
     });
@@ -65,10 +102,11 @@ export class CartComponent implements OnInit {
     if (confirm('Tem certeza que deseja limpar o carrinho?')) {
       this.cartService.clearCart().subscribe({
         next: () => {
-          console.log('Carrinho limpo com sucesso');
+          console.log('🔍 Debug - Carrinho limpo com sucesso');
+          this.cdr.detectChanges();
         },
         error: (error) => {
-          console.error('Erro ao limpar carrinho:', error);
+          console.error('🔍 Debug - Erro ao limpar carrinho:', error);
           alert('Erro ao limpar carrinho. Tente novamente.');
         }
       });

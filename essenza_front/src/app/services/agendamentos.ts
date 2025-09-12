@@ -1,39 +1,61 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AuthService } from './auth';
 
 export interface Agendamento {
-  id?: string;
+  id?: string | number;
   title: string;
   description?: string;
-  start: {
+  start?: {
     dateTime: string;
     timeZone: string;
   };
-  end: {
+  end?: {
     dateTime: string;
     timeZone: string;
   };
-  attendees?: Array<{
-    email: string;
-    displayName?: string;
-    responseStatus?: 'needsAction' | 'declined' | 'tentative' | 'accepted';
-  }>;
+  // Campos do backend (NestJS)
+  startDateTime?: string;
+  endDateTime?: string;
+  timeZone?: string;
   location?: string;
   status?: 'confirmed' | 'tentative' | 'cancelled';
   created?: string;
   updated?: string;
-  // Campos customizados para o sistema Essenza
+  createdAt?: string;
+  updatedAt?: string;
+  // Relacionamentos
+  cliente?: {
+    id: number;
+    nome: string;
+    email: string;
+    cell: string;
+  };
+  servico?: {
+    id: number;
+    nome: string;
+    descricao: string;
+    preco: number;
+  };
+  profissional?: {
+    id: number;
+    nome: string;
+    email: string;
+  };
+  // IDs
   servicoId?: number;
-  servicoNome?: string;
   clienteId?: number;
-  clienteNome?: string;
   profissionalId?: number;
+  // Campos customizados para o sistema Essenza
+  servicoNome?: string;
+  clienteNome?: string;
   profissionalNome?: string;
   valor?: number;
   observacoes?: string;
   statusPagamento?: 'pendente' | 'pago' | 'cancelado';
+  googleEventId?: string;
 }
 
 export interface NovoAgendamento {
@@ -74,8 +96,16 @@ export class AgendamentosService {
     return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento);
   }
 
+  // Criar agendamento com formato do backend
+  criarAgendamentoCompleto(agendamento: any): Observable<Agendamento> {
+    console.log('🔍 Debug - Criando agendamento completo:', agendamento);
+    return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento);
+  }
+
   // Buscar agendamentos do cliente
   getAgendamentosCliente(clienteId: number): Observable<Agendamento[]> {
+    console.log('🔍 Debug - Buscando agendamentos para cliente ID:', clienteId);
+    
     // Mock data por enquanto - em produção, usar o endpoint real
     const mockAgendamentos: Agendamento[] = [
       {
@@ -134,6 +164,36 @@ export class AgendamentosService {
     });
   }
 
+  // Buscar serviços pagos não agendados do cliente
+  getServicosPagosNaoAgendados(clienteId: number): Observable<any[]> {
+    console.log('🔍 Debug - Buscando serviços pagos não agendados para cliente ID:', clienteId);
+    // Usar endpoint existente e filtrar no frontend
+    return this.http.get<any[]>(`${this.apiUrl}/agendamentos/cliente/${clienteId}`).pipe(
+      map(agendamentos => {
+        console.log('🔍 Debug - Todos os agendamentos do cliente:', agendamentos);
+        // Filtrar apenas agendamentos pagos não agendados
+        const filtrados = agendamentos.filter(agendamento => 
+          agendamento.statusPagamento === 'pago' && 
+          agendamento.status === 'tentative'
+        );
+        console.log('🔍 Debug - Agendamentos filtrados (pagos não agendados):', filtrados);
+        return filtrados;
+      })
+    );
+  }
+
+  // Atualizar agendamento
+  atualizarAgendamento(agendamentoId: string | number, dadosAtualizacao: any): Observable<Agendamento> {
+    console.log('🔍 Debug - Atualizando agendamento ID:', agendamentoId, 'dados:', dadosAtualizacao);
+    return this.http.put<Agendamento>(`${this.apiUrl}/agendamentos/${agendamentoId}`, dadosAtualizacao);
+  }
+
+  // Remover agendamento
+  removerAgendamento(agendamentoId: string | number): Observable<any> {
+    console.log('🔍 Debug - Removendo agendamento ID:', agendamentoId);
+    return this.http.delete(`${this.apiUrl}/agendamentos/${agendamentoId}`);
+  }
+
   // Buscar agendamentos do profissional
   getAgendamentosProfissional(profissionalId: number): Observable<Agendamento[]> {
     return this.http.get<Agendamento[]>(`${this.apiUrl}/agendamentos/profissional/${profissionalId}`);
@@ -150,10 +210,6 @@ export class AgendamentosService {
     );
   }
 
-  // Atualizar agendamento
-  atualizarAgendamento(id: string, agendamento: Partial<Agendamento>): Observable<Agendamento> {
-    return this.http.patch<Agendamento>(`${this.apiUrl}/agendamentos/${id}`, agendamento);
-  }
 
   // Cancelar agendamento
   cancelarAgendamento(id: string, motivo?: string): Observable<Agendamento> {
@@ -356,17 +412,27 @@ export class AgendamentosService {
     const fim = new Date(dataFim);
     
     return agendamentos.filter(agendamento => {
-      const dataAgendamento = new Date(agendamento.start.dateTime);
+      if (!agendamento.startDateTime) return false;
+      const dataAgendamento = new Date(agendamento.startDateTime as string);
       return dataAgendamento >= inicio && dataAgendamento <= fim;
     });
   }
 
   // Ordenar agendamentos por data
   ordenarPorData(agendamentos: Agendamento[], crescente: boolean = true): Agendamento[] {
-    return agendamentos.sort((a, b) => {
-      const dataA = new Date(a.start.dateTime);
-      const dataB = new Date(b.start.dateTime);
+    console.log('🔍 Debug - ordenarPorData - Agendamentos recebidos:', agendamentos);
+    console.log('🔍 Debug - ordenarPorData - Quantidade:', agendamentos.length);
+    
+    const resultado = agendamentos.sort((a, b) => {
+      // Usar startDateTime se disponível, senão usar start.dateTime
+      const dataA = a.startDateTime ? new Date(a.startDateTime as string) : 
+                   (a.start?.dateTime ? new Date(a.start.dateTime) : new Date(0));
+      const dataB = b.startDateTime ? new Date(b.startDateTime as string) : 
+                   (b.start?.dateTime ? new Date(b.start.dateTime) : new Date(0));
       return crescente ? dataA.getTime() - dataB.getTime() : dataB.getTime() - dataA.getTime();
     });
+    
+    console.log('🔍 Debug - ordenarPorData - Resultado:', resultado);
+    return resultado;
   }
 }

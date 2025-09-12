@@ -181,10 +181,12 @@ app-cliente-home {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1050;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: flex-end;
   padding: 1rem;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .modal-sidebar {
@@ -194,11 +196,13 @@ app-cliente-home {
   height: 100%;
   max-height: 90vh;
   border-radius: 12px 0 0 12px;
-  display: flex;
+  display: flex !important;
   flex-direction: column;
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
   animation: slideInRight 0.3s ease-out;
   overflow-y: auto;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 @keyframes slideInRight {

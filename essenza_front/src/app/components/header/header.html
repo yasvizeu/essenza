@@ -131,9 +131,10 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" routerLink="/carrinho" routerLinkActive="active">
               <i class="bi bi-cart3 me-1"></i>
               Carrinho
+              <span *ngIf="cartItemCount > 0" class="badge bg-danger ms-1">{{ cartItemCount }}</span>
             </a>
           </li>
         </ng-container>

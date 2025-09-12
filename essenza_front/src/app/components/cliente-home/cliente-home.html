@@ -195,9 +195,12 @@
               <i class="bi bi-heart text-danger me-2"></i>
               Seus Serviços Favoritos
             </h5>
-            <button class="btn btn-outline-primary btn-sm" (click)="loadServicos()">
-              Ver Todos os Serviços
-            </button>
+          <button class="btn btn-outline-primary btn-sm" (click)="loadServicos()">
+            Ver Todos os Serviços
+          </button>
+          <button class="btn btn-outline-warning btn-sm ms-2" (click)="testModal()">
+            Testar Modal
+          </button>
           </div>
         </div>
         <div class="card-body">
@@ -275,7 +278,7 @@
 
           <div *ngIf="!isLoading && servicos.length > 0" class="row g-3">
             <div *ngFor="let servico of servicos" class="col-lg-3 col-md-4 col-sm-6">
-              <div class="card border-0 shadow-sm h-100 servico-card" (click)="openModal(servico)">
+              <div class="card border-0 shadow-sm h-100 servico-card" (click)="openModal(servico)" style="cursor: pointer;">
                 <div class="card-img-wrapper">
                   <img [src]="getServicoImage(servico)" class="card-img-top" [alt]="servico.nome" style="height: 120px; object-fit: cover;">
                   <div class="card-img-overlay d-flex align-items-end">
@@ -309,8 +312,13 @@
   </div>
 </div>
 
+<!-- Debug Modal -->
+<div *ngIf="showModal" style="position: fixed; top: 10px; left: 10px; background: red; color: white; padding: 10px; z-index: 9999;">
+  Modal está ativo: {{ showModal }}
+</div>
+
 <!-- Modal do Serviço -->
-<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
   <div class="modal-sidebar" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h4 class="modal-title">{{ selectedServico?.nome }}</h4>

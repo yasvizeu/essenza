@@ -51,24 +51,48 @@ export class CartService {
 
   // Adicionar item ao carrinho
   addToCart(servico: Servico, quantidade: number = 1): Observable<any> {
+    console.log('🔍 Debug - addToCart chamado para:', servico.nome, 'quantidade:', quantidade);
+    
     // Verificar se está autenticado
     if (typeof window !== 'undefined' && window.localStorage) {
       const token = localStorage.getItem('essenza_access_token');
+      console.log('🔍 Debug - Token encontrado:', !!token);
+      
       if (token) {
         // Usuário logado - usar API
+        console.log('🔍 Debug - Adicionando via API');
+        const headers = { 'Authorization': `Bearer ${token}` };
         return this.http.post(`${this.apiUrl}/carrinho/adicionar`, {
           servicoId: servico.id,
           quantidade: quantidade
-        }).pipe(
+        }, { headers }).pipe(
           tap(() => {
+            console.log('🔍 Debug - Item adicionado via API, recarregando carrinho');
             // Recarregar carrinho após adicionar
-            this.loadCartFromAPI();
+            this.loadCartFromAPI().subscribe({
+              next: (cart) => {
+                console.log('🔍 Debug - Carrinho recarregado:', cart);
+              },
+              error: (error) => {
+                console.error('🔍 Debug - Erro ao recarregar carrinho:', error);
+              }
+            });
+          }),
+          catchError(error => {
+            console.error('🔍 Debug - Erro ao adicionar via API:', error);
+            // Fallback para adição local
+            this.addItemLocally(servico, quantidade);
+            return new Observable(observer => {
+              observer.next({ success: true });
+              observer.complete();
+            });
           })
         );
       }
     }
 
     // Usuário não logado - adicionar localmente
+    console.log('🔍 Debug - Adicionando localmente');
     return new Observable(observer => {
       this.addItemLocally(servico, quantidade);
       observer.next({ success: true });
@@ -78,15 +102,21 @@ export class CartService {
 
   // Adicionar item localmente (para usuários não logados)
   private addItemLocally(servico: Servico, quantidade: number): void {
+    console.log('🔍 Debug - addItemLocally chamado para:', servico.nome, 'quantidade:', quantidade);
+    
     const currentCart = this.cartSubject.value;
+    console.log('🔍 Debug - Carrinho atual antes:', currentCart);
+    
     const existingItem = currentCart.items.find(item => item.servico.id === servico.id);
 
     if (existingItem) {
       // Atualizar quantidade se item já existe
+      console.log('🔍 Debug - Item já existe, atualizando quantidade');
       existingItem.quantidade += quantidade;
       existingItem.precoTotal = this.parsePrice(existingItem.precoUnitario) * existingItem.quantidade;
     } else {
       // Adicionar novo item
+      console.log('🔍 Debug - Adicionando novo item');
       const precoUnitario = this.parsePrice(servico.preco);
       const newItem: CartItem = {
         id: Date.now(), // ID temporário
@@ -99,27 +129,49 @@ export class CartService {
     }
 
     this.updateCartTotals(currentCart);
+    console.log('🔍 Debug - Carrinho após adição:', currentCart);
+    this.cartSubject.next(currentCart);
     this.saveCartToStorage();
+    console.log('🔍 Debug - Item adicionado localmente com sucesso');
   }
 
   // Remover item do carrinho
   removeFromCart(itemId: number): Observable<any> {
+    console.log('🔍 Debug - removeFromCart chamado para item:', itemId);
+    
     // Verificar se está autenticado
     if (typeof window !== 'undefined' && window.localStorage) {
       const token = localStorage.getItem('essenza_access_token');
+      console.log('🔍 Debug - Token encontrado:', !!token);
+      console.log('🔍 Debug - Token value:', token);
+      
       if (token) {
-        // Usuário logado - usar API
-        return this.http.delete(`${this.apiUrl}/carrinho/${itemId}`).pipe(
+        // Usuário logado - usar API com token
+        console.log('🔍 Debug - Removendo via API para item:', itemId);
+        console.log('🔍 Debug - URL:', `${this.apiUrl}/carrinho/${itemId}`);
+        const headers = { 'Authorization': `Bearer ${token}` };
+        return this.http.delete(`${this.apiUrl}/carrinho/${itemId}`, { headers }).pipe(
           tap(() => {
+            console.log('🔍 Debug - Item removido via API, recarregando carrinho');
             this.loadCartFromAPI();
+          }),
+          catchError(error => {
+            console.error('🔍 Debug - Erro na API, removendo localmente:', error);
+            this.removeItemLocally(itemId);
+            return new Observable(observer => {
+              observer.next({ success: true });
+              observer.complete();
+            });
           })
         );
       }
     }
 
     // Usuário não logado - remover localmente
+    console.log('🔍 Debug - Removendo localmente');
     return new Observable(observer => {
       this.removeItemLocally(itemId);
+      console.log('🔍 Debug - Item removido localmente com sucesso');
       observer.next({ success: true });
       observer.complete();
     });
@@ -135,6 +187,8 @@ export class CartService {
 
   // Atualizar quantidade de um item
   updateQuantity(itemId: number, quantidade: number): Observable<any> {
+    console.log('🔍 Debug - updateQuantity chamado para item:', itemId, 'quantidade:', quantidade);
+    
     if (quantidade <= 0) {
       return this.removeFromCart(itemId);
     }
@@ -142,19 +196,42 @@ export class CartService {
     // Verificar se está autenticado
     if (typeof window !== 'undefined' && window.localStorage) {
       const token = localStorage.getItem('essenza_access_token');
+      console.log('🔍 Debug - Token encontrado:', !!token);
+      
       if (token) {
         // Usuário logado - usar API
+        console.log('🔍 Debug - Atualizando via API');
+        const headers = { 'Authorization': `Bearer ${token}` };
         return this.http.put(`${this.apiUrl}/carrinho/${itemId}`, {
           quantidade: quantidade
-        }).pipe(
+        }, { headers }).pipe(
           tap(() => {
-            this.loadCartFromAPI();
+            console.log('🔍 Debug - Quantidade atualizada via API, recarregando carrinho');
+            // Recarregar carrinho após atualizar
+            this.loadCartFromAPI().subscribe({
+              next: (cart) => {
+                console.log('🔍 Debug - Carrinho recarregado após atualização:', cart);
+              },
+              error: (error) => {
+                console.error('🔍 Debug - Erro ao recarregar carrinho:', error);
+              }
+            });
+          }),
+          catchError(error => {
+            console.error('🔍 Debug - Erro ao atualizar via API:', error);
+            // Fallback para atualização local
+            this.updateQuantityLocally(itemId, quantidade);
+            return new Observable(observer => {
+              observer.next({ success: true });
+              observer.complete();
+            });
           })
         );
       }
     }
 
     // Usuário não logado - atualizar localmente
+    console.log('🔍 Debug - Atualizando localmente');
     return new Observable(observer => {
       this.updateQuantityLocally(itemId, quantidade);
       observer.next({ success: true });
@@ -164,15 +241,36 @@ export class CartService {
 
   // Atualizar quantidade localmente (para usuários não logados)
   private updateQuantityLocally(itemId: number, quantidade: number): void {
+    console.log('🔍 Debug - updateQuantityLocally chamado para item:', itemId, 'quantidade:', quantidade);
+    
     const currentCart = this.cartSubject.value;
+    console.log('🔍 Debug - Carrinho atual antes da atualização:', currentCart);
+    
     const item = currentCart.items.find(item => item.id === itemId);
     
     if (item) {
+      console.log('🔍 Debug - Item encontrado, atualizando quantidade');
       item.quantidade = quantidade;
       item.precoTotal = this.parsePrice(item.precoUnitario) * quantidade;
       this.updateCartTotals(currentCart);
+      console.log('🔍 Debug - Carrinho após atualização:', currentCart);
+      this.cartSubject.next(currentCart);
       this.saveCartToStorage();
+      console.log('🔍 Debug - Quantidade atualizada localmente com sucesso');
+    } else {
+      console.log('🔍 Debug - Item não encontrado no carrinho');
     }
+  }
+
+  // Limpar carrinho localmente
+  clearCartLocal(): void {
+    console.log('🔍 Debug - Limpando carrinho localmente');
+    this.cartSubject.next({
+      items: [],
+      total: 0,
+      totalItems: 0
+    });
+    this.saveCartToStorage();
   }
 
   // Limpar carrinho
@@ -184,12 +282,24 @@ export class CartService {
         // Usuário logado - usar API
         return this.http.delete(`${this.apiUrl}/carrinho`).pipe(
           tap(() => {
+            console.log('🔍 Debug - Limpando carrinho via API');
             this.cartSubject.next({
               items: [],
               total: 0,
               totalItems: 0
             });
             this.saveCartToStorage();
+          }),
+          catchError((error) => {
+            console.error('Erro ao limpar carrinho via API:', error);
+            // Se falhar, limpar localmente mesmo assim
+            this.cartSubject.next({
+              items: [],
+              total: 0,
+              totalItems: 0
+            });
+            this.saveCartToStorage();
+            return [];
           })
         );
       }
@@ -209,8 +319,10 @@ export class CartService {
   }
 
   // Carregar carrinho da API (apenas quando autenticado)
-  loadCartFromAPI(): Observable<Cart> {
-    return this.http.get<Cart>(`${this.apiUrl}/carrinho`).pipe(
+  loadCartFromAPI(): Observable<any> {
+    const token = localStorage.getItem('essenza_access_token');
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : undefined;
+    return this.http.get<any>(`${this.apiUrl}/carrinho`, { headers }).pipe(
       tap(cart => {
         this.cartSubject.next(cart);
         this.saveCartToStorage();

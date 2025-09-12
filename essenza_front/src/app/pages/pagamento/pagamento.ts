@@ -30,6 +30,7 @@ export class PagamentoComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.cart$ = this.cartService.cart$;
+    this.initForm();
   }
 
   ngOnInit(): void {
@@ -49,8 +50,6 @@ export class PagamentoComponent implements OnInit {
       this.router.navigate(['/carrinho']);
       return;
     }
-
-    this.initForm();
   }
 
   initForm(): void {
@@ -258,38 +257,79 @@ export class PagamentoComponent implements OnInit {
     this.createAppointments(cart, paymentData);
   }
 
-  // Criar agendamentos
+  // Marcar serviços como pagos (sem criar agendamentos)
   private createAppointments(cart: any, paymentData: PaymentData): void {
     const currentUser = this.authService.getCurrentUser();
+    
+    console.log('🔍 Debug - Marcando serviços como pagos via API');
+    console.log('🔍 Debug - Carrinho:', cart);
+    console.log('🔍 Debug - Usuário:', currentUser);
+    
+    // Criar agendamentos tentative via API (sem data/hora definida)
     const appointments = cart.items.map((item: any) => ({
       title: item.servico.nome,
       description: item.servico.descricao,
-      startDateTime: new Date().toISOString(),
+      startDateTime: new Date().toISOString(), // Data temporária para validação do DTO
       endDateTime: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hora depois
       clienteId: currentUser.id,
-      profissionalId: 1, // Profissional padrão - implementar seleção no futuro
+      profissionalId: 1, // Profissional padrão
       servicoId: item.servico.id,
       valor: item.precoTotal,
-      status: 'confirmed',
-      statusPagamento: 'pago'
+      status: 'tentative', // Status tentative para aparecer em "Pagos Não Agendados"
+      statusPagamento: 'pago' // APENAS este campo é mockado
     }));
 
-    // Simular criação de agendamentos
-    console.log('Criando agendamentos:', appointments);
+    console.log('🔍 Debug - Criando agendamentos tentative via API:', appointments);
     
+    // Salvar cada agendamento no backend
+    let completedAppointments = 0;
+    const totalAppointments = appointments.length;
+    
+    appointments.forEach((appointment: any, index: number) => {
+      this.agendamentosService.criarAgendamento(appointment).subscribe({
+        next: (createdAppointment: any) => {
+          console.log(`🔍 Debug - Agendamento tentative ${index + 1} criado via API:`, createdAppointment);
+          completedAppointments++;
+          
+          if (completedAppointments === totalAppointments) {
+            this.finalizePayment();
+          }
+        },
+        error: (error) => {
+          console.error(`🔍 Debug - Erro ao criar agendamento ${index + 1}:`, error);
+          completedAppointments++;
+          
+          if (completedAppointments === totalAppointments) {
+            this.finalizePayment();
+          }
+        }
+      });
+    });
+  }
+
+  // Finalizar pagamento
+  private finalizePayment(): void {
     // Limpar carrinho
     this.cartService.clearCart().subscribe({
       next: () => {
-        console.log('Carrinho limpo após pagamento');
+        console.log('🔍 Debug - Carrinho limpo após pagamento');
+        this.isLoading = false;
+        
+        // Redirecionar para página de agendamentos do cliente
+        this.router.navigate(['/cliente-agendamentos'], {
+          queryParams: { payment: 'success' }
+        });
       },
       error: (error) => {
-        console.error('Erro ao limpar carrinho:', error);
+        console.error('🔍 Debug - Erro ao limpar carrinho:', error);
+        this.cartService.clearCartLocal();
+        this.isLoading = false;
+        
+        // Redirecionar mesmo com erro
+        this.router.navigate(['/cliente-agendamentos'], {
+          queryParams: { payment: 'success' }
+        });
       }
-    });
-    
-    // Redirecionar para página de agendamentos do cliente
-    this.router.navigate(['/cliente-agendamentos'], {
-      queryParams: { payment: 'success' }
     });
   }
 

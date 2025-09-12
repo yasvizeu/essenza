@@ -41,6 +41,7 @@ export class DashboardProfissionalComponent implements OnInit {
   isLoadingProdutos = false;
   isLoadingClientes = false;
   isLoadingServicos = false;
+  isLoadingAgendamentos = false;
 
   // Estados dos modais
   showModalEstoque = false;
@@ -59,6 +60,20 @@ export class DashboardProfissionalComponent implements OnInit {
   filtroProdutos = '';
   filtroClientes = '';
   clientesFiltrados: Cliente[] = [];
+  
+  // Filtros da agenda
+  filtroAgendamentos = '';
+  filtroDataInicio = '';
+  filtroDataFim = '';
+  filtroStatus = '';
+  filtroStatusPagamento = '';
+  agendamentosFiltrados: Agendamento[] = [];
+  
+  // Estatísticas da agenda
+  agendamentosHoje: Agendamento[] = [];
+  agendamentosAmanha: Agendamento[] = [];
+  agendamentosPendentes: Agendamento[] = [];
+  receitaTotal = 0;
 
   // Produto selecionado para detalhes
   produtoSelecionado: Produto | null = null;
@@ -82,6 +97,7 @@ export class DashboardProfissionalComponent implements OnInit {
   ngOnInit(): void {
     this.checkAuth();
     this.loadDashboardData();
+    this.inicializarFiltrosAgenda();
   }
 
   // Verificar autenticação
@@ -558,20 +574,27 @@ export class DashboardProfissionalComponent implements OnInit {
   // ===== GESTÃO DE AGENDAMENTOS =====
 
   // Carregar agendamentos do profissional
-  private loadAgendamentos(): Promise<void> {
+  loadAgendamentos(): Promise<void> {
     console.log('🔍 Debug - Carregando agendamentos...');
     if (!this.currentUser?.id) {
       return Promise.resolve();
     }
 
+    this.isLoadingAgendamentos = true;
     return this.agendamentosService.getAgendamentosProfissional(this.currentUser.id).toPromise()
       .then(agendamentos => {
         console.log('🔍 Debug - Agendamentos carregados:', agendamentos);
         this.agendamentos = this.agendamentosService.ordenarPorData(agendamentos || [], true);
+        this.aplicarFiltrosAgendamentos();
+        this.calcularEstatisticasAgenda();
       })
       .catch(error => {
         console.error('Erro ao carregar agendamentos:', error);
         this.agendamentos = [];
+        this.agendamentosFiltrados = [];
+      })
+      .finally(() => {
+        this.isLoadingAgendamentos = false;
       });
   }
 
@@ -590,13 +613,15 @@ export class DashboardProfissionalComponent implements OnInit {
   confirmarAgendamento(agendamento: Agendamento): void {
     if (!agendamento.id) return;
 
-    this.agendamentosService.confirmarAgendamento(agendamento.id).subscribe({
+    this.agendamentosService.confirmarAgendamento(agendamento.id.toString()).subscribe({
       next: (agendamentoAtualizado) => {
         // Atualizar na lista local
         const index = this.agendamentos.findIndex(a => a.id === agendamento.id);
         if (index !== -1) {
           this.agendamentos[index] = agendamentoAtualizado;
         }
+        this.aplicarFiltrosAgendamentos();
+        this.calcularEstatisticasAgenda();
         this.showSuccessMessage('Agendamento confirmado com sucesso!');
       },
       error: (error) => {
@@ -613,13 +638,15 @@ export class DashboardProfissionalComponent implements OnInit {
     const confirmacao = confirm('Tem certeza que deseja cancelar este agendamento?');
     if (!confirmacao) return;
 
-    this.agendamentosService.cancelarAgendamento(agendamento.id, 'Cancelado pelo profissional').subscribe({
+    this.agendamentosService.cancelarAgendamento(agendamento.id.toString(), 'Cancelado pelo profissional').subscribe({
       next: (agendamentoAtualizado) => {
         // Atualizar na lista local
         const index = this.agendamentos.findIndex(a => a.id === agendamento.id);
         if (index !== -1) {
           this.agendamentos[index] = agendamentoAtualizado;
         }
+        this.aplicarFiltrosAgendamentos();
+        this.calcularEstatisticasAgenda();
         this.showSuccessMessage('Agendamento cancelado com sucesso!');
       },
       error: (error) => {
@@ -685,6 +712,149 @@ export class DashboardProfissionalComponent implements OnInit {
 
   getStatusPagamentoTextAgendamento(status: string): string {
     return this.agendamentosService.getStatusPagamentoText(status);
+  }
+
+  // ===== FILTROS E ESTATÍSTICAS DA AGENDA =====
+
+  // Aplicar todos os filtros de agendamentos
+  aplicarFiltrosAgendamentos(): void {
+    let agendamentosFiltrados = [...this.agendamentos];
+
+    // Filtro por texto (busca)
+    if (this.filtroAgendamentos.trim()) {
+      const termo = this.filtroAgendamentos.toLowerCase();
+      agendamentosFiltrados = agendamentosFiltrados.filter(agendamento =>
+        agendamento.title?.toLowerCase().includes(termo) ||
+        agendamento.cliente?.nome?.toLowerCase().includes(termo) ||
+        agendamento.servico?.nome?.toLowerCase().includes(termo) ||
+        agendamento.observacoes?.toLowerCase().includes(termo)
+      );
+    }
+
+    // Filtro por data
+    if (this.filtroDataInicio) {
+      const dataInicio = new Date(this.filtroDataInicio);
+      agendamentosFiltrados = agendamentosFiltrados.filter(agendamento => {
+        if (!agendamento.startDateTime) return false;
+        const dataAgendamento = new Date(agendamento.startDateTime as string);
+        return dataAgendamento >= dataInicio;
+      });
+    }
+
+    if (this.filtroDataFim) {
+      const dataFim = new Date(this.filtroDataFim);
+      dataFim.setHours(23, 59, 59, 999); // Incluir todo o dia
+      agendamentosFiltrados = agendamentosFiltrados.filter(agendamento => {
+        if (!agendamento.startDateTime) return false;
+        const dataAgendamento = new Date(agendamento.startDateTime as string);
+        return dataAgendamento <= dataFim;
+      });
+    }
+
+    // Filtro por status
+    if (this.filtroStatus) {
+      agendamentosFiltrados = agendamentosFiltrados.filter(agendamento =>
+        agendamento.status === this.filtroStatus
+      );
+    }
+
+    // Filtro por status de pagamento
+    if (this.filtroStatusPagamento) {
+      agendamentosFiltrados = agendamentosFiltrados.filter(agendamento =>
+        agendamento.statusPagamento === this.filtroStatusPagamento
+      );
+    }
+
+    this.agendamentosFiltrados = agendamentosFiltrados;
+  }
+
+  // Filtrar agendamentos por data
+  filtrarAgendamentosPorData(): void {
+    this.aplicarFiltrosAgendamentos();
+    this.calcularEstatisticasAgenda();
+  }
+
+  // Filtrar agendamentos por status
+  filtrarAgendamentosPorStatus(): void {
+    this.aplicarFiltrosAgendamentos();
+    this.calcularEstatisticasAgenda();
+  }
+
+  // Filtrar agendamentos por status de pagamento
+  filtrarAgendamentosPorStatusPagamento(): void {
+    this.aplicarFiltrosAgendamentos();
+    this.calcularEstatisticasAgenda();
+  }
+
+  // Calcular estatísticas da agenda
+  calcularEstatisticasAgenda(): void {
+    const hoje = new Date();
+    const amanha = new Date();
+    amanha.setDate(hoje.getDate() + 1);
+
+    this.agendamentosHoje = this.agendamentos.filter(agendamento =>
+      agendamento.startDateTime && this.isHojeAgendamento(agendamento.startDateTime)
+    );
+
+    this.agendamentosAmanha = this.agendamentos.filter(agendamento =>
+      agendamento.startDateTime && this.isAmanhaAgendamento(agendamento.startDateTime)
+    );
+
+    this.agendamentosPendentes = this.agendamentos.filter(agendamento =>
+      agendamento.status === 'tentative'
+    );
+
+    this.receitaTotal = this.agendamentos
+      .filter(agendamento => agendamento.status !== 'cancelled')
+      .reduce((total, agendamento) => total + (agendamento.valor || 0), 0);
+  }
+
+  // Limpar todos os filtros da agenda
+  limparFiltrosAgenda(): void {
+    this.filtroAgendamentos = '';
+    this.filtroDataInicio = '';
+    this.filtroDataFim = '';
+    this.filtroStatus = '';
+    this.filtroStatusPagamento = '';
+    this.aplicarFiltrosAgendamentos();
+    this.calcularEstatisticasAgenda();
+  }
+
+  // Inicializar filtros da agenda com valores padrão
+  inicializarFiltrosAgenda(): void {
+    const hoje = new Date();
+    const proximaSemana = new Date();
+    proximaSemana.setDate(hoje.getDate() + 7);
+
+    this.filtroDataInicio = hoje.toISOString().split('T')[0];
+    this.filtroDataFim = proximaSemana.toISOString().split('T')[0];
+  }
+
+  // ===== MÉTODOS AUXILIARES PARA TEMPLATE =====
+
+  // Verificar se agendamento é hoje (com verificação de segurança)
+  isHojeAgendamentoSafe(agendamento: Agendamento): boolean {
+    return agendamento.startDateTime ? this.isHojeAgendamento(agendamento.startDateTime) : false;
+  }
+
+  // Verificar se agendamento é amanhã (com verificação de segurança)
+  isAmanhaAgendamentoSafe(agendamento: Agendamento): boolean {
+    return agendamento.startDateTime ? this.isAmanhaAgendamento(agendamento.startDateTime) : false;
+  }
+
+  // Verificar se agendamento é passado (com verificação de segurança)
+  isPassadoAgendamentoSafe(agendamento: Agendamento): boolean {
+    return agendamento.startDateTime ? this.isPassadoAgendamento(agendamento.startDateTime) : false;
+  }
+
+  // Formatar data do agendamento (com verificação de segurança)
+  formatarDataAgendamentoSafe(agendamento: Agendamento): string {
+    return agendamento.startDateTime ? this.formatarDataAgendamento(agendamento.startDateTime) : 'N/A';
+  }
+
+  // Formatar horário do agendamento (com verificação de segurança)
+  formatarHorarioAgendamentoSafe(agendamento: Agendamento): string {
+    return agendamento.startDateTime ? this.formatarHorarioAgendamento(agendamento.startDateTime) : 'N/A';
   }
 
   // Mensagens

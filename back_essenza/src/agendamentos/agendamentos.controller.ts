@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Patch,
+  Put,
   Param,
   Delete,
   ParseIntPipe,
@@ -28,6 +29,12 @@ export class AgendamentosController {
     return this.agendamentosService.create(createAgendamentoDto);
   }
 
+  @Put(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateAgendamentoDto: UpdateAgendamentoDto) {
+    console.log('🔍 Backend - Atualizando agendamento ID:', id, 'dados:', updateAgendamentoDto);
+    return this.agendamentosService.update(id, updateAgendamentoDto);
+  }
+
   @Get()
   findAll() {
     return this.agendamentosService.findAll();
@@ -36,6 +43,12 @@ export class AgendamentosController {
   @Get('cliente/:id')
   findByCliente(@Param('id', ParseIntPipe) id: number) {
     return this.agendamentosService.findByCliente(id);
+  }
+
+  @Get('servicos-pagos/:clienteId')
+  findServicosPagosNaoAgendados(@Param('clienteId', ParseIntPipe) clienteId: number) {
+    console.log('🔍 Backend - Buscando serviços pagos não agendados para cliente:', clienteId);
+    return this.agendamentosService.findServicosPagosNaoAgendados(clienteId);
   }
 
   @Get('profissional/:id')
@@ -77,18 +90,6 @@ export class AgendamentosController {
     return { disponivel };
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.agendamentosService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateAgendamentoDto: UpdateAgendamentoDto,
-  ) {
-    return this.agendamentosService.update(id, updateAgendamentoDto);
-  }
 
   @Patch(':id/confirmar')
   confirmar(@Param('id', ParseIntPipe) id: number) {
@@ -106,5 +107,11 @@ export class AgendamentosController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.agendamentosService.remove(id);
+  }
+
+  // Rota genérica :id deve ficar por último para não interferir nas outras rotas
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.agendamentosService.findOne(id);
   }
 }

@@ -127,4 +127,40 @@ export class AgendamentosService {
 
     return await query.getMany();
   }
+
+  // Buscar serviços pagos não agendados para um cliente
+  async findServicosPagosNaoAgendados(clienteId: number): Promise<any[]> {
+    // Buscar agendamentos pagos do cliente que ainda são tentative (não agendados)
+    const agendamentosPagos = await this.agendamentosRepository.find({
+      where: {
+        clienteId: clienteId,
+        statusPagamento: 'pago',
+        status: 'tentative'  // Apenas os que ainda não foram agendados
+      },
+      relations: ['servico'],
+      order: { createdAt: 'DESC' }
+    });
+
+    // Retornar apenas os serviços únicos (sem duplicatas)
+    const servicosUnicos = new Map();
+    
+    agendamentosPagos.forEach(agendamento => {
+      if (agendamento.servico && !servicosUnicos.has(agendamento.servico.id)) {
+        servicosUnicos.set(agendamento.servico.id, {
+          id: agendamento.servico.id,
+          nome: agendamento.servico.nome,
+          descricao: agendamento.servico.descricao,
+          preco: agendamento.servico.preco,
+          duracao: agendamento.servico.duracao,
+          categoria: agendamento.servico.categoria,
+          imagem: agendamento.servico.imagem,
+          ativo: agendamento.servico.ativo,
+          dataPagamento: agendamento.createdAt,
+          agendamentoId: agendamento.id
+        });
+      }
+    });
+
+    return Array.from(servicosUnicos.values());
+  }
 }
