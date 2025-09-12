@@ -154,7 +154,7 @@ export class AgendamentosService {
           duracao: agendamento.servico.duracao,
           categoria: agendamento.servico.categoria,
           imagem: agendamento.servico.imagem,
-          ativo: agendamento.servico.ativo,
+          disponivel: agendamento.servico.disponivel,
           dataPagamento: agendamento.createdAt,
           agendamentoId: agendamento.id
         });
