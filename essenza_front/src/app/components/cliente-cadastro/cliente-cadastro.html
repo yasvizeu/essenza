@@ -12,6 +12,19 @@
         </p>
       </div>
 
+      <!-- Mensagens de Erro e Sucesso -->
+      <div *ngIf="showError" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="closeError()" aria-label="Close"></button>
+      </div>
+
+      <div *ngIf="showSuccess" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ successMessage }}
+        <button type="button" class="btn-close" (click)="closeSuccess()" aria-label="Close"></button>
+      </div>
+
       <!-- Indicador de Progresso -->
       <div class="progress mb-4" style="height: 8px;">
         <div class="progress-bar bg-success"

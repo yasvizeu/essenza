@@ -25,6 +25,9 @@ export class ClienteCadastroComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('Componente inicializado');
+    console.log('showError inicial:', this.showError);
+    console.log('showSuccess inicial:', this.showSuccess);
     this.initForms();
   }
 
@@ -103,9 +106,39 @@ export class ClienteCadastroComponent implements OnInit {
 
     const cleanCpf = cpf.replace(/\D/g, '');
     if (cleanCpf.length !== 11) return { cpfInvalidLength: true };
-    if (!this.clienteService.validarCPF(cpf)) return { cpfInvalid: true };
+    
+    // Validação básica de CPF (algoritmo)
+    if (!this.validarCPF(cleanCpf)) return { cpfInvalid: true };
 
     return null;
+  }
+
+  // Função para validar CPF (algoritmo)
+  validarCPF(cpf: string): boolean {
+    if (cpf.length !== 11) return false;
+    
+    // Verificar se todos os dígitos são iguais
+    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    
+    // Calcular primeiro dígito verificador
+    let soma = 0;
+    for (let i = 0; i < 9; i++) {
+      soma += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let resto = soma % 11;
+    let digito1 = resto < 2 ? 0 : 11 - resto;
+    
+    if (parseInt(cpf.charAt(9)) !== digito1) return false;
+    
+    // Calcular segundo dígito verificador
+    soma = 0;
+    for (let i = 0; i < 10; i++) {
+      soma += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    resto = soma % 11;
+    let digito2 = resto < 2 ? 0 : 11 - resto;
+    
+    return parseInt(cpf.charAt(10)) === digito2;
   }
 
   // Validador de data de nascimento
@@ -180,7 +213,10 @@ export class ClienteCadastroComponent implements OnInit {
       next: (response) => {
         this.isCheckingCpf = false;
         if (response.exists) {
+          console.log('🚫 CPF já existe no sistema');
           this.cadastroForm.get('cpf')?.setErrors({ 'cpfAlreadyExists': true });
+          // Mostrar mensagem de erro imediatamente
+          this.showErrorMessage('❌ Este CPF já possui cadastro no sistema. Por favor, verifique se você já possui uma conta ou entre em contato conosco.');
         } else {
           // Remove o erro de CPF existente se houver
           const control = this.cadastroForm.get('cpf');
@@ -191,6 +227,10 @@ export class ClienteCadastroComponent implements OnInit {
             } else {
               control.setErrors(control.errors);
             }
+          }
+          // Limpar mensagem de erro se CPF não existe
+          if (this.showError && this.errorMessage.includes('CPF')) {
+            this.showError = false;
           }
         }
       },
@@ -269,6 +309,12 @@ export class ClienteCadastroComponent implements OnInit {
   // Controle de verificação de CPF
   isCheckingCpf = false;
 
+  // Controle de mensagens de erro e sucesso
+  errorMessage = '';
+  successMessage = '';
+  showError = false;
+  showSuccess = false;
+
   // Alternar visualização da senha
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -295,6 +341,16 @@ export class ClienteCadastroComponent implements OnInit {
 
   // Submeter formulário completo
   onSubmit(): void {
+    // Marcar todos os campos como tocados para mostrar erros
+    this.markAllFieldsAsTouched();
+    
+    // Verificar se há erro de CPF já existente
+    if (this.cadastroForm.get('cpf')?.errors?.['cpfAlreadyExists']) {
+      console.log('🚫 CPF já existe - impedindo envio');
+      this.showErrorMessage('❌ Este CPF já possui cadastro no sistema. Por favor, verifique se você já possui uma conta ou entre em contato conosco.');
+      return;
+    }
+    
     if (this.cadastroForm.valid && this.anamneseForm.valid) {
       this.isLoading = true;
 
@@ -326,16 +382,34 @@ export class ClienteCadastroComponent implements OnInit {
         next: (response) => {
           console.log('Cliente cadastrado com sucesso:', response);
           this.isLoading = false;
-          // Redirecionar para página de login
-          this.router.navigate(['/login']);
+          // Exibir mensagem de sucesso
+          this.showSuccessMessage('✅ Cadastro realizado com sucesso! Redirecionando...');
+          // Redirecionar para página de login após um pequeno delay
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
         },
         error: (error) => {
           console.error('Erro ao cadastrar cliente:', error);
           this.isLoading = false;
-          // Aqui você pode implementar tratamento de erro mais específico
+          this.handleRegistrationError(error);
         }
       });
+    } else {
+      // Se o formulário não é válido, mostrar mensagem de erro
+      this.showErrorMessage('❌ Por favor, corrija os erros nos campos destacados em vermelho antes de continuar.');
     }
+  }
+
+  // Marcar todos os campos como tocados para mostrar erros
+  markAllFieldsAsTouched(): void {
+    Object.keys(this.cadastroForm.controls).forEach(key => {
+      this.cadastroForm.get(key)?.markAsTouched();
+    });
+    
+    Object.keys(this.anamneseForm.controls).forEach(key => {
+      this.anamneseForm.get(key)?.markAsTouched();
+    });
   }
 
   // Verificar se o passo atual é válido
@@ -377,7 +451,7 @@ export class ClienteCadastroComponent implements OnInit {
       } else if (control.errors['cpfInvalid']) {
         return 'CPF inválido';
       } else if (control.errors['cpfAlreadyExists']) {
-        return 'Este CPF já está cadastrado no sistema';
+        return 'Este CPF já possui cadastro';
       }
       
       // Erros de data de nascimento
@@ -415,7 +489,7 @@ export class ClienteCadastroComponent implements OnInit {
       } else if (control.errors['passwordNoSpecialChar']) {
         return 'Senha deve conter pelo menos 1 caractere especial (!@#$%^&*...)';
       } else if (control.errors['passwordMismatch']) {
-        return 'As senhas não coincidem';
+        return 'Senhas diferentes';
       }
       
       // Erro de comprimento mínimo genérico
@@ -442,5 +516,124 @@ export class ClienteCadastroComponent implements OnInit {
       value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
       event.target.value = value;
     }
+  }
+
+  // Tratar erros de cadastro
+  handleRegistrationError(error: any): void {
+    console.error('Erro detalhado:', error);
+    console.error('Status do erro:', error.status);
+    console.error('Mensagem do erro:', error.error);
+    
+    // Limpar mensagens anteriores
+    this.showError = false;
+    this.showSuccess = false;
+    
+    // Voltar automaticamente para o passo 1 (dados pessoais) quando há erro
+    this.currentStep = 1;
+    console.log('🔄 Voltando automaticamente para o passo 1 (Dados Pessoais)');
+    
+    // Marcar todos os campos como tocados para mostrar erros visuais
+    this.markAllFieldsAsTouched();
+    
+    // Verificar se há mensagem específica do backend
+    if (error.error && error.error.message) {
+      console.log('Exibindo mensagem específica do backend:', error.error.message);
+      
+      // Personalizar mensagens específicas
+      if (error.error.message.includes('CPF')) {
+        this.showErrorMessage('❌ Este CPF já possui cadastro no sistema. Por favor, verifique se você já possui uma conta ou entre em contato conosco.');
+      } else if (error.error.message.includes('email')) {
+        this.showErrorMessage('❌ Este email já possui cadastro no sistema. Tente fazer login ou use outro email.');
+      } else {
+        this.showErrorMessage(`❌ ${error.error.message}`);
+      }
+      return;
+    }
+    
+    // Verificar status HTTP específicos
+    if (error.status === 409) {
+      console.log('Erro 409 - Conflito detectado');
+      this.showErrorMessage('❌ Este CPF ou email já possui cadastro no sistema. Verifique seus dados ou tente fazer login.');
+    } else if (error.status === 400) {
+      console.log('Erro 400 - Dados inválidos');
+      this.showErrorMessage('❌ Dados inválidos. Verifique se todos os campos estão preenchidos corretamente e tente novamente.');
+    } else if (error.status === 0) {
+      console.log('Erro 0 - Problema de conexão');
+      this.showErrorMessage('❌ Erro de conexão. Verifique sua internet e tente novamente.');
+    } else if (error.status === 500) {
+      console.log('Erro 500 - Erro interno do servidor');
+      this.showErrorMessage('❌ Erro interno do servidor. Tente novamente em alguns minutos.');
+    } else {
+      console.log('Erro genérico - Status:', error.status);
+      this.showErrorMessage('❌ Erro interno do servidor. Tente novamente mais tarde.');
+    }
+  }
+
+  // Exibir mensagem de erro
+  showErrorMessage(message: string): void {
+    console.log('Exibindo mensagem de erro:', message);
+    this.errorMessage = message;
+    this.showError = true;
+    this.showSuccess = false;
+    
+    // Scroll para o topo para garantir que o usuário veja a mensagem
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+    
+    // Forçar detecção de mudanças e log de debug
+    setTimeout(() => {
+      console.log('✅ Estado showError:', this.showError);
+      console.log('✅ Mensagem de erro:', this.errorMessage);
+      console.log('✅ Passo atual:', this.currentStep);
+    }, 200);
+    
+    // Auto-hide após 15 segundos (tempo suficiente para o usuário ler)
+    setTimeout(() => {
+      this.showError = false;
+    }, 15000);
+  }
+
+  // Exibir mensagem de sucesso
+  showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    this.showSuccess = true;
+    this.showError = false;
+    
+    // Auto-hide após 3 segundos
+    setTimeout(() => {
+      this.showSuccess = false;
+    }, 3000);
+  }
+
+  // Fechar mensagem de erro
+  closeError(): void {
+    this.showError = false;
+  }
+
+  // Fechar mensagem de sucesso
+  closeSuccess(): void {
+    this.showSuccess = false;
+  }
+
+  // Método de teste para simular erro (remover em produção)
+  testErrorHandling(): void {
+    console.log('🧪 Testando tratamento de erro...');
+    const mockError = {
+      status: 409,
+      error: {
+        message: 'Este CPF já possui cadastro no sistema'
+      }
+    };
+    this.handleRegistrationError(mockError);
+  }
+
+  // Método de teste para simular CPF já existente (remover em produção)
+  testCpfExists(): void {
+    console.log('🧪 Testando CPF já existente...');
+    // Simular um CPF já existente
+    this.cadastroForm.get('cpf')?.setValue('123.456.789-00');
+    this.cadastroForm.get('cpf')?.setErrors({ 'cpfAlreadyExists': true });
+    this.showErrorMessage('❌ Este CPF já possui cadastro no sistema. Por favor, verifique se você já possui uma conta ou entre em contato conosco.');
   }
 }

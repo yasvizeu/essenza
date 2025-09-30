@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,8 +13,32 @@ export class ClientesService {
     private clienteRepo: Repository<Cliente>,
   ){}
   async create(dto: CreateClienteDto): Promise<Cliente> {
-    const newClient = this.clienteRepo.create(dto);
-    return this.clienteRepo.save(newClient);
+    // Verificar se CPF já existe
+    const existingClient = await this.clienteRepo.findOneBy({ cpf: dto.cpf });
+    if (existingClient) {
+      throw new ConflictException('Este CPF já possui cadastro');
+    }
+
+    // Verificar se email já existe
+    const existingEmail = await this.clienteRepo.findOneBy({ email: dto.email });
+    if (existingEmail) {
+      throw new ConflictException('Este email já possui cadastro');
+    }
+
+    try {
+      const newClient = this.clienteRepo.create(dto);
+      return await this.clienteRepo.save(newClient);
+    } catch (error) {
+      // Se for erro de constraint única (duplicação)
+      if (error.code === '23505') {
+        if (error.detail.includes('cpf')) {
+          throw new ConflictException('Este CPF já possui cadastro');
+        } else if (error.detail.includes('email')) {
+          throw new ConflictException('Este email já possui cadastro');
+        }
+      }
+      throw new BadRequestException('Erro ao criar cliente');
+    }
   }
 
   findAll() {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -10,9 +10,14 @@ export class ClientesController {
   constructor(private readonly clientesService: ClientesService) {}
 
   @Post()
-  create(@Body() createClienteDto: CreateClienteDto) {
+  async create(@Body() createClienteDto: CreateClienteDto) {
     this.logger.log('Creating cliente');
-    return this.clientesService.create(createClienteDto);
+    try {
+      return await this.clientesService.create(createClienteDto);
+    } catch (error) {
+      this.logger.error(`Error creating cliente: ${error.message}`);
+      throw error; // Re-throw para que o NestJS trate o erro automaticamente
+    }
   }
 
   @Get()
