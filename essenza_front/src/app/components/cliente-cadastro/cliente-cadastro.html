@@ -13,17 +13,21 @@
       </div>
 
       <!-- Mensagens de Erro e Sucesso -->
-      <div *ngIf="showError" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        {{ errorMessage }}
-        <button type="button" class="btn-close" (click)="closeError()" aria-label="Close"></button>
-      </div>
+      @if (showError) {
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ errorMessage }}
+          <button type="button" class="btn-close" (click)="closeError()" aria-label="Close"></button>
+        </div>
+      }
 
-      <div *ngIf="showSuccess" class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i>
-        {{ successMessage }}
-        <button type="button" class="btn-close" (click)="closeSuccess()" aria-label="Close"></button>
-      </div>
+      @if (showSuccess) {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          {{ successMessage }}
+          <button type="button" class="btn-close" (click)="closeSuccess()" aria-label="Close"></button>
+        </div>
+      }
 
       <!-- Indicador de Progresso -->
       <div class="progress mb-4" style="height: 8px;">
@@ -47,7 +51,8 @@
       </div>
 
       <!-- Formulário de Dados Pessoais - Passo 1 -->
-      <div *ngIf="currentStep === 1" class="card border-0 shadow-sm">
+      @if (currentStep === 1) {
+      <div class="card border-0 shadow-sm">
         <div class="card-header bg-success text-white">
           <h5 class="mb-0">
             <i class="bi bi-person-fill me-2"></i>
@@ -70,10 +75,11 @@
                         formControlName="name"
                         (input)="onNameChange($event)"
                         placeholder="Digite seu nome completo">
-                 <div class="text-danger small mt-1"
-                      *ngIf="getErrorMessage('name', cadastroForm)">
-                   {{ getErrorMessage('name', cadastroForm) }}
-                 </div>
+                @if (getErrorMessage('name', cadastroForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('name', cadastroForm) }}
+                  </div>
+                }
                </div>
 
               <!-- Email -->
@@ -89,10 +95,11 @@
                        formControlName="email"
                        (input)="onEmailChange($event)"
                        placeholder="seu@email.com">
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('email', cadastroForm)">
-                  {{ getErrorMessage('email', cadastroForm) }}
-                </div>
+               @if (getErrorMessage('email', cadastroForm)) {
+                 <div class="text-danger small mt-1">
+                   {{ getErrorMessage('email', cadastroForm) }}
+                 </div>
+               }
               </div>
 
               <!-- CPF -->
@@ -110,14 +117,17 @@
                          (input)="onCpfChange($event)"
                          placeholder="000.000.000-00"
                          maxlength="14">
-                  <span class="input-group-text" *ngIf="isCheckingCpf">
-                    <i class="bi bi-arrow-clockwise spin"></i>
-                  </span>
+                  @if (isCheckingCpf) {
+                    <span class="input-group-text">
+                      <i class="bi bi-arrow-clockwise spin"></i>
+                    </span>
+                  }
                 </div>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('cpf', cadastroForm)">
-                  {{ getErrorMessage('cpf', cadastroForm) }}
-                </div>
+                @if (getErrorMessage('cpf', cadastroForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('cpf', cadastroForm) }}
+                  </div>
+                }
               </div>
 
               <!-- Data de Nascimento -->
@@ -132,10 +142,11 @@
                        id="birthDate"
                        formControlName="birthDate"
                        (change)="onBirthDateChange($event)">
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('birthDate', cadastroForm)">
-                  {{ getErrorMessage('birthDate', cadastroForm) }}
-                </div>
+                @if (getErrorMessage('birthDate', cadastroForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('birthDate', cadastroForm) }}
+                  </div>
+                }
               </div>
 
               <!-- Celular -->
@@ -152,10 +163,11 @@
                        (input)="onCellChange($event)"
                        placeholder="(11) 99999-9999"
                        maxlength="15">
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('cell', cadastroForm)">
-                  {{ getErrorMessage('cell', cadastroForm) }}
-                </div>
+                @if (getErrorMessage('cell', cadastroForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('cell', cadastroForm) }}
+                  </div>
+                }
               </div>
 
               <!-- Endereço -->
@@ -171,10 +183,11 @@
                           (input)="onAddressChange($event)"
                           rows="3"
                           placeholder="Rua, número, bairro, cidade - UF, CEP"></textarea>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('address', cadastroForm)">
-                  {{ getErrorMessage('address', cadastroForm) }}
-                </div>
+                @if (getErrorMessage('address', cadastroForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('address', cadastroForm) }}
+                  </div>
+                }
               </div>
 
                              <!-- Senha -->
@@ -199,8 +212,9 @@
                    </button>
                  </div>
                  
-                 <!-- Feedback visual da senha -->
-                 <div class="mt-2" *ngIf="cadastroForm.get('password')?.value">
+                <!-- Feedback visual da senha -->
+                @if (cadastroForm.get('password')?.value) {
+                <div class="mt-2">
                    <div class="row">
                      <div class="col-12">
                        <small class="text-muted">Requisitos da senha:</small>
@@ -245,13 +259,15 @@
                          Especial
                        </small>
                      </div>
-                   </div>
-                 </div>
+                  </div>
+                </div>
+                }
                  
-                 <div class="text-danger small mt-1"
-                      *ngIf="getErrorMessage('password', cadastroForm)">
-                   {{ getErrorMessage('password', cadastroForm) }}
-                 </div>
+                @if (getErrorMessage('password', cadastroForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('password', cadastroForm) }}
+                  </div>
+                }
                </div>
 
               <!-- Confirmar Senha -->
@@ -275,10 +291,16 @@
                     <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
                   </button>
                 </div>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('confirmPassword', cadastroForm)">
-                  {{ getErrorMessage('confirmPassword', cadastroForm) }}
-                </div>
+                @if (getErrorMessage('confirmPassword', cadastroForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('confirmPassword', cadastroForm) }}
+                  </div>
+                }
+                @if (cadastroForm.hasError('passwordMismatch') && cadastroForm.get('confirmPassword')?.touched){
+                  <div class="text-danger small mt-1">
+                    As senhas não coincidem.
+                  </div>
+                }
               </div>
             </div>
 
@@ -295,9 +317,11 @@
           </form>
         </div>
       </div>
+      }
 
       <!-- Formulário de Anamnese - Passo 2 -->
-      <div *ngIf="currentStep === 2" class="card border-0 shadow-sm">
+      @if (currentStep === 2) {
+      <div class="card border-0 shadow-sm">
         <div class="card-header bg-success text-white">
           <h5 class="mb-0">
             <i class="bi bi-clipboard2-pulse me-2"></i>
@@ -305,6 +329,14 @@
           </h5>
         </div>
         <div class="card-body p-4">
+          @if(showError){
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              {{ errorMessage }}
+              <button type="button" class="btn-close" (click)="closeError()" aria-label="Close"></button>
+
+            </div>
+          }
           <form [formGroup]="anamneseForm">
             <div class="row">
               <!-- Problemas de Saúde -->
@@ -317,10 +349,11 @@
                           formControlName="healthProblems"
                           rows="3"
                           placeholder="Descreva problemas de saúde atuais ou passados, doenças crônicas, etc."></textarea>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('healthProblems', anamneseForm)">
-                  {{ getErrorMessage('healthProblems', anamneseForm) }}
-                </div>
+                @if (getErrorMessage('healthProblems', anamneseForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('healthProblems', anamneseForm) }}
+                  </div>
+                }
               </div>
 
               <!-- Medicamentos -->
@@ -333,10 +366,11 @@
                           formControlName="medications"
                           rows="2"
                           placeholder="Liste medicamentos que está tomando atualmente (incluir nome e dosagem)"></textarea>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('medications', anamneseForm)">
-                  {{ getErrorMessage('medications', anamneseForm) }}
-                </div>
+                @if (getErrorMessage('medications', anamneseForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('medications', anamneseForm) }}
+                  </div>
+                }
               </div>
 
               <!-- Alergias -->
@@ -349,10 +383,11 @@
                           formControlName="allergies"
                           rows="2"
                           placeholder="Descreva alergias conhecidas (medicamentos, alimentos, produtos, etc.)"></textarea>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('allergies', anamneseForm)">
-                  {{ getErrorMessage('allergies', anamneseForm) }}
-                </div>
+                @if (getErrorMessage('allergies', anamneseForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('allergies', anamneseForm) }}
+                  </div>
+                }
               </div>
 
               <!-- Cirurgias -->
@@ -365,10 +400,11 @@
                           formControlName="surgeries"
                           rows="2"
                           placeholder="Liste cirurgias realizadas, data aproximada e motivo"></textarea>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('surgeries', anamneseForm)">
-                  {{ getErrorMessage('surgeries', anamneseForm) }}
-                </div>
+                @if (getErrorMessage('surgeries', anamneseForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('surgeries', anamneseForm) }}
+                  </div>
+                }
               </div>
 
               <!-- Estilo de Vida -->
@@ -381,10 +417,11 @@
                           formControlName="lifestyle"
                           rows="3"
                           placeholder="Descreva seu estilo de vida: atividade física, alimentação, sono, estresse, tabagismo, etc."></textarea>
-                <div class="text-danger small mt-1"
-                     *ngIf="getErrorMessage('lifestyle', anamneseForm)">
-                  {{ getErrorMessage('lifestyle', anamneseForm) }}
-                </div>
+                @if (getErrorMessage('lifestyle', anamneseForm)) {
+                  <div class="text-danger small mt-1">
+                    {{ getErrorMessage('lifestyle', anamneseForm) }}
+                  </div>
+                }
               </div>
             </div>
 
@@ -401,19 +438,23 @@
                       class="btn btn-success btn-lg px-4"
                       (click)="onSubmit()"
                       [disabled]="!anamneseForm.valid || isLoading">
-                <span *ngIf="!isLoading">
-                  <i class="bi bi-check-circle me-2"></i>
-                  Finalizar Cadastro
-                </span>
-                <span *ngIf="isLoading">
-                  <i class="bi bi-hourglass-split me-2"></i>
-                  Processando...
-                </span>
+                @if (!isLoading) {
+                  <span>
+                    <i class="bi bi-check-circle me-2"></i>
+                    Finalizar Cadastro
+                  </span>
+                } @else {
+                  <span>
+                    <i class="bi bi-hourglass-split me-2"></i>
+                    Processando...
+                  </span>
+                }
               </button>
             </div>
           </form>
         </div>
       </div>
+      }
 
       <!-- Informações Adicionais -->
       <div class="card border-0 bg-light mt-4">

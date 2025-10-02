@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ValidationErrors, ValidatorFn, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ClienteService, Cliente, FichaAnamnese, ClienteCompleto } from '../../services/cliente';
 import { Router } from '@angular/router';
@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   selector: 'app-cliente-cadastro',
   templateUrl: './cliente-cadastro.html',
   styleUrl: './cliente-cadastro.scss',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   standalone: true
 })
 export class ClienteCadastroComponent implements OnInit {
@@ -28,7 +28,7 @@ export class ClienteCadastroComponent implements OnInit {
     console.log('Componente inicializado');
     console.log('showError inicial:', this.showError);
     console.log('showSuccess inicial:', this.showSuccess);
-    this.initForms();
+    this.initForms(); 
   }
 
   initForms(): void {
@@ -529,8 +529,8 @@ export class ClienteCadastroComponent implements OnInit {
     this.showSuccess = false;
     
     // Voltar automaticamente para o passo 1 (dados pessoais) quando há erro
-    this.currentStep = 1;
-    console.log('🔄 Voltando automaticamente para o passo 1 (Dados Pessoais)');
+    //this.currentStep = 1;
+   // console.log('🔄 Voltando automaticamente para o passo 1 (Dados Pessoais)');
     
     // Marcar todos os campos como tocados para mostrar erros visuais
     this.markAllFieldsAsTouched();
