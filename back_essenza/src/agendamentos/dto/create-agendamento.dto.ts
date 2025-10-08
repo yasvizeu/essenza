@@ -26,12 +26,12 @@ export class CreateAgendamentoDto {
   location?: string;
 
   @IsOptional()
-  @IsEnum(['confirmed', 'tentative', 'cancelled'])
-  status?: 'confirmed' | 'tentative' | 'cancelled';
+  @IsEnum(['confirmed', 'onHold', 'cancelled'])
+  status?: 'confirmed' | 'onHold' | 'cancelled';
 
   @IsOptional()
-  @IsEnum(['pendente', 'pago', 'cancelado'])
-  statusPagamento?: 'pendente' | 'pago' | 'cancelado';
+  @IsEnum(['pendente', 'pago'])
+  statusPagamento?: 'pendente' | 'pago';
 
   @IsOptional()
   @IsNumber()
@@ -53,3 +53,4 @@ export class CreateAgendamentoDto {
   @IsNumber()
   servicoId: number;
 }
+
