@@ -14,27 +14,31 @@
 
       <!-- Mensagens de Erro e Sucesso -->
       @if (showError) {
-        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>
-          {{ errorMessage }}
-          <button type="button" class="btn-close" (click)="closeError()" aria-label="Close"></button>
-        </div>
-      }
-
-      @if (showSuccess) {
-        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-          <i class="bi bi-check-circle-fill me-2"></i>
-          {{ successMessage }}
-          <button type="button" class="btn-close" (click)="closeSuccess()" aria-label="Close"></button>
-        </div>
+      <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="closeError()" aria-label="Close"></button>
+      </div>
+      } @if (showSuccess) {
+      <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ successMessage }}
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closeSuccess()"
+          aria-label="Close"
+        ></button>
+      </div>
       }
 
       <!-- Indicador de Progresso -->
-      <div class="progress mb-4" style="height: 8px;">
-        <div class="progress-bar bg-success"
-             [style.width.%]="(currentStep / totalSteps) * 100"
-             role="progressbar">
-        </div>
+      <div class="progress mb-4" style="height: 8px">
+        <div
+          class="progress-bar bg-success"
+          [style.width.%]="(currentStep / totalSteps) * 100"
+          role="progressbar"
+        ></div>
       </div>
 
       <div class="d-flex justify-content-between mb-4">
@@ -42,9 +46,11 @@
           <i class="bi bi-1-circle me-2"></i>
           Dados Pessoais
         </span>
-        <span class="badge fs-6 px-3 py-2"
-              [class.bg-success]="currentStep >= 2"
-              [class.bg-secondary]="currentStep < 2">
+        <span
+          class="badge fs-6 px-3 py-2"
+          [class.bg-success]="currentStep >= 2"
+          [class.bg-secondary]="currentStep < 2"
+        >
           <i class="bi bi-2-circle me-2"></i>
           Ficha de Anamnese
         </span>
@@ -62,44 +68,48 @@
         <div class="card-body p-4">
           <form [formGroup]="cadastroForm">
             <div class="row">
-                             <!-- Nome Completo -->
-               <div class="col-md-12 mb-3">
-                 <label for="name" class="form-label fw-bold">
-                   <i class="bi bi-person me-2"></i>Nome Completo *
-                 </label>
-                 <input type="text"
-                        class="form-control"
-                        [class.is-valid]="isFieldValid('name')"
-                        [class.is-invalid]="hasFieldError('name')"
-                        id="name"
-                        formControlName="name"
-                        (input)="onNameChange($event)"
-                        placeholder="Digite seu nome completo">
+              <!-- Nome Completo -->
+              <div class="col-md-12 mb-3">
+                <label for="name" class="form-label fw-bold">
+                  <i class="bi bi-person me-2"></i>Nome Completo *
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [class.is-valid]="isFieldValid('name')"
+                  [class.is-invalid]="hasFieldError('name')"
+                  id="name"
+                  formControlName="name"
+                  (input)="onNameChange($event)"
+                  placeholder="Digite seu nome completo"
+                />
                 @if (getErrorMessage('name', cadastroForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('name', cadastroForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('name', cadastroForm) }}
+                </div>
                 }
-               </div>
+              </div>
 
               <!-- Email -->
               <div class="col-md-6 mb-3">
                 <label for="email" class="form-label fw-bold">
                   <i class="bi bi-envelope me-2"></i>Email *
                 </label>
-                <input type="email"
-                       class="form-control"
-                       [class.is-valid]="isFieldValid('email')"
-                       [class.is-invalid]="hasFieldError('email')"
-                       id="email"
-                       formControlName="email"
-                       (input)="onEmailChange($event)"
-                       placeholder="seu@email.com">
-               @if (getErrorMessage('email', cadastroForm)) {
-                 <div class="text-danger small mt-1">
-                   {{ getErrorMessage('email', cadastroForm) }}
-                 </div>
-               }
+                <input
+                  type="email"
+                  class="form-control"
+                  [class.is-valid]="isFieldValid('email')"
+                  [class.is-invalid]="hasFieldError('email')"
+                  id="email"
+                  formControlName="email"
+                  (input)="onEmailChange($event)"
+                  placeholder="seu@email.com"
+                />
+                @if (getErrorMessage('email', cadastroForm)) {
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('email', cadastroForm) }}
+                </div>
+                }
               </div>
 
               <!-- CPF -->
@@ -108,25 +118,27 @@
                   <i class="bi bi-card-text me-2"></i>CPF *
                 </label>
                 <div class="input-group">
-                  <input type="text"
-                         class="form-control"
-                         [class.is-valid]="isFieldValid('cpf')"
-                         [class.is-invalid]="hasFieldError('cpf')"
-                         id="cpf"
-                         formControlName="cpf"
-                         (input)="onCpfChange($event)"
-                         placeholder="000.000.000-00"
-                         maxlength="14">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-valid]="isFieldValid('cpf')"
+                    [class.is-invalid]="hasFieldError('cpf')"
+                    id="cpf"
+                    formControlName="cpf"
+                    (input)="onCpfChange($event)"
+                    placeholder="000.000.000-00"
+                    maxlength="14"
+                  />
                   @if (isCheckingCpf) {
-                    <span class="input-group-text">
-                      <i class="bi bi-arrow-clockwise spin"></i>
-                    </span>
+                  <span class="input-group-text">
+                    <i class="bi bi-arrow-clockwise spin"></i>
+                  </span>
                   }
                 </div>
                 @if (getErrorMessage('cpf', cadastroForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('cpf', cadastroForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('cpf', cadastroForm) }}
+                </div>
                 }
               </div>
 
@@ -135,17 +147,19 @@
                 <label for="birthDate" class="form-label fw-bold">
                   <i class="bi bi-calendar me-2"></i>Data de Nascimento *
                 </label>
-                <input type="date"
-                       class="form-control"
-                       [class.is-valid]="isFieldValid('birthDate')"
-                       [class.is-invalid]="hasFieldError('birthDate')"
-                       id="birthDate"
-                       formControlName="birthDate"
-                       (change)="onBirthDateChange($event)">
+                <input
+                  type="date"
+                  class="form-control"
+                  [class.is-valid]="isFieldValid('birthDate')"
+                  [class.is-invalid]="hasFieldError('birthDate')"
+                  id="birthDate"
+                  formControlName="birthDate"
+                  (change)="onBirthDateChange($event)"
+                />
                 @if (getErrorMessage('birthDate', cadastroForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('birthDate', cadastroForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('birthDate', cadastroForm) }}
+                </div>
                 }
               </div>
 
@@ -154,19 +168,21 @@
                 <label for="cell" class="form-label fw-bold">
                   <i class="bi bi-phone me-2"></i>Celular *
                 </label>
-                <input type="text"
-                       class="form-control"
-                       [class.is-valid]="isFieldValid('cell')"
-                       [class.is-invalid]="hasFieldError('cell')"
-                       id="cell"
-                       formControlName="cell"
-                       (input)="onCellChange($event)"
-                       placeholder="(11) 99999-9999"
-                       maxlength="15">
+                <input
+                  type="text"
+                  class="form-control"
+                  [class.is-valid]="isFieldValid('cell')"
+                  [class.is-invalid]="hasFieldError('cell')"
+                  id="cell"
+                  formControlName="cell"
+                  (input)="onCellChange($event)"
+                  placeholder="(11) 99999-9999"
+                  maxlength="15"
+                />
                 @if (getErrorMessage('cell', cadastroForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('cell', cadastroForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('cell', cadastroForm) }}
+                </div>
                 }
               </div>
 
@@ -175,100 +191,139 @@
                 <label for="address" class="form-label fw-bold">
                   <i class="bi bi-geo-alt me-2"></i>Endereço Completo *
                 </label>
-                <textarea class="form-control"
-                          [class.is-valid]="isFieldValid('address')"
-                          [class.is-invalid]="hasFieldError('address')"
-                          id="address"
-                          formControlName="address"
-                          (input)="onAddressChange($event)"
-                          rows="3"
-                          placeholder="Rua, número, bairro, cidade - UF, CEP"></textarea>
+                <textarea
+                  class="form-control"
+                  [class.is-valid]="isFieldValid('address')"
+                  [class.is-invalid]="hasFieldError('address')"
+                  id="address"
+                  formControlName="address"
+                  (input)="onAddressChange($event)"
+                  rows="3"
+                  placeholder="Rua, número, bairro, cidade - UF, CEP"
+                ></textarea>
                 @if (getErrorMessage('address', cadastroForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('address', cadastroForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('address', cadastroForm) }}
+                </div>
                 }
               </div>
 
-                             <!-- Senha -->
-               <div class="col-md-6 mb-3">
-                 <label for="password" class="form-label fw-bold">
-                   <i class="bi bi-lock me-2"></i>Senha *
-                 </label>
-                 <div class="input-group">
-                   <input [type]="showPassword ? 'text' : 'password'"
-                          class="form-control"
-                          [class.is-valid]="isFieldValid('password')"
-                          [class.is-invalid]="hasFieldError('password')"
-                          id="password"
-                          formControlName="password"
-                          (input)="onPasswordChange($event)"
-                          placeholder="Mínimo 8 caracteres">
-                   <button class="btn btn-outline-secondary" 
-                           type="button" 
-                           (click)="togglePasswordVisibility()"
-                           [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
-                     <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
-                   </button>
-                 </div>
-                 
+              <!-- Senha -->
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label fw-bold">
+                  <i class="bi bi-lock me-2"></i>Senha *
+                </label>
+                <div class="input-group">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    class="form-control"
+                    [class.is-valid]="isFieldValid('password')"
+                    [class.is-invalid]="hasFieldError('password')"
+                    id="password"
+                    formControlName="password"
+                    (input)="onPasswordChange($event)"
+                    placeholder="Mínimo 8 caracteres"
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+                  >
+                    <i
+                      class="bi"
+                      [class.bi-eye]="!showPassword"
+                      [class.bi-eye-slash]="showPassword"
+                    ></i>
+                  </button>
+                </div>
+
                 <!-- Feedback visual da senha -->
                 @if (cadastroForm.get('password')?.value) {
                 <div class="mt-2">
-                   <div class="row">
-                     <div class="col-12">
-                       <small class="text-muted">Requisitos da senha:</small>
-                     </div>
-                     <div class="col-6">
-                       <small [class.text-success]="getPasswordStatus().requirements.minLength" 
-                              [class.text-danger]="!getPasswordStatus().requirements.minLength">
-                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.minLength" 
-                            [class.bi-x-circle]="!getPasswordStatus().requirements.minLength"></i>
-                         8+ caracteres
-                       </small>
-                     </div>
-                     <div class="col-6">
-                       <small [class.text-success]="getPasswordStatus().requirements.hasUpperCase" 
-                              [class.text-danger]="!getPasswordStatus().requirements.hasUpperCase">
-                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasUpperCase" 
-                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasUpperCase"></i>
-                         Maiúscula
-                       </small>
-                     </div>
-                     <div class="col-6">
-                       <small [class.text-success]="getPasswordStatus().requirements.hasLowerCase" 
-                              [class.text-danger]="!getPasswordStatus().requirements.hasLowerCase">
-                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasLowerCase" 
-                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasLowerCase"></i>
-                         Minúscula
-                       </small>
-                     </div>
-                     <div class="col-6">
-                       <small [class.text-success]="getPasswordStatus().requirements.hasNumbers" 
-                              [class.text-danger]="!getPasswordStatus().requirements.hasNumbers">
-                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasNumbers" 
-                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasNumbers"></i>
-                         Número
-                       </small>
-                     </div>
-                     <div class="col-6">
-                       <small [class.text-success]="getPasswordStatus().requirements.hasSpecialChar" 
-                              [class.text-danger]="!getPasswordStatus().requirements.hasSpecialChar">
-                         <i class="bi" [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasSpecialChar" 
-                            [class.bi-x-circle]="!getPasswordStatus().requirements.hasSpecialChar"></i>
-                         Especial
-                       </small>
-                     </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <small class="text-muted">Requisitos da senha:</small>
+                    </div>
+                    <div class="col-6">
+                      <small
+                        [class.text-success]="getPasswordStatus().requirements.minLength"
+                        [class.text-danger]="!getPasswordStatus().requirements.minLength"
+                      >
+                        <i
+                          class="bi"
+                          [class.bi-check-circle-fill]="getPasswordStatus().requirements.minLength"
+                          [class.bi-x-circle]="!getPasswordStatus().requirements.minLength"
+                        ></i>
+                        8+ caracteres
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small
+                        [class.text-success]="getPasswordStatus().requirements.hasUpperCase"
+                        [class.text-danger]="!getPasswordStatus().requirements.hasUpperCase"
+                      >
+                        <i
+                          class="bi"
+                          [class.bi-check-circle-fill]="
+                            getPasswordStatus().requirements.hasUpperCase
+                          "
+                          [class.bi-x-circle]="!getPasswordStatus().requirements.hasUpperCase"
+                        ></i>
+                        Maiúscula
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small
+                        [class.text-success]="getPasswordStatus().requirements.hasLowerCase"
+                        [class.text-danger]="!getPasswordStatus().requirements.hasLowerCase"
+                      >
+                        <i
+                          class="bi"
+                          [class.bi-check-circle-fill]="
+                            getPasswordStatus().requirements.hasLowerCase
+                          "
+                          [class.bi-x-circle]="!getPasswordStatus().requirements.hasLowerCase"
+                        ></i>
+                        Minúscula
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small
+                        [class.text-success]="getPasswordStatus().requirements.hasNumbers"
+                        [class.text-danger]="!getPasswordStatus().requirements.hasNumbers"
+                      >
+                        <i
+                          class="bi"
+                          [class.bi-check-circle-fill]="getPasswordStatus().requirements.hasNumbers"
+                          [class.bi-x-circle]="!getPasswordStatus().requirements.hasNumbers"
+                        ></i>
+                        Número
+                      </small>
+                    </div>
+                    <div class="col-6">
+                      <small
+                        [class.text-success]="getPasswordStatus().requirements.hasSpecialChar"
+                        [class.text-danger]="!getPasswordStatus().requirements.hasSpecialChar"
+                      >
+                        <i
+                          class="bi"
+                          [class.bi-check-circle-fill]="
+                            getPasswordStatus().requirements.hasSpecialChar
+                          "
+                          [class.bi-x-circle]="!getPasswordStatus().requirements.hasSpecialChar"
+                        ></i>
+                        Especial
+                      </small>
+                    </div>
                   </div>
                 </div>
+                } @if (getErrorMessage('password', cadastroForm)) {
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('password', cadastroForm) }}
+                </div>
                 }
-                 
-                @if (getErrorMessage('password', cadastroForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('password', cadastroForm) }}
-                  </div>
-                }
-               </div>
+              </div>
 
               <!-- Confirmar Senha -->
               <div class="col-md-6 mb-3">
@@ -276,40 +331,49 @@
                   <i class="bi bi-lock-fill me-2"></i>Confirmar Senha *
                 </label>
                 <div class="input-group">
-                  <input [type]="showConfirmPassword ? 'text' : 'password'"
-                         class="form-control"
-                         [class.is-valid]="isFieldValid('confirmPassword')"
-                         [class.is-invalid]="hasFieldError('confirmPassword')"
-                         id="confirmPassword"
-                         formControlName="confirmPassword"
-                         (input)="onPasswordChange($event)"
-                         placeholder="Confirme sua senha">
-                  <button class="btn btn-outline-secondary" 
-                          type="button" 
-                          (click)="toggleConfirmPasswordVisibility()"
-                          [attr.aria-label]="showConfirmPassword ? 'Ocultar senha' : 'Mostrar senha'">
-                    <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
+                  <input
+                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    class="form-control"
+                    [class.is-valid]="isFieldValid('confirmPassword')"
+                    [class.is-invalid]="hasFieldError('confirmPassword')"
+                    id="confirmPassword"
+                    formControlName="confirmPassword"
+                    (input)="onPasswordChange($event)"
+                    placeholder="Confirme sua senha"
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="toggleConfirmPasswordVisibility()"
+                    [attr.aria-label]="showConfirmPassword ? 'Ocultar senha' : 'Mostrar senha'"
+                  >
+                    <i
+                      class="bi"
+                      [class.bi-eye]="!showConfirmPassword"
+                      [class.bi-eye-slash]="showConfirmPassword"
+                    ></i>
                   </button>
                 </div>
+
                 @if (getErrorMessage('confirmPassword', cadastroForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('confirmPassword', cadastroForm) }}
-                  </div>
-                }
-                @if (cadastroForm.hasError('passwordMismatch') && cadastroForm.get('confirmPassword')?.touched){
-                  <div class="text-danger small mt-1">
-                    As senhas não coincidem.
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('confirmPassword', cadastroForm) }}
+                </div>
+                } @if (cadastroForm.hasError('passwordMismatch') &&
+                cadastroForm.get('confirmPassword')?.touched){
+                <div class="text-danger small mt-1">As senhas não coincidem.</div>
                 }
               </div>
             </div>
 
             <!-- Botão Próximo -->
             <div class="text-end">
-              <button type="button"
-                      class="btn btn-success btn-lg px-4"
-                      (click)="nextStep()"
-                      [disabled]="!cadastroForm.valid">
+              <button
+                type="button"
+                class="btn btn-success btn-lg px-4"
+                (click)="nextStep()"
+                [disabled]="!cadastroForm.valid"
+              >
                 <i class="bi bi-arrow-right me-2"></i>
                 Próximo Passo
               </button>
@@ -330,12 +394,16 @@
         </div>
         <div class="card-body p-4">
           @if(showError){
-            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-              <i class="bi bi-exclamation-triangle-fill me-2"></i>
-              {{ errorMessage }}
-              <button type="button" class="btn-close" (click)="closeError()" aria-label="Close"></button>
-
-            </div>
+          <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ errorMessage }}
+            <button
+              type="button"
+              class="btn-close"
+              (click)="closeError()"
+              aria-label="Close"
+            ></button>
+          </div>
           }
           <form [formGroup]="anamneseForm">
             <div class="row">
@@ -344,15 +412,17 @@
                 <label for="healthProblems" class="form-label fw-bold">
                   <i class="bi bi-heart-pulse me-2"></i>Problemas de Saúde *
                 </label>
-                <textarea class="form-control"
-                          id="healthProblems"
-                          formControlName="healthProblems"
-                          rows="3"
-                          placeholder="Descreva problemas de saúde atuais ou passados, doenças crônicas, etc."></textarea>
+                <textarea
+                  class="form-control"
+                  id="healthProblems"
+                  formControlName="healthProblems"
+                  rows="3"
+                  placeholder="Descreva problemas de saúde atuais ou passados, doenças crônicas, etc."
+                ></textarea>
                 @if (getErrorMessage('healthProblems', anamneseForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('healthProblems', anamneseForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('healthProblems', anamneseForm) }}
+                </div>
                 }
               </div>
 
@@ -361,15 +431,17 @@
                 <label for="medications" class="form-label fw-bold">
                   <i class="bi bi-capsule me-2"></i>Medicamentos em Uso *
                 </label>
-                <textarea class="form-control"
-                          id="medications"
-                          formControlName="medications"
-                          rows="2"
-                          placeholder="Liste medicamentos que está tomando atualmente (incluir nome e dosagem)"></textarea>
+                <textarea
+                  class="form-control"
+                  id="medications"
+                  formControlName="medications"
+                  rows="2"
+                  placeholder="Liste medicamentos que está tomando atualmente (incluir nome e dosagem)"
+                ></textarea>
                 @if (getErrorMessage('medications', anamneseForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('medications', anamneseForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('medications', anamneseForm) }}
+                </div>
                 }
               </div>
 
@@ -378,15 +450,17 @@
                 <label for="allergies" class="form-label fw-bold">
                   <i class="bi bi-exclamation-triangle me-2"></i>Alergias *
                 </label>
-                <textarea class="form-control"
-                          id="allergies"
-                          formControlName="allergies"
-                          rows="2"
-                          placeholder="Descreva alergias conhecidas (medicamentos, alimentos, produtos, etc.)"></textarea>
+                <textarea
+                  class="form-control"
+                  id="allergies"
+                  formControlName="allergies"
+                  rows="2"
+                  placeholder="Descreva alergias conhecidas (medicamentos, alimentos, produtos, etc.)"
+                ></textarea>
                 @if (getErrorMessage('allergies', anamneseForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('allergies', anamneseForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('allergies', anamneseForm) }}
+                </div>
                 }
               </div>
 
@@ -395,15 +469,17 @@
                 <label for="surgeries" class="form-label fw-bold">
                   <i class="bi bi-scissors me-2"></i>Cirurgias Realizadas *
                 </label>
-                <textarea class="form-control"
-                          id="surgeries"
-                          formControlName="surgeries"
-                          rows="2"
-                          placeholder="Liste cirurgias realizadas, data aproximada e motivo"></textarea>
+                <textarea
+                  class="form-control"
+                  id="surgeries"
+                  formControlName="surgeries"
+                  rows="2"
+                  placeholder="Liste cirurgias realizadas, data aproximada e motivo"
+                ></textarea>
                 @if (getErrorMessage('surgeries', anamneseForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('surgeries', anamneseForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('surgeries', anamneseForm) }}
+                </div>
                 }
               </div>
 
@@ -412,42 +488,48 @@
                 <label for="lifestyle" class="form-label fw-bold">
                   <i class="bi bi-person-walking me-2"></i>Estilo de Vida *
                 </label>
-                <textarea class="form-control"
-                          id="lifestyle"
-                          formControlName="lifestyle"
-                          rows="3"
-                          placeholder="Descreva seu estilo de vida: atividade física, alimentação, sono, estresse, tabagismo, etc."></textarea>
+                <textarea
+                  class="form-control"
+                  id="lifestyle"
+                  formControlName="lifestyle"
+                  rows="3"
+                  placeholder="Descreva seu estilo de vida: atividade física, alimentação, sono, estresse, tabagismo, etc."
+                ></textarea>
                 @if (getErrorMessage('lifestyle', anamneseForm)) {
-                  <div class="text-danger small mt-1">
-                    {{ getErrorMessage('lifestyle', anamneseForm) }}
-                  </div>
+                <div class="text-danger small mt-1">
+                  {{ getErrorMessage('lifestyle', anamneseForm) }}
+                </div>
                 }
               </div>
             </div>
 
             <!-- Botões de Navegação -->
             <div class="d-flex justify-content-between">
-              <button type="button"
-                      class="btn btn-outline-secondary btn-lg px-4"
-                      (click)="previousStep()">
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-lg px-4"
+                (click)="previousStep()"
+              >
                 <i class="bi bi-arrow-left me-2"></i>
                 Voltar
               </button>
 
-              <button type="button"
-                      class="btn btn-success btn-lg px-4"
-                      (click)="onSubmit()"
-                      [disabled]="!anamneseForm.valid || isLoading">
+              <button
+                type="button"
+                class="btn btn-success btn-lg px-4"
+                (click)="onSubmit()"
+                [disabled]="!anamneseForm.valid || isLoading"
+              >
                 @if (!isLoading) {
-                  <span>
-                    <i class="bi bi-check-circle me-2"></i>
-                    Finalizar Cadastro
-                  </span>
+                <span>
+                  <i class="bi bi-check-circle me-2"></i>
+                  Finalizar Cadastro
+                </span>
                 } @else {
-                  <span>
-                    <i class="bi bi-hourglass-split me-2"></i>
-                    Processando...
-                  </span>
+                <span>
+                  <i class="bi bi-hourglass-split me-2"></i>
+                  Processando...
+                </span>
                 }
               </button>
             </div>
@@ -464,8 +546,8 @@
             Seus dados estão seguros
           </h6>
           <p class="text-muted small mb-0">
-            Todas as informações fornecidas são tratadas com confidencialidade e utilizadas apenas para
-            melhorar sua experiência e segurança em nossos tratamentos.
+            Todas as informações fornecidas são tratadas com confidencialidade e utilizadas apenas
+            para melhorar sua experiência e segurança em nossos tratamentos.
           </p>
         </div>
       </div>

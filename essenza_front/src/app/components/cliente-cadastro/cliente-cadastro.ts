@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ValidationErrors, ValidatorFn, Abst
 import { CommonModule } from '@angular/common';
 import { ClienteService, Cliente, FichaAnamnese, ClienteCompleto } from '../../services/cliente';
 import { Router } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-cliente-cadastro',
@@ -21,7 +22,8 @@ export class ClienteCadastroComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private clienteService: ClienteService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef // <-- adicionado
   ) {}
 
   ngOnInit(): void {
@@ -541,9 +543,14 @@ export class ClienteCadastroComponent implements OnInit {
       
       // Personalizar mensagens específicas
       if (error.error.message.includes('CPF')) {
+        this.currentStep = 1; // Leva o usuário ao passo 1
+       
         this.showErrorMessage('❌ Este CPF já possui cadastro no sistema. Por favor, verifique se você já possui uma conta ou entre em contato conosco.');
+         this.cdr.detectChanges(); // Forçar detecção de mudanças
       } else if (error.error.message.includes('email')) {
+        this.currentStep = 1; // Leva o usuário ao passo 1
         this.showErrorMessage('❌ Este email já possui cadastro no sistema. Tente fazer login ou use outro email.');
+          this.cdr.detectChanges(); // Forçar detecção de mudanças
       } else {
         this.showErrorMessage(`❌ ${error.error.message}`);
       }
