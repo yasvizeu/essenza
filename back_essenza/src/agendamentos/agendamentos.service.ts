@@ -13,9 +13,18 @@ export class AgendamentosService {
   ) {}
 
   async create(createAgendamentoDto: CreateAgendamentoDto): Promise<Agendamento> {
-    const agendamento = this.agendamentosRepository.create(createAgendamentoDto);
-    return await this.agendamentosRepository.save(agendamento);
-  }
+  // Cria o agendamento
+  const agendamento = this.agendamentosRepository.create({
+    ...createAgendamentoDto,
+    status: 'confirmed', // ou 'scheduled' dependendo da sua convenção
+    statusPagamento: 'pago' // opcional, se o pagamento já estiver confirmado
+  });
+
+  const salvo = await this.agendamentosRepository.save(agendamento);
+
+  return salvo;
+}
+
 
   async findAll(): Promise<Agendamento[]> {
     return await this.agendamentosRepository.find({
