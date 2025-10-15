@@ -17,14 +17,6 @@
             <i class="bi bi-arrow-clockwise me-1"></i>
             Atualizar
           </button>
-          <button class="btn btn-outline-warning btn-sm ms-2" (click)="debugInfo()">
-            <i class="bi bi-bug me-1"></i>
-            Debug
-          </button>
-          <button class="btn btn-outline-info btn-sm ms-2" (click)="simulateAgendamentos()">
-            <i class="bi bi-play me-1"></i>
-            Simular
-          </button>
           <button class="btn btn-light btn-sm" (click)="goToNovoAgendamento()">
             <i class="bi bi-plus-circle me-1"></i>
             Novo Agendamento
@@ -37,15 +29,6 @@
 
 <!-- Conteúdo Principal -->
 <div class="container py-4">
-  <!-- Debug Info -->
-  <div class="alert alert-info mb-3">
-    <strong>Debug Info:</strong><br>
-    isLoading: {{ isLoading }}<br>
-    hasError: {{ hasError }}<br>
-    agendamentos.length: {{ agendamentos.length }}<br>
-    showEmptyState: {{ showEmptyState }}<br>
-    showServicos: {{ showServicos }}
-  </div>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-5">
@@ -228,8 +211,8 @@
                         <i class="bi bi-x-circle"></i>
                       </button>
                     </div>
-                    <div *ngIf="agendamento.valor" class="text-success fw-bold">
-                      R$ {{ agendamento.valor.toFixed(2).replace('.', ',') }}
+                    <div class="text-success fw-bold">
+                      R$ {{ formatPrice(agendamento.valor ?? 0) }}
                     </div>
                   </div>
                 </div>
@@ -295,8 +278,8 @@
                             title="Ver Detalhes">
                       <i class="bi bi-eye"></i>
                     </button>
-                    <div *ngIf="agendamento.valor" class="text-success fw-bold">
-                      R$ {{ agendamento.valor.toFixed(2).replace('.', ',') }}
+                    <div class="text-success fw-bold">
+                      R$ {{ formatPrice(agendamento.valor ?? 0) }}
                     </div>
                   </div>
                 </div>
@@ -449,3 +432,11 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de Edição de Agendamento -->
+<app-editar-agendamento-modal
+  [agendamento]="selectedAgendamentoParaEdicao"
+  [isOpen]="showEdicaoModal"
+  (close)="showEdicaoModal = false; selectedAgendamentoParaEdicao = null"
+  (agendamentoEditado)="onAgendamentoEditado($event)">
+</app-editar-agendamento-modal>

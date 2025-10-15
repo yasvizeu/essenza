@@ -167,17 +167,11 @@ export class AgendamentosService {
   // Buscar serviços pagos não agendados do cliente
   getServicosPagosNaoAgendados(clienteId: number): Observable<any[]> {
     console.log('🔍 Debug - Buscando serviços pagos não agendados para cliente ID:', clienteId);
-    // Usar endpoint existente e filtrar no frontend
-    return this.http.get<any[]>(`${this.apiUrl}/agendamentos/cliente/${clienteId}`).pipe(
+    // Usar endpoint específico para serviços pagos não agendados
+    return this.http.get<any[]>(`${this.apiUrl}/agendamentos/servicos-pagos/${clienteId}`).pipe(
       map(agendamentos => {
-        console.log('🔍 Debug - Todos os agendamentos do cliente:', agendamentos);
-        // Filtrar apenas agendamentos pagos não agendados
-        const filtrados = agendamentos.filter(agendamento => 
-          agendamento.statusPagamento === 'pago' && 
-          agendamento.status === 'tentative'
-        );
-        console.log('🔍 Debug - Agendamentos filtrados (pagos não agendados):', filtrados);
-        return filtrados;
+        console.log('🔍 Debug - Serviços pagos não agendados recebidos da API:', agendamentos);
+        return agendamentos;
       })
     );
   }
@@ -221,6 +215,35 @@ export class AgendamentosService {
     return this.http.patch<Agendamento>(`${this.apiUrl}/agendamentos/${id}/confirmar`, {});
   }
 
+  // Confirmar agendamento de serviço pago (com data/hora e profissional)
+  confirmarAgendamentoPago(
+    id: string | number, 
+    startDateTime: string, 
+    endDateTime: string, 
+    profissionalId: number
+  ): Observable<Agendamento> {
+    console.log('🔍 Debug - Confirmando agendamento pago ID:', id);
+    return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos/${id}/confirmar-pago`, {
+      startDateTime,
+      endDateTime,
+      profissionalId
+    });
+  }
+
+  // Verificar disponibilidade de horário
+  verificarDisponibilidade(
+    profissionalId: number,
+    startDateTime: string,
+    endDateTime: string,
+    agendamentoId?: string | number
+  ): Observable<{ disponivel: boolean }> {
+    let url = `${this.apiUrl}/agendamentos/disponibilidade?profissionalId=${profissionalId}&startDateTime=${startDateTime}&endDateTime=${endDateTime}`;
+    if (agendamentoId) {
+      url += `&agendamentoId=${agendamentoId}`;
+    }
+    return this.http.get<{ disponivel: boolean }>(url);
+  }
+
   // Buscar disponibilidade do profissional
   getDisponibilidadeProfissional(
     profissionalId: number, 
@@ -262,7 +285,15 @@ export class AgendamentosService {
 
   // Formatar data para exibição
   formatarData(data: string): string {
+    if (!data || data === 'Invalid Date') {
+      return 'Data não disponível';
+    }
+    
     const date = new Date(data);
+    if (isNaN(date.getTime())) {
+      return 'Data inválida';
+    }
+    
     return date.toLocaleDateString('pt-BR', {
       weekday: 'long',
       year: 'numeric',
@@ -273,7 +304,15 @@ export class AgendamentosService {
 
   // Formatar horário para exibição
   formatarHorario(data: string): string {
+    if (!data || data === 'Invalid Date') {
+      return 'Horário não disponível';
+    }
+    
     const date = new Date(data);
+    if (isNaN(date.getTime())) {
+      return 'Horário inválido';
+    }
+    
     return date.toLocaleTimeString('pt-BR', {
       hour: '2-digit',
       minute: '2-digit'
@@ -282,7 +321,15 @@ export class AgendamentosService {
 
   // Formatar data e horário juntos
   formatarDataHorario(data: string): string {
+    if (!data || data === 'Invalid Date') {
+      return 'Data/horário não disponível';
+    }
+    
     const date = new Date(data);
+    if (isNaN(date.getTime())) {
+      return 'Data/horário inválido';
+    }
+    
     return date.toLocaleString('pt-BR', {
       weekday: 'short',
       day: '2-digit',
@@ -321,6 +368,34 @@ export class AgendamentosService {
     const hoje = new Date();
     const dataAgendamento = new Date(data);
     return dataAgendamento < hoje;
+  }
+
+  // Verificar se pode editar agendamento (até 24h antes)
+  podeEditarAgendamento(data: string): boolean {
+    const agora = new Date();
+    const dataAgendamento = new Date(data);
+    const diferencaHoras = (dataAgendamento.getTime() - agora.getTime()) / (1000 * 60 * 60);
+    return diferencaHoras >= 24;
+  }
+
+  // Obter tempo restante para edição
+  getTempoRestanteEdicao(data: string): string {
+    const agora = new Date();
+    const dataAgendamento = new Date(data);
+    const diferencaHoras = (dataAgendamento.getTime() - agora.getTime()) / (1000 * 60 * 60);
+    
+    if (diferencaHoras < 0) {
+      return 'Agendamento já passou';
+    } else if (diferencaHoras < 1) {
+      const minutos = Math.floor(diferencaHoras * 60);
+      return `${minutos} minutos restantes`;
+    } else if (diferencaHoras < 24) {
+      const horas = Math.floor(diferencaHoras);
+      return `${horas} horas restantes`;
+    } else {
+      const dias = Math.floor(diferencaHoras / 24);
+      return `${dias} dias restantes`;
+    }
   }
 
   // Obter classe CSS para status

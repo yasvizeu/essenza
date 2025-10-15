@@ -309,6 +309,9 @@ export class ClienteCadastroComponent implements OnInit {
         address: this.cadastroForm.value.address
       };
 
+      console.log('🔍 Debug - Dados do cliente sendo enviados:', cliente);
+      console.log('🔍 Debug - Form values:', this.cadastroForm.value);
+
       const fichaAnamnese: FichaAnamnese = {
         healthProblems: this.anamneseForm.value.healthProblems,
         medications: this.anamneseForm.value.medications,

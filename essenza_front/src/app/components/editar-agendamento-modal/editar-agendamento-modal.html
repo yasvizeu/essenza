@@ -1,0 +1,128 @@
+<!-- Modal de Edição de Agendamento -->
+<div class="modal fade" [class.show]="isOpen" [style.display]="isOpen ? 'block' : 'none'" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title">
+          <i class="bi bi-pencil-square me-2"></i>
+          Editar Agendamento
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Informações do Agendamento -->
+        <div class="alert alert-info" *ngIf="agendamento">
+          <h6 class="alert-heading">
+            <i class="bi bi-info-circle me-2"></i>
+            Informações do Agendamento
+          </h6>
+          <p class="mb-1"><strong>Serviço:</strong> {{ agendamento.servicoNome || agendamento.title }}</p>
+          <p class="mb-1"><strong>Data Atual:</strong> {{ formatarData(agendamento.startDateTime || '') }}</p>
+          <p class="mb-1"><strong>Horário Atual:</strong> {{ formatarHorario(agendamento.startDateTime || '') }}</p>
+          <p class="mb-0"><strong>Tempo Restante para Edição:</strong> {{ getTempoRestante() }}</p>
+        </div>
+
+        <!-- Formulário de Edição -->
+        <form (ngSubmit)="onSubmit()" #editForm="ngForm">
+          <div class="row g-3">
+            <!-- Data -->
+            <div class="col-md-6">
+              <label for="dataSelecionada" class="form-label">
+                <i class="bi bi-calendar me-1"></i>
+                Nova Data *
+              </label>
+              <input 
+                type="date" 
+                class="form-control" 
+                id="dataSelecionada"
+                [(ngModel)]="dataSelecionada" 
+                name="dataSelecionada"
+                [min]="getMinDate()"
+                required>
+            </div>
+
+            <!-- Horário -->
+            <div class="col-md-6">
+              <label for="horarioSelecionado" class="form-label">
+                <i class="bi bi-clock me-1"></i>
+                Novo Horário *
+              </label>
+              <select 
+                class="form-select" 
+                id="horarioSelecionado"
+                [(ngModel)]="horarioSelecionado" 
+                name="horarioSelecionado"
+                required>
+                <option value="">Selecione um horário</option>
+                <option *ngFor="let horario of horariosDisponiveis" [value]="horario">
+                  {{ horario }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Profissional -->
+            <div class="col-md-6">
+              <label for="profissionalSelecionado" class="form-label">
+                <i class="bi bi-person me-1"></i>
+                Profissional *
+              </label>
+              <select 
+                class="form-select" 
+                id="profissionalSelecionado"
+                [(ngModel)]="profissionalSelecionado" 
+                name="profissionalSelecionado"
+                required>
+                <option value="">Selecione um profissional</option>
+                <option *ngFor="let profissional of profissionaisDisponiveis" [value]="profissional.id">
+                  {{ profissional.nome }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Observações -->
+            <div class="col-12">
+              <label for="observacoes" class="form-label">
+                <i class="bi bi-chat-text me-1"></i>
+                Observações
+              </label>
+              <textarea 
+                class="form-control" 
+                id="observacoes"
+                [(ngModel)]="observacoes" 
+                name="observacoes"
+                rows="3"
+                placeholder="Observações adicionais sobre o agendamento...">
+              </textarea>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="hasError" class="alert alert-danger mt-3" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            {{ errorMessage }}
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+          <i class="bi bi-x-circle me-1"></i>
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-warning" 
+          (click)="onSubmit()"
+          [disabled]="isLoading || !isFormValid()">
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          <i *ngIf="!isLoading" class="bi bi-check-circle me-1"></i>
+          {{ isLoading ? 'Salvando...' : 'Salvar Alterações' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="modal-backdrop fade" [class.show]="isOpen" *ngIf="isOpen"></div>

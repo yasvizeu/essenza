@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ServicosService, Servico, PaginatedResponse } from '../../services/servicos';
@@ -29,7 +29,8 @@ export class Home implements OnInit, OnDestroy {
 
   constructor(
     private servicosService: ServicosService,
-    private cartService: CartService
+    private cartService: CartService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -73,26 +74,22 @@ export class Home implements OnInit, OnDestroy {
 
   loadServicos(): void {
     this.isLoading = true;
-    console.log('🔄 Home - Iniciando carregamento de serviços...');
     
     this.servicosService.getServicos(this.currentPage, this.pageSize).subscribe({
       next: (response: PaginatedResponse<Servico>) => {
-        console.log('✅ Home - Resposta recebida:', response);
-        console.log('✅ Home - Dados:', response.data);
-        console.log('✅ Home - Quantidade:', response.data?.length);
-        
-        this.servicos = response.data;
-        this.totalPages = response.pagination.totalPages;
-        this.hasNextPage = response.pagination.hasNext;
-        this.hasPrevPage = response.pagination.hasPrev;
+        this.servicos = response.data || [];
+        this.totalPages = response.pagination?.totalPages || 0;
+        this.hasNextPage = response.pagination?.hasNext || false;
+        this.hasPrevPage = response.pagination?.hasPrev || false;
         this.isLoading = false;
         
-        console.log('✅ Home - Serviços atribuídos:', this.servicos);
-        console.log('✅ Home - isLoading:', this.isLoading);
+        // Forçar detecção de mudanças
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('❌ Home - Erro ao carregar serviços:', error);
+        console.error('Erro ao carregar serviços:', error);
         this.isLoading = false;
+        this.servicos = [];
       }
     });
   }

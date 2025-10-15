@@ -96,6 +96,19 @@ export class AgendamentosController {
     return this.agendamentosService.confirmar(id);
   }
 
+  @Post(':id/confirmar-pago')
+  confirmarAgendamentoPago(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { startDateTime: string; endDateTime: string; profissionalId: number }
+  ) {
+    return this.agendamentosService.confirmarAgendamentoPago(
+      id,
+      body.startDateTime,
+      body.endDateTime,
+      body.profissionalId
+    );
+  }
+
   @Patch(':id/cancelar')
   cancelar(
     @Param('id', ParseIntPipe) id: number,

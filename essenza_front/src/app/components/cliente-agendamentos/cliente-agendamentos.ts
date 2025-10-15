@@ -6,12 +6,13 @@ import { AuthService } from '../../services/auth';
 import { AgendamentosService, Agendamento } from '../../services/agendamentos';
 import { ServicosService, Servico } from '../../services/servicos';
 import { AgendamentoModalComponent } from '../agendamento-modal/agendamento-modal';
+import { EditarAgendamentoModalComponent } from '../editar-agendamento-modal/editar-agendamento-modal';
 
 @Component({
   selector: 'app-cliente-agendamentos',
   templateUrl: './cliente-agendamentos.html',
   styleUrl: './cliente-agendamentos.scss',
-  imports: [CommonModule, FormsModule, AgendamentoModalComponent],
+  imports: [CommonModule, FormsModule, AgendamentoModalComponent, EditarAgendamentoModalComponent],
   standalone: true
 })
 export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
@@ -48,17 +49,13 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🔍 Debug - Inicializando componente ClienteAgendamentos');
-    
     // Verificar se o usuário está autenticado
     if (!this.authService.isAuthenticated() || !this.authService.isCliente()) {
-      console.log('🔍 Debug - Usuário não autenticado ou não é cliente');
       this.router.navigate(['/login']);
       return;
     }
 
     this.currentUser = this.authService.getCurrentUser();
-    console.log('🔍 Debug - Usuário atual:', this.currentUser);
     this.loadAgendamentos();
     this.loadServicosPagos();
   }
@@ -68,10 +65,7 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
   }
 
   loadAgendamentos(): void {
-    console.log('🔍 Debug - Carregando agendamentos para usuário:', this.currentUser);
-    
     if (!this.currentUser?.id) {
-      console.log('🔍 Debug - Usuário não encontrado');
       this.hasError = true;
       this.errorMessage = 'Usuário não encontrado';
       return;
@@ -82,40 +76,28 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
 
     this.agendamentosService.getAgendamentosCliente(this.currentUser.id).subscribe({
       next: (agendamentos) => {
-        console.log('🔍 Debug - Agendamentos recebidos:', agendamentos);
-        console.log('🔍 Debug - Chamando ordenarPorData...');
         this.agendamentos = this.agendamentosService.ordenarPorData(agendamentos, true);
-        console.log('🔍 Debug - Agendamentos após ordenação:', this.agendamentos);
         this.agendamentosService.atualizarAgendamentosLocais(agendamentos);
         
         // Classificar agendamentos nas três seções
         this.classificarAgendamentos();
         
-        console.log('🔍 Debug - Agendamentos processados:', this.agendamentos);
-        console.log('🔍 Debug - Confirmados:', this.agendamentosConfirmados.length);
-        console.log('🔍 Debug - Histórico:', this.agendamentosHistorico.length);
-        
         // Verificar se há agendamentos
         if (this.agendamentos.length === 0) {
-          console.log('🔍 Debug - Nenhum agendamento encontrado, mostrando estado vazio');
           this.showEmptyState = true;
           this.loadServicos();
         } else {
-          console.log('🔍 Debug - Agendamentos encontrados, escondendo estado vazio');
           this.showEmptyState = false;
           this.showServicos = false;
         }
         
-        console.log('🔍 Debug - Definindo isLoading como false');
         this.isLoading = false;
-        console.log('🔍 Debug - Estado final - isLoading:', this.isLoading, 'showEmptyState:', this.showEmptyState, 'agendamentos.length:', this.agendamentos.length);
         
         // Forçar detecção de mudanças
         this.cdr.detectChanges();
-        console.log('🔍 Debug - Detecção de mudanças forçada');
       },
       error: (error) => {
-        console.error('🔍 Debug - Erro ao carregar agendamentos:', error);
+        console.error('Erro ao carregar agendamentos:', error);
         this.hasError = true;
         this.errorMessage = 'Erro ao carregar agendamentos. Tente novamente.';
         this.isLoading = false;
@@ -126,15 +108,13 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
   }
 
   loadServicos(): void {
-    console.log('🔍 Debug - Carregando serviços');
     this.servicosService.getServicos().subscribe({
       next: (response) => {
-        console.log('🔍 Debug - Serviços carregados:', response);
         this.servicos = response.data;
         this.showServicos = true;
       },
       error: (error) => {
-        console.error('🔍 Debug - Erro ao carregar serviços:', error);
+        console.error('Erro ao carregar serviços:', error);
       }
     });
   }
@@ -155,14 +135,14 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
         
         // Converter para formato de serviços
         this.servicosPagos = agendamentos.map((agendamento: any) => ({
-          id: agendamento.servico?.id || agendamento.servicoId || 0,
-          nome: agendamento.servico?.nome || agendamento.title || 'Serviço',
-          descricao: agendamento.servico?.descricao || agendamento.description || 'Descrição não disponível',
-          preco: agendamento.valor || 0,
-          duracao: agendamento.servico?.duracao || 60,
-          categoria: 'servico',
-          imagem: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-          agendamentoId: agendamento.id // ID do agendamento tentative para referência
+          id: agendamento.id || 0,
+          nome: agendamento.nome || 'Serviço',
+          descricao: agendamento.descricao || 'Descrição não disponível',
+          preco: agendamento.preco || 0,
+          duracao: agendamento.duracao || 60,
+          categoria: agendamento.categoria || 'servico',
+          imagem: agendamento.imagem || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+          agendamentoId: agendamento.agendamentoId // ID do agendamento tentative para referência
         }));
         
         console.log('🔍 Debug - Serviços pagos processados:', this.servicosPagos);
@@ -346,43 +326,75 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     // Se estamos agendando um serviço pago (agendamento tentative)
     if (this.selectedServicoParaAgendamento && (this.selectedServicoParaAgendamento as any).agendamentoId) {
       const agendamentoId = (this.selectedServicoParaAgendamento as any).agendamentoId;
-      console.log('🔍 Debug - Criando novo agendamento confirmed para serviço pago');
+      console.log('🔍 Debug - Confirmando agendamento pago ID:', agendamentoId);
       
-      // Criar novo agendamento confirmed em vez de atualizar
+      // Usar o novo endpoint para confirmar agendamento pago
       const dataHora = new Date(`${agendamento.data}T${agendamento.horario}:00`);
       const dataHoraFim = new Date(dataHora.getTime() + 60 * 60 * 1000); // 1 hora depois
       
-      const novoAgendamento = {
-        title: this.selectedServicoParaAgendamento.nome,
-        description: this.selectedServicoParaAgendamento.descricao || '',
-        startDateTime: dataHora.toISOString(),
-        endDateTime: dataHoraFim.toISOString(),
-        clienteId: Number(this.currentUser.id),
-        profissionalId: Number(agendamento.profissionalId),
-        servicoId: Number(this.selectedServicoParaAgendamento.id),
-        status: 'confirmed',
-        statusPagamento: 'pago',
-        valor: Number(this.selectedServicoParaAgendamento.preco),
-        observacoes: agendamento.observacoes || ''
-      };
-      
-      console.log('🔍 Debug - Criando novo agendamento confirmed:', novoAgendamento);
-      
-      this.agendamentosService.criarAgendamentoCompleto(novoAgendamento).subscribe({
-        next: (agendamentoCriado) => {
-          console.log('🔍 Debug - Novo agendamento confirmed criado:', agendamentoCriado);
-          
-          // Tentar remover o agendamento tentative (se existir)
-          this.removerAgendamentoTentative(agendamentoId);
-          
+      this.agendamentosService.confirmarAgendamentoPago(
+        agendamentoId,
+        dataHora.toISOString(),
+        dataHoraFim.toISOString(),
+        Number(agendamento.profissionalId)
+      ).subscribe({
+        next: (agendamentoConfirmado) => {
+          console.log('🔍 Debug - Agendamento pago confirmado:', agendamentoConfirmado);
+          this.showSuccessMessage('Agendamento confirmado com sucesso!');
+          // Remover imediatamente o card do serviço pago da seção amarela
+          this.servicosPagos = this.servicosPagos.filter((s: any) => s.agendamentoId !== agendamentoId);
+          // Adicionar de forma otimista aos confirmados
+          if (agendamentoConfirmado) {
+            this.agendamentosConfirmados = [agendamentoConfirmado as any, ...this.agendamentosConfirmados];
+            // Atualizar fonte única e reclassificar para refletir no template
+            this.agendamentos = [agendamentoConfirmado as any, ...this.agendamentos];
+            this.classificarAgendamentos();
+            this.cdr.detectChanges();
+          }
+          // Sincronizar com backend
           this.recarregarDados();
         },
         error: (error) => {
-          console.error('🔍 Debug - Erro ao criar agendamento confirmed:', error);
+          console.error('🔍 Debug - Erro ao confirmar agendamento pago:', error);
           console.error('🔍 Debug - Status:', error.status);
           console.error('🔍 Debug - Error details:', error.error);
-          console.error('🔍 Debug - Dados enviados:', novoAgendamento);
-          this.recarregarDados();
+          // Se o endpoint não existir (404), tentar confirmar via atualização (PUT)
+          if (error?.status === 404) {
+            const dataHora = new Date(`${agendamento.data}T${agendamento.horario}:00`);
+            const dataHoraFim = new Date(dataHora.getTime() + 60 * 60 * 1000);
+
+            const payloadAtualizacao: any = {
+              startDateTime: dataHora.toISOString(),
+              endDateTime: dataHoraFim.toISOString(),
+              profissionalId: Number(agendamento.profissionalId),
+              status: 'confirmed'
+            };
+
+            this.agendamentosService.atualizarAgendamento(agendamentoId, payloadAtualizacao).subscribe({
+              next: (agendamentoAtualizado) => {
+                console.log('🔍 Debug - Agendamento confirmado via PUT update:', agendamentoAtualizado);
+                this.showSuccessMessage('Agendamento confirmado com sucesso!');
+                // Remover cartão da seção amarela
+                this.servicosPagos = this.servicosPagos.filter((s: any) => s.agendamentoId !== agendamentoId);
+                // Adicionar de forma otimista aos confirmados
+                this.agendamentosConfirmados = [agendamentoAtualizado as any, ...this.agendamentosConfirmados];
+                // Atualizar fonte única e reclassificar
+                this.agendamentos = [agendamentoAtualizado as any, ...this.agendamentos];
+                this.classificarAgendamentos();
+                this.cdr.detectChanges();
+                this.recarregarDados();
+              },
+              error: (errUpdate) => {
+                console.error('🔍 Debug - Erro ao confirmar via PUT update:', errUpdate);
+                // Fallback final: tentar criar novo agendamento
+                this.criarNovoAgendamentoFallback(agendamento);
+              }
+            });
+            return;
+          }
+
+          // Outros erros: fallback de criação
+          this.criarNovoAgendamentoFallback(agendamento);
         }
       });
     } else {
@@ -394,6 +406,56 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     this.closeAgendamentoModal();
   }
 
+  // Fallback para criar novo agendamento se a confirmação falhar
+  private criarNovoAgendamentoFallback(agendamento: any): void {
+    console.log('🔍 Debug - Executando fallback: criando novo agendamento');
+    
+    // Garantir que temos o serviço selecionado para montar o payload
+    if (!this.selectedServicoParaAgendamento) {
+      this.showErrorMessage('Não foi possível identificar o serviço para criar o agendamento. Tente novamente.');
+      return;
+    }
+
+    const dataHora = new Date(`${agendamento.data}T${agendamento.horario}:00`);
+    const dataHoraFim = new Date(dataHora.getTime() + 60 * 60 * 1000);
+    
+    const novoAgendamento = {
+      title: this.selectedServicoParaAgendamento.nome,
+      description: this.selectedServicoParaAgendamento.descricao || '',
+      startDateTime: dataHora.toISOString(),
+      endDateTime: dataHoraFim.toISOString(),
+      clienteId: Number(this.currentUser.id),
+      profissionalId: Number(agendamento.profissionalId),
+      servicoId: Number(this.selectedServicoParaAgendamento.id),
+      status: 'confirmed',
+      statusPagamento: 'pago',
+      valor: Number(this.selectedServicoParaAgendamento.preco),
+      observacoes: agendamento.observacoes || ''
+    };
+    
+    this.agendamentosService.criarAgendamentoCompleto(novoAgendamento).subscribe({
+      next: (agendamentoCriado) => {
+        console.log('🔍 Debug - Novo agendamento criado via fallback:', agendamentoCriado);
+        // Remover imediatamente o card do serviço pago (se existir referência)
+        const pagoId = (this.selectedServicoParaAgendamento as any)?.agendamentoId;
+        if (pagoId) {
+          this.servicosPagos = this.servicosPagos.filter((s: any) => s.agendamentoId !== pagoId);
+        }
+        // Adicionar de forma otimista aos confirmados
+        if (agendamentoCriado) {
+          this.agendamentosConfirmados = [agendamentoCriado as any, ...this.agendamentosConfirmados];
+        }
+        // Sincronizar com backend
+        this.recarregarDados();
+      },
+      error: (error) => {
+        console.error('🔍 Debug - Erro no fallback:', error);
+        this.showErrorMessage('Erro ao confirmar agendamento. Tente novamente.');
+        this.recarregarDados();
+      }
+    });
+  }
+
   // Recarregar todos os dados
   private recarregarDados(): void {
     console.log('🔍 Debug - Recarregando dados...');
@@ -403,22 +465,88 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     console.log('🔍 Debug - Dados recarregados');
   }
 
-  // Remover agendamento tentative (opcional)
-  private removerAgendamentoTentative(agendamentoId: string | number): void {
-    console.log('🔍 Debug - Tentando remover agendamento tentative ID:', agendamentoId);
-    
-    // Tentar remover o agendamento tentative (não é crítico se falhar)
-    this.agendamentosService.removerAgendamento(agendamentoId).subscribe({
-      next: (response) => {
-        console.log('🔍 Debug - Agendamento tentative removido com sucesso:', response);
+
+  // Método para editar agendamento existente
+  editarAgendamento(agendamento: Agendamento): void {
+    if (!this.agendamentosService.podeEditarAgendamento(agendamento.startDateTime || '')) {
+      this.showErrorMessage('Não é possível editar agendamentos com menos de 24 horas de antecedência.');
+      return;
+    }
+
+    this.selectedAgendamentoParaEdicao = agendamento;
+    this.showEdicaoModal = true;
+  }
+
+  // Método para confirmar edição de agendamento
+  confirmarEdicaoAgendamento(dadosEdicao: any): void {
+    if (!this.selectedAgendamentoParaEdicao) return;
+
+    this.isLoading = true;
+    this.agendamentosService.atualizarAgendamento(
+      this.selectedAgendamentoParaEdicao.id!,
+      dadosEdicao
+    ).subscribe({
+      next: (agendamentoAtualizado) => {
+        console.log('Agendamento atualizado com sucesso:', agendamentoAtualizado);
+        this.isLoading = false;
+        this.showEdicaoModal = false;
+        this.selectedAgendamentoParaEdicao = null;
+        this.loadAgendamentos(); // Recarregar lista
+        this.showSuccessMessage('Agendamento atualizado com sucesso!');
       },
       error: (error) => {
-        console.log('🔍 Debug - Erro ao remover agendamento tentative:', error);
-        console.log('🔍 Debug - Status:', error.status);
-        console.log('🔍 Debug - Message:', error.message);
+        console.error('Erro ao atualizar agendamento:', error);
+        this.isLoading = false;
+        this.showErrorMessage('Erro ao atualizar agendamento. Tente novamente.');
       }
     });
   }
+
+  // Método para lidar com agendamento editado
+  onAgendamentoEditado(agendamentoEditado: any): void {
+    console.log('Agendamento editado:', agendamentoEditado);
+    this.showSuccessMessage('Agendamento editado com sucesso!');
+    this.loadAgendamentos();
+  }
+
+  // Método para agendar serviço pago (usando o novo endpoint)
+  agendarServicoPago(servico: any): void {
+    if (!this.currentUser || this.currentUser.tipo !== 'cliente') {
+      this.showErrorMessage('Você precisa estar logado como cliente para agendar.');
+      return;
+    }
+
+    this.selectedServicoParaAgendamento = servico;
+    this.showAgendamentoModal = true;
+  }
+
+  // Métodos auxiliares para o template
+  podeEditarAgendamento(agendamento: Agendamento): boolean {
+    return this.agendamentosService.podeEditarAgendamento(agendamento.startDateTime || '');
+  }
+
+  podeCancelarAgendamento(agendamento: Agendamento): boolean {
+    // Pode cancelar se não passou e não é cancelled
+    return !this.agendamentosService.isPassado(agendamento.startDateTime || '') && 
+           agendamento.status !== 'cancelled';
+  }
+
+  formatarData(data: string): string {
+    return this.agendamentosService.formatarData(data);
+  }
+
+  formatarHorario(data: string): string {
+    return this.agendamentosService.formatarHorario(data);
+  }
+
+  isHoje(data: string): boolean {
+    return this.agendamentosService.isHoje(data);
+  }
+
+  isAmanha(data: string): boolean {
+    return this.agendamentosService.isAmanha(data);
+  }
+
 
   // Classificar agendamentos nas três seções
   classificarAgendamentos(): void {
@@ -473,41 +601,8 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     console.log('🔍 Debug - Agendamentos histórico:', this.agendamentosHistorico.length);
   }
 
-  // Verificar se pode editar agendamento (até 24h antes)
-  podeEditarAgendamento(agendamento: Agendamento): boolean {
-    const dataAgendamento = this.getAgendamentoDateTime(agendamento);
-    if (!dataAgendamento) return false;
-    
-    const data = new Date(dataAgendamento);
-    const agora = new Date();
-    const diferencaHoras = (data.getTime() - agora.getTime()) / (1000 * 60 * 60);
-    
-    return diferencaHoras > 24 && agendamento.status === 'confirmed';
-  }
 
-  // Verificar se pode cancelar agendamento (até 24h antes)
-  podeCancelarAgendamento(agendamento: Agendamento): boolean {
-    const dataAgendamento = this.getAgendamentoDateTime(agendamento);
-    if (!dataAgendamento) return false;
-    
-    const data = new Date(dataAgendamento);
-    const agora = new Date();
-    const diferencaHoras = (data.getTime() - agora.getTime()) / (1000 * 60 * 60);
-    
-    return diferencaHoras > 24 && agendamento.status === 'confirmed';
-  }
 
-  // Editar agendamento
-  editarAgendamento(agendamento: Agendamento): void {
-    if (!this.podeEditarAgendamento(agendamento)) {
-      this.showErrorMessage('Você só pode editar agendamentos até 24h antes da data marcada.');
-      return;
-    }
-    
-    this.selectedAgendamentoParaEdicao = agendamento;
-    this.showEdicaoModal = true;
-    console.log('🔍 Debug - Abrindo modal de edição para:', agendamento);
-  }
 
   // Fechar modal de edição
   closeEdicaoModal(): void {
@@ -515,43 +610,6 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     this.selectedAgendamentoParaEdicao = null;
   }
 
-  // Salvar edição de agendamento
-  onAgendamentoEditado(agendamentoEditado: any): void {
-    console.log('🔍 Debug - Agendamento editado:', agendamentoEditado);
-    
-    if (!agendamentoEditado.id) {
-      this.showErrorMessage('ID do agendamento não encontrado.');
-      return;
-    }
-
-    // Preparar dados para atualização
-    const dadosAtualizacao = {
-      startDateTime: `${agendamentoEditado.data}T${agendamentoEditado.horario}:00`,
-      endDateTime: `${agendamentoEditado.data}T${this.calcularHorarioFim(agendamentoEditado.horario)}:00`,
-      profissionalId: agendamentoEditado.profissionalId,
-      observacoes: agendamentoEditado.observacoes,
-      servicoId: agendamentoEditado.servicoId,
-      servicoNome: agendamentoEditado.servicoNome
-    };
-
-    // Atualizar no backend
-    this.agendamentosService.atualizarAgendamento(agendamentoEditado.id, dadosAtualizacao).subscribe({
-      next: (agendamentoAtualizado) => {
-        console.log('🔍 Debug - Agendamento atualizado no backend:', agendamentoAtualizado);
-        this.showSuccessMessage('Agendamento atualizado com sucesso!');
-        
-        // Recarregar lista de agendamentos
-        this.loadAgendamentos();
-        
-        // Fechar modal
-        this.closeEdicaoModal();
-      },
-      error: (error) => {
-        console.error('🔍 Debug - Erro ao atualizar agendamento:', error);
-        this.showErrorMessage('Erro ao atualizar agendamento. Tente novamente.');
-      }
-    });
-  }
 
   // Calcular horário de fim baseado no horário de início
   calcularHorarioFim(horarioInicio: string): string {
@@ -674,34 +732,6 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     console.log('🔍 Debug - Simulação concluída, detecção de mudanças forçada');
   }
 
-  // Formatação
-  formatarData(data: string): string {
-    return this.agendamentosService.formatarData(data);
-  }
-
-  formatarHorario(data: string): string {
-    return this.agendamentosService.formatarHorario(data);
-  }
-
-  formatarDataHorario(data: string): string {
-    return this.agendamentosService.formatarDataHorario(data);
-  }
-
-  isHoje(data: string): boolean {
-    return this.agendamentosService.isHoje(data);
-  }
-
-  isAmanha(data: string): boolean {
-    return this.agendamentosService.isAmanha(data);
-  }
-
-  isProximo(data: string): boolean {
-    return this.agendamentosService.isProximo(data);
-  }
-
-  isPassado(data: string): boolean {
-    return this.agendamentosService.isPassado(data);
-  }
 
   // Métodos auxiliares para template
   getAgendamentoDateTime(agendamento: Agendamento): string {
@@ -725,21 +755,6 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
     return dateTime ? this.isPassado(dateTime) : false;
   }
 
-  getStatusClass(status: string): string {
-    return this.agendamentosService.getStatusClass(status);
-  }
-
-  getStatusText(status: string): string {
-    return this.agendamentosService.getStatusText(status);
-  }
-
-  getStatusPagamentoClass(status: string): string {
-    return this.agendamentosService.getStatusPagamentoClass(status);
-  }
-
-  getStatusPagamentoText(status: string): string {
-    return this.agendamentosService.getStatusPagamentoText(status);
-  }
 
   // Mensagens
   private showSuccessMessage(message: string): void {
@@ -770,5 +785,26 @@ export class ClienteAgendamentosComponent implements OnInit, OnDestroy {
         notification.parentNode.removeChild(notification);
       }
     }, 4000);
+  }
+
+  // Métodos auxiliares para o template
+  getStatusClass(status: string): string {
+    return this.agendamentosService.getStatusClass(status);
+  }
+
+  getStatusText(status: string): string {
+    return this.agendamentosService.getStatusText(status);
+  }
+
+  getStatusPagamentoClass(status: string): string {
+    return this.agendamentosService.getStatusPagamentoClass(status);
+  }
+
+  getStatusPagamentoText(status: string): string {
+    return this.agendamentosService.getStatusPagamentoText(status);
+  }
+
+  isPassado(data: string): boolean {
+    return this.agendamentosService.isPassado(data);
   }
 }

@@ -41,6 +41,8 @@ export class ClienteService {
 
   // Cadastrar cliente
   cadastrarCliente(cliente: Cliente): Observable<any> {
+    console.log('🔍 Debug - Enviando dados para API:', cliente);
+    console.log('🔍 Debug - URL da API:', `${this.apiUrl}/clientes`);
     return this.http.post(`${this.apiUrl}/clientes`, cliente);
   }
 
