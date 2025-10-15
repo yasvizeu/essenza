@@ -112,8 +112,8 @@ export class AgendamentosService {
   async confirmarAgendamentoPago(id: number, startDateTime: string, endDateTime: string, profissionalId: number): Promise<Agendamento> {
     const agendamento = await this.findOne(id);
     
-    // Verificar se é um agendamento pago e tentative
-    if (agendamento.statusPagamento !== 'pago' || agendamento.status !== 'tentative') {
+    // Verificar se é um agendamento pago e onHold (pendente)
+    if (agendamento.statusPagamento !== 'pago' || agendamento.status !== 'onHold') {
       throw new Error('Apenas agendamentos pagos e pendentes podem ser confirmados');
     }
     
@@ -154,10 +154,10 @@ export class AgendamentosService {
   async cancelar(id: number, motivo?: string): Promise<Agendamento> {
     const agendamento = await this.findOne(id);
     
-    // Se for um agendamento confirmado pago, voltar para tentative
+    // Se for um agendamento confirmado pago, voltar para onHold
     if (agendamento.status === 'confirmed' && agendamento.statusPagamento === 'pago') {
-      agendamento.status = 'tentative';
-      console.log('🔍 Debug - Agendamento cancelado voltou para tentative:', {
+      agendamento.status = 'onHold';
+      console.log('🔍 Debug - Agendamento cancelado voltou para onHold:', {
         id: agendamento.id,
         status: agendamento.status,
         statusPagamento: agendamento.statusPagamento
@@ -230,18 +230,18 @@ export class AgendamentosService {
   async findServicosPagosNaoAgendados(clienteId: number): Promise<any[]> {
     console.log('🔍 Backend - Buscando serviços pagos não agendados para cliente ID:', clienteId);
     
-    // Buscar agendamentos pagos do cliente que ainda são tentative (não agendados)
+    // Buscar agendamentos pagos do cliente que ainda estão onHold (não agendados)
     const agendamentosPagos = await this.agendamentosRepository.find({
       where: {
         clienteId: clienteId,
         statusPagamento: 'pago',
-        status: 'tentative'  // Apenas os que ainda não foram agendados
+        status: 'onHold'  // Apenas os que ainda não foram agendados
       },
       relations: ['servico'],
       order: { createdAt: 'DESC' }
     });
 
-    console.log('🔍 Backend - Agendamentos pagos tentative encontrados:', agendamentosPagos.length);
+    console.log('🔍 Backend - Agendamentos pagos onHold encontrados:', agendamentosPagos.length);
     console.log('🔍 Backend - Detalhes dos agendamentos:', agendamentosPagos.map(a => ({
       id: a.id,
       status: a.status,
