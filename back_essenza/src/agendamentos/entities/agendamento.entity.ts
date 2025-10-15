@@ -28,10 +28,10 @@ export class Agendamento {
 
   @Column({ 
     type: 'enum', 
-    enum: ['confirmed', 'tentative', 'cancelled'], 
+    enum: ['confirmed', 'onHold', 'cancelled'], 
     default: 'tentative' 
   })
-  status: 'confirmed' | 'tentative' | 'cancelled';
+  status: 'confirmed' | 'onHold' | 'cancelled';
 
   @Column({ 
     type: 'enum', 
@@ -76,3 +76,4 @@ export class Agendamento {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+

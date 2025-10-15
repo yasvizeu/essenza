@@ -33,7 +33,7 @@ O Essenza é um sistema completo que ajuda clínicas de estética a:
 
 🏗️ Arquitetura do Sistema
 🔧 Stack Tecnológica
-Frontend  → Angular 20 + TailwindCSS
+Frontend  → Angular 20 + Bootstrap
 Backend   → NestJS 11 + TypeORM + JWT
 Database  → MySQL 8
 Services  → Microserviço Spring Boot (envio de e-mails)
@@ -230,5 +230,6 @@ Sinta-se livre para usar, modificar e contribuir.
 ✨ Última atualização: Setembro 2025
 
 📌 Versão da documentação: 1.1.0
+
 
 
