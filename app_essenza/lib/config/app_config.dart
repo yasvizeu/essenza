@@ -1,6 +1,6 @@
 class AppConfig {
   // URLs da API
-  static const String apiBaseUrl = 'http://127.0.0.1:3000'; // Para web e local
+  static const String apiBaseUrl = 'http://10.69.45.122:3000'; // IP da máquina
   
   // Configurações de desenvolvimento
   static const bool debugMode = true;
