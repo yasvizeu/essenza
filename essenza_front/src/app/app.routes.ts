@@ -9,6 +9,7 @@ import { Sobre } from './pages/sobre/sobre';
 import { CartComponent } from './components/cart/cart';
 import { PagamentoComponent } from './pages/pagamento/pagamento';
 import { ServicosComponent } from './pages/servicos/servicos';
+import { ConfiguracoesComponent } from './pages/configuracoes/configuracoes';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -22,5 +23,6 @@ export const routes: Routes = [
   { path: 'dashboard-profissional', component: DashboardProfissionalComponent },
   { path: 'carrinho', component: CartComponent },
   { path: 'pagamento', component: PagamentoComponent },
+  { path: 'configuracoes', component: ConfiguracoesComponent },
   { path: '**', redirectTo: '' }
 ];

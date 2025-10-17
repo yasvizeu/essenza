@@ -1,8 +1,11 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ServicosService, Servico, PaginatedResponse } from '../../services/servicos';
 import { CartService, CartItem } from '../../services/cart';
+import { AuthService } from '../../services/auth';
+import { AgendamentosService, Agendamento } from '../../services/agendamentos';
 
 @Component({
   selector: 'app-home',
@@ -27,17 +30,46 @@ export class Home implements OnInit, OnDestroy {
   hasNextPage = false;
   hasPrevPage = false;
 
+  // Dados do usuário logado
+  isAuthenticated = false;
+  currentUser: any = null;
+  
+  // Agendamentos
+  proximosAgendamentos: Agendamento[] = [];
+  isLoadingAgendamentos = false;
+  
+  // Serviços recomendados
+  servicosRecomendados: Servico[] = [];
+  isLoadingRecomendados = false;
+  
+  // Modal de detalhes do agendamento
+  showDetalhesModal = false;
+  selectedAgendamentoDetalhes: Agendamento | null = null;
+
   constructor(
     private servicosService: ServicosService,
     private cartService: CartService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private agendamentosService: AgendamentosService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    // Verificar autenticação
+    this.isAuthenticated = this.authService.isAuthenticated();
+    this.currentUser = this.authService.getCurrentUser();
+    
     this.loadServicos();
     this.cartSubscription = this.cartService.cart$.subscribe(cart => {
       this.cart = cart;
     });
+    
+    // Carregar dados específicos do usuário se estiver logado
+    if (this.isAuthenticated && this.currentUser?.tipo === 'cliente') {
+      this.loadProximosAgendamentos();
+      this.loadServicosRecomendados();
+    }
     
     // Inicializar o carrossel após um pequeno delay
     setTimeout(() => {
@@ -92,6 +124,108 @@ export class Home implements OnInit, OnDestroy {
         this.servicos = [];
       }
     });
+  }
+
+  loadProximosAgendamentos(): void {
+    if (!this.currentUser?.id) return;
+    
+    this.isLoadingAgendamentos = true;
+    this.agendamentosService.getAgendamentosCliente(this.currentUser.id).subscribe({
+      next: (agendamentos: Agendamento[]) => {
+        // Filtrar apenas agendamentos confirmados e futuros
+        const hoje = new Date();
+        this.proximosAgendamentos = agendamentos
+          .filter(ag => ag.status === 'confirmed' && new Date(ag.startDateTime!) >= hoje)
+          .sort((a, b) => new Date(a.startDateTime!).getTime() - new Date(b.startDateTime!).getTime())
+          .slice(0, 3); // Apenas os próximos 3
+        this.isLoadingAgendamentos = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar agendamentos:', error);
+        this.proximosAgendamentos = [];
+        this.isLoadingAgendamentos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadServicosRecomendados(): void {
+    if (!this.currentUser?.id) return;
+    
+    this.isLoadingRecomendados = true;
+    this.agendamentosService.getServicosPagosNaoAgendados(this.currentUser.id).subscribe({
+      next: (agendamentos: Agendamento[]) => {
+        // Extrair IDs dos serviços já agendados/pagos
+        const servicosJaUtilizados = agendamentos.map(ag => ag.servico?.id).filter(id => id);
+        
+        // Buscar serviços similares (excluindo os já utilizados)
+        this.servicosService.getServicos(1, 6).subscribe({
+          next: (response: PaginatedResponse<Servico>) => {
+            this.servicosRecomendados = response.data
+              ?.filter(servico => !servicosJaUtilizados.includes(servico.id))
+              .slice(0, 4) || []; // Apenas 4 recomendações
+            this.isLoadingRecomendados = false;
+            this.cdr.detectChanges();
+          },
+          error: (error) => {
+            console.error('Erro ao carregar serviços recomendados:', error);
+            this.servicosRecomendados = [];
+            this.isLoadingRecomendados = false;
+            this.cdr.detectChanges();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Erro ao carregar histórico de serviços:', error);
+        this.servicosRecomendados = [];
+        this.isLoadingRecomendados = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Métodos auxiliares
+  formatarData(data: string): string {
+    const dataObj = new Date(data);
+    return dataObj.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+
+  formatarHora(data: string): string {
+    const dataObj = new Date(data);
+    return dataObj.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  navegarParaAgendamentos(): void {
+    this.router.navigate(['/cliente-agendamentos']);
+  }
+
+  navegarParaServicos(): void {
+    this.router.navigate(['/servicos']);
+  }
+
+  navegarParaSobre(): void {
+    this.router.navigate(['/sobre']);
+  }
+
+  // Métodos do modal de detalhes do agendamento
+  verDetalhesAgendamento(agendamento: Agendamento): void {
+    this.selectedAgendamentoDetalhes = agendamento;
+    this.showDetalhesModal = true;
+    document.body.classList.add('modal-open');
+  }
+
+  closeDetalhesModal(): void {
+    this.showDetalhesModal = false;
+    this.selectedAgendamentoDetalhes = null;
+    document.body.classList.remove('modal-open');
   }
 
   // Métodos de paginação

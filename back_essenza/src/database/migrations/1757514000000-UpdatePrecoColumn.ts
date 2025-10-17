@@ -9,15 +9,16 @@ export class UpdatePrecoColumn1757514000000 implements MigrationInterface {
         const precoColumn = table?.findColumnByName("preco");
         
         if (precoColumn) {
-            // Atualizar o tipo da coluna preco para decimal com precisão
-            await queryRunner.query(`ALTER TABLE \`servico\` MODIFY COLUMN \`preco\` DECIMAL(10,2) NOT NULL`);
+            // Verificar se já é DECIMAL(10,2) para evitar erro
+            const columnType = precoColumn.type;
+            if (columnType !== 'decimal' || precoColumn.precision !== 10 || precoColumn.scale !== 2) {
+                // Garantir que não há valores nulos na coluna preco
+                await queryRunner.query(`UPDATE \`servico\` SET \`preco\` = 0.00 WHERE \`preco\` IS NULL`);
+                
+                // Atualizar o tipo da coluna preco para decimal com precisão
+                await queryRunner.query(`ALTER TABLE \`servico\` MODIFY COLUMN \`preco\` DECIMAL(10,2) NOT NULL`);
+            }
         }
-
-        // Garantir que não há valores nulos na coluna preco
-        await queryRunner.query(`UPDATE \`servico\` SET \`preco\` = 0.00 WHERE \`preco\` IS NULL`);
-        
-        // Garantir que a coluna não aceita NULL
-        await queryRunner.query(`ALTER TABLE \`servico\` MODIFY COLUMN \`preco\` DECIMAL(10,2) NOT NULL`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

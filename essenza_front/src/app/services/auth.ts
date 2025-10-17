@@ -88,9 +88,16 @@ export class AuthService {
     console.log('🔍 AuthService - checkAuthStatus:', { token: !!token, user: !!user });
 
     if (token && user) {
-      this.isAuthenticatedSubject.next(true);
-      this.currentUserSubject.next(user);
-      console.log('🔍 AuthService - Usuário autenticado restaurado:', user);
+      // Verificar se o token ainda é válido
+      if (!this.isTokenExpired()) {
+        this.isAuthenticatedSubject.next(true);
+        this.currentUserSubject.next(user);
+        console.log('🔍 AuthService - Usuário autenticado restaurado:', user);
+      } else {
+        // Token expirado, tentar fazer refresh
+        console.log('🔍 AuthService - Token expirado, tentando refresh...');
+        this.tryRefreshToken();
+      }
     } else {
       console.log('🔍 AuthService - Nenhum usuário autenticado encontrado');
     }
@@ -174,9 +181,7 @@ export class AuthService {
   // Obter token de acesso
   getAccessToken(): string | null {
     if (!this.isBrowser()) return null;
-    const token = localStorage.getItem(this.tokenKey);
-    console.log('🔍 AuthService - getAccessToken:', token ? 'Token encontrado' : 'Token não encontrado');
-    return token;
+    return localStorage.getItem(this.tokenKey);
   }
 
   // Obter token de refresh
@@ -194,12 +199,9 @@ export class AuthService {
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      const expirationTime = payload.exp * 1000; // Converter para milissegundos
-      const isExpired = Date.now() >= expirationTime;
-      console.log('🔍 AuthService - isTokenExpired:', isExpired);
-      return isExpired;
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
     } catch (error) {
-      console.log('🔍 AuthService - Erro ao verificar token:', error);
       return true;
     }
   }
@@ -311,14 +313,42 @@ export class AuthService {
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      const expirationTime = payload.exp * 1000;
-      const currentTime = Date.now();
-      const timeUntilExpiry = expirationTime - currentTime;
+      const currentTime = Math.floor(Date.now() / 1000);
+      const timeUntilExpiry = payload.exp - currentTime;
 
       // Refresh se faltar menos de 5 minutos para expirar
-      return timeUntilExpiry < 5 * 60 * 1000;
+      return timeUntilExpiry < 300;
     } catch (error) {
       return true;
+    }
+  }
+
+  // Tentar fazer refresh do token
+  private tryRefreshToken(): void {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      console.log('🔍 AuthService - Nenhum refresh token encontrado');
+      this.logout();
+      return;
+    }
+
+    this.refreshToken().subscribe({
+      next: (response) => {
+        console.log('🔍 AuthService - Token renovado com sucesso');
+        this.handleLoginSuccess(response);
+      },
+      error: (error) => {
+        console.log('🔍 AuthService - Erro ao renovar token:', error);
+        this.logout();
+      }
+    });
+  }
+
+  // Atualizar dados do usuário atual
+  updateCurrentUser(userData: any): void {
+    this.currentUserSubject.next(userData);
+    if (this.isBrowser()) {
+      localStorage.setItem(this.userKey, JSON.stringify(userData));
     }
   }
 }

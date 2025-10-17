@@ -1,0 +1,213 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header -->
+      <div class="d-flex align-items-center mb-4">
+        <button class="btn btn-outline-secondary me-3" (click)="voltar()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <div>
+          <h2 class="mb-1">Configurações do Perfil</h2>
+          <p class="text-muted mb-0">Gerencie suas informações pessoais</p>
+        </div>
+      </div>
+
+      <!-- Mensagens de Sucesso/Erro -->
+      <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        {{ successMessage }}
+        <button type="button" class="btn-close" (click)="clearMessages()"></button>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="clearMessages()"></button>
+      </div>
+
+      <!-- Informações do Usuário -->
+      <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-person-circle me-2"></i>
+            Informações do Usuário
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <strong>Nome:</strong>
+              <p class="text-muted">{{ currentUser?.nome || 'Não informado' }}</p>
+            </div>
+            <div class="col-md-6">
+              <strong>Tipo:</strong>
+              <p class="text-muted">
+                <span class="badge bg-success">{{ currentUser?.tipo || 'cliente' }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alterar Email -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-envelope me-2"></i>
+            Alterar Email
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="emailForm" (ngSubmit)="alterarEmail()">
+            <div class="mb-3">
+              <label for="email" class="form-label">Novo Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="emailForm.get('email')?.invalid && emailForm.get('email')?.touched"
+                placeholder="Digite seu novo email">
+              <div *ngIf="emailForm.get('email')?.invalid && emailForm.get('email')?.touched" class="invalid-feedback">
+                <div *ngIf="emailForm.get('email')?.errors?.['required']">Email é obrigatório</div>
+                <div *ngIf="emailForm.get('email')?.errors?.['email']">Digite um email válido</div>
+              </div>
+            </div>
+            <button 
+              type="submit" 
+              class="btn btn-success"
+              [disabled]="emailForm.invalid || isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!isLoading" class="bi bi-check-lg me-2"></i>
+              Alterar Email
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Alterar Senha -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-lock me-2"></i>
+            Alterar Senha
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="senhaForm" (ngSubmit)="alterarSenha()">
+            <div class="mb-3">
+              <label for="senhaAtual" class="form-label">Senha Atual</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="senhaAtual"
+                formControlName="senhaAtual"
+                [class.is-invalid]="senhaForm.get('senhaAtual')?.invalid && senhaForm.get('senhaAtual')?.touched"
+                placeholder="Digite sua senha atual">
+              <div *ngIf="senhaForm.get('senhaAtual')?.invalid && senhaForm.get('senhaAtual')?.touched" class="invalid-feedback">
+                <div *ngIf="senhaForm.get('senhaAtual')?.errors?.['required']">Senha atual é obrigatória</div>
+                <div *ngIf="senhaForm.get('senhaAtual')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="novaSenha" class="form-label">Nova Senha</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="novaSenha"
+                formControlName="novaSenha"
+                [class.is-invalid]="senhaForm.get('novaSenha')?.invalid && senhaForm.get('novaSenha')?.touched"
+                placeholder="Digite sua nova senha">
+              <div *ngIf="senhaForm.get('novaSenha')?.invalid && senhaForm.get('novaSenha')?.touched" class="invalid-feedback">
+                <div *ngIf="senhaForm.get('novaSenha')?.errors?.['required']">Nova senha é obrigatória</div>
+                <div *ngIf="senhaForm.get('novaSenha')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="confirmarSenha" class="form-label">Confirmar Nova Senha</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="confirmarSenha"
+                formControlName="confirmarSenha"
+                [class.is-invalid]="senhaForm.get('confirmarSenha')?.invalid && senhaForm.get('confirmarSenha')?.touched"
+                placeholder="Confirme sua nova senha">
+              <div *ngIf="senhaForm.get('confirmarSenha')?.invalid && senhaForm.get('confirmarSenha')?.touched" class="invalid-feedback">
+                <div *ngIf="senhaForm.get('confirmarSenha')?.errors?.['required']">Confirmação de senha é obrigatória</div>
+                <div *ngIf="senhaForm.get('confirmarSenha')?.errors?.['passwordMismatch']">As senhas não coincidem</div>
+              </div>
+            </div>
+            <button 
+              type="submit" 
+              class="btn btn-success"
+              [disabled]="senhaForm.invalid || isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!isLoading" class="bi bi-check-lg me-2"></i>
+              Alterar Senha
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Alterar Celular -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-phone me-2"></i>
+            Alterar Celular
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="celularForm" (ngSubmit)="alterarCelular()">
+            <div class="mb-3">
+              <label for="celular" class="form-label">Novo Celular</label>
+              <input 
+                type="tel" 
+                class="form-control" 
+                id="celular"
+                formControlName="celular"
+                (input)="formatarCelular($event)"
+                [class.is-invalid]="celularForm.get('celular')?.invalid && celularForm.get('celular')?.touched"
+                placeholder="(11) 99999-9999">
+              <div *ngIf="celularForm.get('celular')?.invalid && celularForm.get('celular')?.touched" class="invalid-feedback">
+                <div *ngIf="celularForm.get('celular')?.errors?.['required']">Celular é obrigatório</div>
+                <div *ngIf="celularForm.get('celular')?.errors?.['pattern']">Digite um celular válido no formato (11) 99999-9999</div>
+              </div>
+              <div class="form-text">Digite apenas números, a formatação será aplicada automaticamente</div>
+            </div>
+            <button 
+              type="submit" 
+              class="btn btn-success"
+              [disabled]="celularForm.invalid || isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!isLoading" class="bi bi-check-lg me-2"></i>
+              Alterar Celular
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Informações de Segurança -->
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-shield-check me-2"></i>
+            Informações de Segurança
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Dicas de Segurança:</strong>
+            <ul class="mb-0 mt-2">
+              <li>Use uma senha forte com pelo menos 6 caracteres</li>
+              <li>Combine letras, números e símbolos</li>
+              <li>Não compartilhe suas credenciais com terceiros</li>
+              <li>Mantenha seu email e celular atualizados</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

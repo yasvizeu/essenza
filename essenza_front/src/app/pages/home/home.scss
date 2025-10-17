@@ -17,6 +17,101 @@
   }
 }
 
+// Estilos para seções de usuário logado
+.agendamentos-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.recomendados-section {
+  background: #ffffff;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #dee2e6 50%, transparent 100%);
+  }
+}
+
+// Cards de agendamento
+.agendamento-card {
+  transition: all 0.3s ease;
+  border-left: 4px solid #28a745;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+// Cards de serviços recomendados
+.servico-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  z-index: 10; /* Garantir que os cards fiquem acima do footer */
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-img-top {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover .card-img-top {
+    transform: scale(1.05);
+  }
+  
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    background: linear-gradient(135deg, #28a745, #20c997);
+  }
+}
+
+// Estados vazios
+.empty-state {
+  .display-1 {
+    opacity: 0.3;
+  }
+  
+  h5 {
+    color: #6c757d;
+  }
+  
+  p {
+    color: #adb5bd;
+  }
+}
+
+// Loading states
+.loading-state {
+  .spinner-border {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  p {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+}
+
 // Estilos para o carrossel
 #clinicaCarousel {
   .carousel-inner {
@@ -455,6 +550,11 @@
 .servico-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.servico-card {
+  position: relative;
+  z-index: 10; /* Garantir que os cards fiquem acima do footer */
 }
 
 .servico-card .card-img-wrapper {

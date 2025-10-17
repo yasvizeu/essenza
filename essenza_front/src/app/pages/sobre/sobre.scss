@@ -26,6 +26,8 @@
   transition: all 0.3s ease;
   border-radius: 15px;
   overflow: hidden;
+  position: relative;
+  z-index: 10; /* Garantir que os cards fiquem acima do footer */
 }
 
 .card:hover {

@@ -51,35 +51,23 @@ export class CartService {
 
   // Adicionar item ao carrinho
   addToCart(servico: Servico, quantidade: number = 1): Observable<any> {
-    console.log('🔍 Debug - addToCart chamado para:', servico.nome, 'quantidade:', quantidade);
-    
     // Verificar se está autenticado
     if (typeof window !== 'undefined' && window.localStorage) {
       const token = localStorage.getItem('essenza_access_token');
-      console.log('🔍 Debug - Token encontrado:', !!token);
       
       if (token) {
         // Usuário logado - usar API
-        console.log('🔍 Debug - Adicionando via API');
         const headers = { 'Authorization': `Bearer ${token}` };
         return this.http.post(`${this.apiUrl}/carrinho/adicionar`, {
           servicoId: servico.id,
           quantidade: quantidade
         }, { headers }).pipe(
           tap(() => {
-            console.log('🔍 Debug - Item adicionado via API, recarregando carrinho');
             // Recarregar carrinho após adicionar
-            this.loadCartFromAPI().subscribe({
-              next: (cart) => {
-                console.log('🔍 Debug - Carrinho recarregado:', cart);
-              },
-              error: (error) => {
-                console.error('🔍 Debug - Erro ao recarregar carrinho:', error);
-              }
-            });
+            this.loadCartFromAPI().subscribe();
           }),
           catchError(error => {
-            console.error('🔍 Debug - Erro ao adicionar via API:', error);
+            console.error('Erro ao adicionar via API:', error);
             // Fallback para adição local
             this.addItemLocally(servico, quantidade);
             return new Observable(observer => {
@@ -92,7 +80,6 @@ export class CartService {
     }
 
     // Usuário não logado - adicionar localmente
-    console.log('🔍 Debug - Adicionando localmente');
     return new Observable(observer => {
       this.addItemLocally(servico, quantidade);
       observer.next({ success: true });
@@ -322,6 +309,7 @@ export class CartService {
   loadCartFromAPI(): Observable<any> {
     const token = localStorage.getItem('essenza_access_token');
     const headers = token ? { 'Authorization': `Bearer ${token}` } : undefined;
+    
     return this.http.get<any>(`${this.apiUrl}/carrinho`, { headers }).pipe(
       tap(cart => {
         this.cartSubject.next(cart);

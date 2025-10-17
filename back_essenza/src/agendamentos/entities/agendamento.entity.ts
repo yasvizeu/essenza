@@ -28,10 +28,10 @@ export class Agendamento {
 
   @Column({ 
     type: 'enum', 
-    enum: ['confirmed', 'onHold', 'cancelled'], 
+    enum: ['confirmed', 'tentative', 'cancelled'], 
     default: 'tentative' 
   })
-  status: 'confirmed' | 'onHold' | 'cancelled';
+  status: 'confirmed' | 'tentative' | 'cancelled';
 
   @Column({ 
     type: 'enum', 

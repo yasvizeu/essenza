@@ -204,12 +204,6 @@
                               title="Editar Agendamento">
                         <i class="bi bi-pencil"></i>
                       </button>
-                      <button class="btn btn-outline-danger btn-sm" 
-                              *ngIf="podeCancelarAgendamento(agendamento)"
-                              (click)="cancelarAgendamento(agendamento)"
-                              title="Cancelar">
-                        <i class="bi bi-x-circle"></i>
-                      </button>
                     </div>
                     <div class="text-success fw-bold">
                       R$ {{ formatPrice(agendamento.valor ?? 0) }}
@@ -358,19 +352,10 @@
   (agendamentoCriado)="onAgendamentoCriado($event)">
 </app-agendamento-modal>
 
-<!-- Modal de Edição de Agendamento -->
-<app-agendamento-modal
-  [servico]="getServicoParaEdicao()"
-  [isOpen]="showEdicaoModal"
-  [isEditMode]="true"
-  [agendamentoOriginal]="selectedAgendamentoParaEdicao"
-  (close)="closeEdicaoModal()"
-  (agendamentoCriado)="onAgendamentoEditado($event)">
-</app-agendamento-modal>
 
 <!-- Modal de Detalhes do Agendamento -->
-<div *ngIf="showDetalhesModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-lg">
+<div *ngIf="showDetalhesModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
@@ -440,3 +425,4 @@
   (close)="showEdicaoModal = false; selectedAgendamentoParaEdicao = null"
   (agendamentoEditado)="onAgendamentoEditado($event)">
 </app-editar-agendamento-modal>
+

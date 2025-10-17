@@ -3,6 +3,7 @@ footer {
   background: linear-gradient(135deg, #1a1a1a, #2d2d2d) !important;
   position: relative;
   overflow: hidden;
+  z-index: 1; /* Garantir que o footer fique abaixo dos cards */
 }
 
 footer::before {
@@ -57,6 +58,14 @@ footer h5 {
   margin-bottom: 0.5rem;
 }
 
+footer h6 {
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
+}
+
 footer p {
   font-size: 0.9rem;
   opacity: 0.9;
@@ -72,6 +81,40 @@ footer a:hover {
   color: #28a745 !important;
   text-decoration: none;
   transform: translateX(5px);
+}
+
+/* Links Úteis - Estilo específico */
+footer .footer-link {
+  color: #e9ecef !important;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.8;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+}
+
+footer .footer-link:hover {
+  color: #28a745 !important;
+  text-decoration: none;
+  transform: translateX(8px);
+  text-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+}
+
+footer .footer-link::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.3s ease;
+}
+
+footer .footer-link:hover::before {
+  width: 10px;
 }
 
 /* Social Links */

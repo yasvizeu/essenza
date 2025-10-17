@@ -5,6 +5,8 @@
   cursor: pointer;
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
+  z-index: 10; /* Garantir que os cards fiquem acima do footer */
 }
 
 .servico-card:hover {

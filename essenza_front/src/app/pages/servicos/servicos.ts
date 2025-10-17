@@ -70,10 +70,10 @@ export class ServicosComponent implements OnInit, OnDestroy {
   loadServicos(): void {
     this.isLoading = true;
     this.cdr.detectChanges();
-    
+
     this.servicosService.getServicos(this.currentPage, this.pageSize, this.categoriaSelecionada).subscribe({
       next: (response: PaginatedResponse<Servico>) => {
-        this.servicos = response.data;
+        this.servicos = response.data || [];
         this.totalPages = response.pagination.totalPages;
         this.hasNextPage = response.pagination.hasNext;
         this.hasPrevPage = response.pagination.hasPrev;
@@ -82,6 +82,7 @@ export class ServicosComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Erro ao carregar serviços:', error);
+        this.servicos = [];
         this.isLoading = false;
         this.cdr.detectChanges();
       }

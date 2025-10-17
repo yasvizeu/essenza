@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UseGuards, Request } from '@nestjs/common';
 import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { UpdateEmailDto, UpdatePasswordDto, UpdateCelularDto } from './dto/update-cliente.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('/clientes')
 export class ClientesController {
@@ -51,5 +53,27 @@ export class ClientesController {
   remove(@Param('id') id: string) {
     this.logger.log(`Removing cliente with id: ${id}`);
     return this.clientesService.remove(+id);
+  }
+
+  // Endpoints para configurações do perfil
+  @UseGuards(JwtAuthGuard)
+  @Patch('alterar-email')
+  alterarEmail(@Request() req: any, @Body() updateEmailDto: UpdateEmailDto) {
+    this.logger.log(`Alterando email do cliente ${req.user.id}`);
+    return this.clientesService.alterarEmail(req.user.id, updateEmailDto.email);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('alterar-senha')
+  alterarSenha(@Request() req: any, @Body() updatePasswordDto: UpdatePasswordDto) {
+    this.logger.log(`Alterando senha do cliente ${req.user.id}`);
+    return this.clientesService.alterarSenha(req.user.id, updatePasswordDto.senhaAtual, updatePasswordDto.novaSenha);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('alterar-celular')
+  alterarCelular(@Request() req: any, @Body() updateCelularDto: UpdateCelularDto) {
+    this.logger.log(`Alterando celular do cliente ${req.user.id}`);
+    return this.clientesService.alterarCelular(req.user.id, updateCelularDto.cell);
   }
 }

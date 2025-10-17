@@ -94,7 +94,7 @@ export class AuthService {
     const { email, senha, userType } = loginDto;
     
     console.log('🔍 Debug - Login attempt:', { email, userType });
-    console.log('🔍 Debug - Senha recebida:', senha);
+    // Removido log da senha por segurança
 
     let user;
     
@@ -120,7 +120,7 @@ export class AuthService {
     }
 
     console.log('🔍 Debug - Usuário encontrado:', { id: user.id, email: user.email, type: user.type });
-    console.log('🔍 Debug - Senha hash no banco:', user.password);
+    // Removido log da senha hash por segurança
 
     // Verificar senha
     const isSenhaValid = await bcrypt.compare(senha, user.password);
@@ -228,7 +228,7 @@ export class AuthService {
     };
 
     return this.jwtService.sign(payload, { 
-      secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
+      secret: process.env.JWT_REFRESH_SECRET || 'sua-chave-super-secreta-para-refresh-token-em-producao-mude-esta-chave',
       expiresIn: '7d'
     });
   }

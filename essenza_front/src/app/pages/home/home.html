@@ -1,19 +1,34 @@
+<!-- Hero Section - Personalizado para usuários logados -->
 <div class="hero-section bg-success text-white py-5">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-6">
         <h1 class="display-4 fw-bold mb-4">
-          Bem-vindo à Essenza
+          <span *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'">
+            Olá, {{ currentUser?.nome || 'Cliente' }}! 👋
+          </span>
+          <span *ngIf="!isAuthenticated || currentUser?.tipo !== 'cliente'">
+            Bem-vindo à Essenza
+          </span>
         </h1>
         <p class="lead mb-4">
-          Descubra serviços de estética profissional que transformam sua vida e cuidam da sua beleza.
+          <span *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'">
+            Que bom ter você de volta! Confira seus próximos agendamentos e descubra novos tratamentos.
+          </span>
+          <span *ngIf="!isAuthenticated || currentUser?.tipo !== 'cliente'">
+            Descubra serviços de estética profissional que transformam sua vida e cuidam da sua beleza.
+          </span>
         </p>
         <div class="d-flex gap-3">
-          <button class="btn btn-light btn-lg">
+          <button type="button" class="btn btn-light btn-lg" (click)="navegarParaServicos()">
             <i class="bi bi-arrow-right me-2"></i>
             Explorar Serviços
           </button>
-          <button class="btn btn-outline-light btn-lg">
+          <button type="button" *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'" class="btn btn-outline-light btn-lg" (click)="navegarParaAgendamentos()">
+            <i class="bi bi-calendar-check me-2"></i>
+            Meus Agendamentos
+          </button>
+          <button type="button" *ngIf="!isAuthenticated || currentUser?.tipo !== 'cliente'" class="btn btn-outline-light btn-lg" (click)="navegarParaSobre()">
             <i class="bi bi-play-circle me-2"></i>
             Saiba Mais
           </button>
@@ -26,13 +41,158 @@
   </div>
 </div>
 
+<!-- Seção de Agendamentos - Apenas para usuários logados -->
+<div *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'" class="py-5 agendamentos-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-bold mb-0">
+            <i class="bi bi-calendar-check me-2 text-success"></i>
+            Meus Próximos Agendamentos
+          </h3>
+          <button class="btn btn-outline-success" (click)="navegarParaAgendamentos()">
+            Ver Todos
+            <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </div>
+        
+        <div *ngIf="isLoadingAgendamentos" class="text-center py-4 loading-state">
+          <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+          <p class="mt-2 text-muted">Carregando seus agendamentos...</p>
+        </div>
+
+        <div *ngIf="!isLoadingAgendamentos && proximosAgendamentos.length === 0" class="text-center py-5 empty-state">
+          <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+          <h5 class="text-muted">Nenhum agendamento próximo</h5>
+          <p class="text-muted">Que tal agendar um novo tratamento?</p>
+          <button class="btn btn-success" (click)="navegarParaServicos()">
+            <i class="bi bi-plus-circle me-2"></i>
+            Agendar Serviço
+          </button>
+        </div>
+
+        <div *ngIf="!isLoadingAgendamentos && proximosAgendamentos.length > 0" class="row">
+          <div *ngFor="let agendamento of proximosAgendamentos" class="col-md-4 mb-3">
+            <div class="card h-100 agendamento-card border-0 shadow-sm" (click)="verDetalhesAgendamento(agendamento)" style="cursor: pointer;">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h6 class="card-title text-success fw-bold mb-0">{{ agendamento.servico?.nome }}</h6>
+                  <span class="badge bg-success">Confirmado</span>
+                </div>
+                <p class="card-text text-muted small mb-2">
+                  <i class="bi bi-person me-1"></i>
+                  {{ agendamento.profissional?.nome }}
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <small class="text-muted d-block">
+                      <i class="bi bi-calendar me-1"></i>
+                      {{ formatarData(agendamento.startDateTime!) }}
+                    </small>
+                    <small class="text-muted">
+                      <i class="bi bi-clock me-1"></i>
+                      {{ formatarHora(agendamento.startDateTime!) }}
+                    </small>
+                  </div>
+                  <div class="text-end">
+                    <small class="text-success fw-bold">
+                      R$ {{ agendamento.servico?.preco | number:'1.2-2' }}
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Seção de Serviços Recomendados - Apenas para usuários logados -->
+<div *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'" class="py-5 recomendados-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-bold mb-0">
+            <i class="bi bi-heart me-2 text-success"></i>
+            Recomendados para Você
+          </h3>
+          <button class="btn btn-outline-success" (click)="navegarParaServicos()">
+            Ver Todos
+            <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </div>
+        
+        <div *ngIf="isLoadingRecomendados" class="text-center py-4 loading-state">
+          <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+          <p class="mt-2 text-muted">Buscando recomendações personalizadas...</p>
+        </div>
+
+        <div *ngIf="!isLoadingRecomendados && servicosRecomendados.length === 0" class="text-center py-5 empty-state">
+          <i class="bi bi-search display-1 text-muted mb-3"></i>
+          <h5 class="text-muted">Nenhuma recomendação disponível</h5>
+          <p class="text-muted">Explore nossos serviços para receber recomendações personalizadas!</p>
+          <button class="btn btn-success" (click)="navegarParaServicos()">
+            <i class="bi bi-search me-2"></i>
+            Explorar Serviços
+          </button>
+        </div>
+
+        <div *ngIf="!isLoadingRecomendados && servicosRecomendados.length > 0" class="row">
+          <div *ngFor="let servico of servicosRecomendados" class="col-md-3 mb-4">
+            <div class="card h-100 servico-card border-0 shadow-sm" (click)="openModal(servico)">
+              <div class="card-img-top position-relative">
+                <img [src]="getServicoImage(servico)" [alt]="servico.nome" class="img-fluid" style="height: 200px; object-fit: cover;">
+                <div class="position-absolute top-0 end-0 m-2">
+                  <span class="badge bg-success">Recomendado</span>
+                </div>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h6 class="card-title fw-bold text-success mb-2">{{ servico.nome }}</h6>
+                <p class="card-text text-muted small flex-grow-1">{{ servico.descricao }}</p>
+                <div class="d-flex justify-content-between align-items-center mt-auto">
+                  <span class="h6 text-success mb-0">R$ {{ servico.preco | number:'1.2-2' }}</span>
+                  <button class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Carrossel de Serviços de Estética -->
 <section class="py-5">
   <div class="container">
     <div class="row text-center mb-5">
       <div class="col-12">
-        <h2 class="display-6 fw-bold mb-3">Serviços em Destaque</h2>
-        <p class="lead text-muted">Conheça nossos tratamentos mais populares</p>
+        <h2 class="display-6 fw-bold mb-3">
+          <span *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'">
+            Nossos Serviços
+          </span>
+          <span *ngIf="!isAuthenticated || currentUser?.tipo !== 'cliente'">
+            Serviços em Destaque
+          </span>
+        </h2>
+        <p class="lead text-muted">
+          <span *ngIf="isAuthenticated && currentUser?.tipo === 'cliente'">
+            Explore todos os nossos tratamentos disponíveis
+          </span>
+          <span *ngIf="!isAuthenticated || currentUser?.tipo !== 'cliente'">
+            Conheça nossos tratamentos mais populares
+          </span>
+        </p>
       </div>
     </div>
 
@@ -391,6 +551,66 @@
         <i class="bi bi-cart-plus me-2"></i>
         Adicionar ao Carrinho
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Detalhes do Agendamento -->
+<div *ngIf="showDetalhesModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-calendar-event me-2"></i>
+          Detalhes do Agendamento
+        </h5>
+        <button type="button" class="btn-close" (click)="closeDetalhesModal()"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedAgendamentoDetalhes">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-primary">Informações do Serviço</h6>
+            <p><strong>Serviço:</strong> {{ selectedAgendamentoDetalhes.servico?.nome }}</p>
+            <p><strong>Descrição:</strong> {{ selectedAgendamentoDetalhes.servico?.descricao || 'N/A' }}</p>
+            <p><strong>Valor:</strong> R$ {{ selectedAgendamentoDetalhes.servico?.preco | number:'1.2-2' }}</p>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-primary">Data e Horário</h6>
+            <p><strong>Data:</strong> {{ formatarData(selectedAgendamentoDetalhes.startDateTime!) }}</p>
+            <p><strong>Horário:</strong> {{ formatarHora(selectedAgendamentoDetalhes.startDateTime!) }}</p>
+            <p><strong>Duração:</strong> 60 min (estimativa)</p>
+          </div>
+        </div>
+        
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <h6 class="text-primary">Profissional</h6>
+            <p><strong>Nome:</strong> {{ selectedAgendamentoDetalhes.profissional?.nome }}</p>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-primary">Status</h6>
+            <span class="badge bg-success me-2">Confirmado</span>
+            <span class="badge bg-success">Pago</span>
+          </div>
+        </div>
+        
+        <div class="row mt-3" *ngIf="selectedAgendamentoDetalhes.observacoes">
+          <div class="col-12">
+            <h6 class="text-primary">Observações</h6>
+            <p class="text-muted">{{ selectedAgendamentoDetalhes.observacoes }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDetalhesModal()">
+          <i class="bi bi-x-circle me-1"></i>
+          Fechar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="navegarParaAgendamentos()">
+          <i class="bi bi-calendar-check me-1"></i>
+          Ver Todos os Agendamentos
+        </button>
+      </div>
     </div>
   </div>
 </div>

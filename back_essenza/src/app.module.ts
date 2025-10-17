@@ -19,20 +19,15 @@ import 'dotenv/config';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    // host: process.env.DB_HOST,
-    host: 'localhost',
-   // port: Number(process.env.DB_PORT),
-    port: 3306,
-   // username: process.env.DB_USER,
-    username: 'root',
-   // password: process.env.DB_PASS,
-    password: '',
-   // database: process.env.DB_NAME,
-    database: 'essenza',
+    host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT) || 3306,
+    username: process.env.DB_USER || 'root',
+    password: process.env.DB_PASS || '',
+    database: process.env.DB_NAME || 'essenza',
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: true, // Temporariamente habilitado para criar tabelas
+    synchronize: process.env.NODE_ENV !== 'production', // Apenas em desenvolvimento
     charset: 'utf8mb4_unicode_ci',
-    // manualInitialization: true,
+    logging: process.env.NODE_ENV === 'development',
   }), AuthModule, PersonasModule, ClientesModule, ProfissionalModule, FichaAnamneseModule, ProdutosModule, ServicosModule, ProtocolosModule, EstoqueModule, DashboardModule, AgendamentosModule, CarrinhoModule],
   controllers: [AppController],
   providers: [AppService],

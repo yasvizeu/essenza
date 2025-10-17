@@ -26,8 +26,8 @@ export class CreateAgendamentoDto {
   location?: string;
 
   @IsOptional()
-  @IsEnum(['confirmed', 'onHold', 'cancelled'])
-  status?: 'confirmed' | 'onHold' | 'cancelled';
+  @IsEnum(['confirmed', 'tentative', 'cancelled'])
+  status?: 'confirmed' | 'tentative' | 'cancelled';
 
   @IsOptional()
   @IsEnum(['pendente', 'pago'])

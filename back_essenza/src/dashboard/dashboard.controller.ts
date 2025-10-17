@@ -23,13 +23,13 @@ export class DashboardController {
       ]);
 
       // Calcular produtos com baixo estoque (menos de 10 unidades)
-      let produtosBaixoEstoque = 0;
-      for (const produto of produtos) {
-        const saldo = await this.inventarioService.saldoProduto(produto.id);
-        if (saldo < 10) {
-          produtosBaixoEstoque++;
-        }
-      }
+      // Usar Promise.all para executar queries em paralelo
+      const saldosPromises = produtos.map(produto => 
+        this.inventarioService.saldoProduto(produto.id)
+      );
+      const saldos = await Promise.all(saldosPromises);
+      
+      const produtosBaixoEstoque = saldos.filter(saldo => saldo < 10).length;
 
       // Contar movimentações de hoje
       const hoje = new Date();
@@ -63,17 +63,19 @@ export class DashboardController {
   async getProdutosBaixoEstoque() {
     try {
       const produtos = await this.produtosService.findAll();
-      const produtosComSaldo: any[] = [];
       
-      for (const produto of produtos) {
-        const saldo = await this.inventarioService.saldoProduto(produto.id);
-        if (saldo < 10) {
-          produtosComSaldo.push({
-            ...produto,
-            saldoAtual: saldo
-          });
-        }
-      }
+      // Usar Promise.all para executar queries em paralelo
+      const saldosPromises = produtos.map(produto => 
+        this.inventarioService.saldoProduto(produto.id)
+      );
+      const saldos = await Promise.all(saldosPromises);
+      
+      const produtosComSaldo = produtos
+        .map((produto, index) => ({
+          ...produto,
+          saldoAtual: saldos[index]
+        }))
+        .filter(produto => produto.saldoAtual < 10);
       
       return produtosComSaldo;
     } catch (error) {
