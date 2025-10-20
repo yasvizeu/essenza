@@ -22,3 +22,35 @@ export class UpdateCelularDto {
   })
   cell: string;
 }
+
+// DTO principal para atualização genérica de Cliente
+export class UpdateClienteDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  birthDate?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  cell?: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  // type/cpf normalmente não deveriam ser alterados aqui, mas deixamos opcionais
+  @IsOptional()
+  @IsString()
+  cpf?: string;
+
+  @IsOptional()
+  @IsString()
+  type?: 'cliente' | 'profissional';
+}

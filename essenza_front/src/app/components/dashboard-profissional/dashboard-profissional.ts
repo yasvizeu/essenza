@@ -439,11 +439,12 @@ export class DashboardProfissionalComponent implements OnInit {
     if (nome.trim() === '') {
       this.clientesFiltrados = [...this.clientes];
     } else {
-      this.clientesFiltrados = this.clientes.filter(cliente =>
-        cliente.nome.toLowerCase().includes(nome.toLowerCase()) ||
-        cliente.email.toLowerCase().includes(nome.toLowerCase()) ||
-        cliente.cpf.includes(nome)
-      );
+      this.clientesFiltrados = this.clientes.filter(cliente => {
+        const nomeCliente = (cliente.nome || (cliente as any).name || '').toLowerCase();
+        return nomeCliente.includes(nome.toLowerCase()) ||
+               cliente.email.toLowerCase().includes(nome.toLowerCase()) ||
+               cliente.cpf.includes(nome);
+      });
     }
   }
 
@@ -726,6 +727,7 @@ export class DashboardProfissionalComponent implements OnInit {
       agendamentosFiltrados = agendamentosFiltrados.filter(agendamento =>
         agendamento.title?.toLowerCase().includes(termo) ||
         agendamento.cliente?.nome?.toLowerCase().includes(termo) ||
+        agendamento.cliente?.name?.toLowerCase().includes(termo) ||
         agendamento.servico?.nome?.toLowerCase().includes(termo) ||
         agendamento.observacoes?.toLowerCase().includes(termo)
       );

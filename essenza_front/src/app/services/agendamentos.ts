@@ -30,6 +30,7 @@ export interface Agendamento {
   cliente?: {
     id: number;
     nome: string;
+    name?: string; // opcional: compatibilidade com backend que retorna 'name'
     email: string;
     cell: string;
   };
@@ -42,6 +43,7 @@ export interface Agendamento {
   profissional?: {
     id: number;
     nome: string;
+    name?: string; // opcional: compatibilidade com backend que retorna 'name'
     email: string;
   };
   // IDs

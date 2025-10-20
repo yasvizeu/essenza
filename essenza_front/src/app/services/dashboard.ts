@@ -40,6 +40,7 @@ export interface Cliente {
   id: number;
   email: string;
   nome: string;
+  name?: string; // opcional: compatibilidade com backend que retorna 'name'
   cpf: string;
   birthDate: string;
   cell: string;
@@ -51,6 +52,7 @@ export interface Profissional {
   id: number;
   email: string;
   nome: string;
+  name?: string; // opcional: compatibilidade com backend que retorna 'name'
   cpf: string;
   birthDate: string;
   cell: string;

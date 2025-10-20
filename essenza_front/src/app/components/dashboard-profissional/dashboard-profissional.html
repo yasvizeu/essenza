@@ -10,7 +10,7 @@
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
           <i class="bi bi-person-circle me-2"></i>
-          {{ currentUser?.nome || 'Profissional' }}
+          {{ currentUser?.nome || currentUser?.name || 'Profissional' }}
         </a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#" (click)="logout()">
@@ -277,7 +277,7 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let cliente of clientes | filter: filtroClientes">
-                      <td><strong>{{ cliente.nome }}</strong></td>
+                      <td><strong>{{ cliente.nome || cliente.name }}</strong></td>
                       <td>{{ cliente.email }}</td>
                       <td>{{ formatarCPF(cliente.cpf) }}</td>
                       <td>{{ formatarTelefone(cliente.cell) }}</td>
@@ -309,7 +309,7 @@
                       <div class="d-flex align-items-center mb-2">
                         <i class="bi bi-person-circle fs-1 text-primary me-3"></i>
                         <div>
-                          <h6 class="card-title mb-1">{{ profissional.nome }}</h6>
+                          <h6 class="card-title mb-1">{{ profissional.nome || profissional.name }}</h6>
                           <small class="text-muted">{{ profissional.especialidade || 'Sem especialidade' }}</small>
                         </div>
                       </div>
@@ -444,7 +444,7 @@
                       </td>
                       <td>
                         <div class="d-flex flex-column">
-                          <strong>{{ agendamento.cliente?.nome || agendamento.clienteNome || 'N/A' }}</strong>
+                          <strong>{{ agendamento.cliente?.nome || agendamento.cliente?.name || agendamento.clienteNome || 'N/A' }}</strong>
                           <small class="text-muted">{{ formatarTelefone(agendamento.cliente?.cell || '') }}</small>
                         </div>
                       </td>

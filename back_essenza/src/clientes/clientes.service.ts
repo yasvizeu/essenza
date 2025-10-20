@@ -64,7 +64,7 @@ export class ClientesService {
 
     // Buscar cliente atualizado
     const clienteAtualizado = await this.clienteRepo.findOne({ where: { id: clienteId } });
-    const { password, ...clienteSemSenha } = clienteAtualizado;
+    const clienteSemSenha = clienteAtualizado ? (({ password, ...rest }) => rest)(clienteAtualizado as any) : {};
 
     return {
       message: 'Email alterado com sucesso',
@@ -80,7 +80,7 @@ export class ClientesService {
     }
 
     // Verificar senha atual
-    const senhaValida = await bcrypt.compare(senhaAtual, cliente.password);
+    const senhaValida = await bcrypt.compare(senhaAtual, (cliente as any).password);
     if (!senhaValida) {
       throw new UnauthorizedException('Senha atual incorreta');
     }
@@ -108,7 +108,7 @@ export class ClientesService {
 
     // Buscar cliente atualizado
     const clienteAtualizado = await this.clienteRepo.findOne({ where: { id: clienteId } });
-    const { password, ...clienteSemSenha } = clienteAtualizado;
+    const clienteSemSenha = clienteAtualizado ? (({ password, ...rest }) => rest)(clienteAtualizado as any) : {};
 
     return {
       message: 'Celular alterado com sucesso',
