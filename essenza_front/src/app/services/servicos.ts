@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
+import { AuthService } from './auth';
 
 export interface Servico {
   id: number;
@@ -35,7 +36,10 @@ export class ServicosService {
   private servicosSubject = new BehaviorSubject<Servico[]>([]);
   public servicos$ = this.servicosSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   // Método para limpar cache e forçar reload
   clearCache(): void {
@@ -53,22 +57,15 @@ export class ServicosService {
     };
     if (categoria) params.categoria = categoria;
 
-    console.log('🔄 ServicosService - Fazendo requisição para:', `${this.apiUrl}/servico`);
-    console.log('🔄 ServicosService - Parâmetros:', params);
-    
+    const headers = this.authService.getAuthHeaders();
     return this.http.get<PaginatedResponse<Servico>>(`${this.apiUrl}/servico`, { 
-      params
+      params,
+      headers
     }).pipe(
       tap(response => {
-        console.log('✅ ServicosService - Resposta recebida:', response);
-        console.log('✅ ServicosService - Dados:', response.data);
-        console.log('✅ ServicosService - Quantidade:', response.data?.length);
-        
         // Sempre atualizar o cache com os dados recebidos
         this.servicosCache = response.data;
         this.servicosSubject.next(response.data);
-        
-        console.log('✅ ServicosService - Cache atualizado:', this.servicosCache);
       }),
       catchError(error => {
         console.error('Erro ao carregar serviços:', error);

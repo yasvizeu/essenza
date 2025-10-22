@@ -146,9 +146,7 @@ export class DashboardProfissionalComponent implements OnInit {
 
   // Carregar dados do dashboard
   loadDashboardData(): void {
-    console.log('🔍 Debug - Iniciando carregamento do dashboard');
     this.isLoading = true;
-    console.log('🔍 Debug - isLoading definido como true');
     
     // Carregar dados em paralelo
     Promise.all([
@@ -162,25 +160,18 @@ export class DashboardProfissionalComponent implements OnInit {
     ]).then(() => {
       // Calcular estatísticas localmente após carregar todos os dados
       this.calcularEstatisticas();
-      console.log('🔍 Debug - Carregamento do dashboard concluído');
       this.isLoading = false;
-      console.log('🔍 Debug - isLoading definido como false');
-      this.cdr.detectChanges(); // Forçar detecção de mudanças
     }).catch(error => {
       console.error('Erro ao carregar dados do dashboard:', error);
       this.isLoading = false;
-      console.log('🔍 Debug - isLoading definido como false (erro)');
-      this.cdr.detectChanges(); // Forçar detecção de mudanças
     });
   }
 
   // Carregar produtos
   private loadProdutos(): Promise<void> {
-    console.log('🔍 Debug - Carregando produtos...');
     this.isLoadingProdutos = true;
     return this.dashboardService.getProdutos().toPromise()
       .then(produtos => {
-        console.log('🔍 Debug - Produtos carregados:', produtos);
         this.produtos = produtos || [];
       })
       .catch(error => {
@@ -188,17 +179,14 @@ export class DashboardProfissionalComponent implements OnInit {
         this.produtos = [];
       })
       .finally(() => {
-        console.log('🔍 Debug - Produtos carregamento finalizado');
         this.isLoadingProdutos = false;
       });
   }
 
   // Carregar serviços
   private loadServicos(): Promise<void> {
-    console.log('🔍 Debug - Carregando serviços...');
     return this.dashboardService.getServicos().toPromise()
       .then(servicos => {
-        console.log('🔍 Debug - Serviços carregados:', servicos);
         this.servicos = servicos || [];
       })
       .catch(error => {
@@ -209,11 +197,9 @@ export class DashboardProfissionalComponent implements OnInit {
 
   // Carregar clientes
   private loadClientes(): Promise<void> {
-    console.log('🔍 Debug - Carregando clientes...');
     this.isLoadingClientes = true;
     return this.dashboardService.getClientes().toPromise()
       .then(clientes => {
-        console.log('🔍 Debug - Clientes carregados:', clientes);
         this.clientes = clientes || [];
         this.clientesFiltrados = [...this.clientes];
       })
@@ -223,14 +209,12 @@ export class DashboardProfissionalComponent implements OnInit {
         this.clientesFiltrados = [];
       })
       .finally(() => {
-        console.log('🔍 Debug - Clientes carregamento finalizado');
         this.isLoadingClientes = false;
       });
   }
 
   // Carregar profissionais
   private loadProfissionais(): Promise<void> {
-    console.log('🔍 Debug - Carregando profissionais...');
     return this.dashboardService.getProfissionais().toPromise()
       .then(profissionais => {
         console.log('🔍 Debug - Profissionais carregados:', profissionais);

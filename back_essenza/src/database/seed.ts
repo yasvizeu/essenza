@@ -6,6 +6,7 @@ import { Cliente } from '../clientes/entities/cliente.entity';
 import { Produto } from '../produtos/entities/produto.entity';
 import { Servico } from '../servicos/entities/servico.entity';
 import { ServicoProduto } from '../servicos/entities/servico-produto.entity';
+import { FichaAnamnese } from '../ficha-anamnese/entities/ficha-anamnese.entity';
 import * as bcrypt from 'bcryptjs';
 
 const dataSource = new DataSource({
@@ -31,6 +32,7 @@ async function seed() {
     const produtoRepository = dataSource.getRepository(Produto);
     const servicoRepository = dataSource.getRepository(Servico);
     const servicoProdutoRepository = dataSource.getRepository(ServicoProduto);
+    const fichaAnamneseRepository = dataSource.getRepository(FichaAnamnese);
 
     // Verificar se já existem usuários em cada tabela separadamente
     const existingProfissionais = await profissionalRepository.find();
@@ -85,6 +87,7 @@ async function seed() {
     }
 
     // Criar usuário cliente se não existir
+    let clienteCriado: Cliente | null = null;
     if (existingClientes.length === 0) {
       console.log('Criando usuário cliente...');
       const hashedSenhaCliente = await bcrypt.hash('Cliente123@', 12);
@@ -98,10 +101,34 @@ async function seed() {
         cell: '11987654322',
         address: 'Rua Cliente, 456',
       });
-      await clienteRepository.save(cliente);
+      clienteCriado = await clienteRepository.save(cliente);
       console.log('✅ Cliente criado com sucesso!');
     } else {
       console.log('ℹ️ Cliente já existe, pulando...');
+      clienteCriado = existingClientes[0];
+    }
+
+    // Criar ficha de anamnese para o cliente se não existir
+    if (clienteCriado) {
+      const existingFicha = await fichaAnamneseRepository.findOne({
+        where: { cliente: { id: clienteCriado.id } }
+      });
+
+      if (!existingFicha) {
+        console.log('Criando ficha de anamnese para o cliente...');
+        const fichaAnamnese = fichaAnamneseRepository.create({
+          healthProblems: 'Nenhum problema de saúde conhecido. Pressão arterial normal. Não possui diabetes, hipertensão ou problemas cardíacos.',
+          medications: 'Não utiliza medicamentos contínuos. Apenas ocasionalmente paracetamol para dores de cabeça.',
+          allergies: 'Alergia a perfumes fortes e produtos com fragrância artificial. Pele sensível a alguns conservantes.',
+          surgeries: 'Nenhuma cirurgia realizada. Apenas extração de dente do siso em 2018.',
+          lifestyle: 'Estilo de vida ativo. Pratica yoga 3x por semana, caminhada diária. Alimentação balanceada, evita açúcar refinado. Dorme 7-8 horas por noite. Não fuma, bebe socialmente.',
+          cliente: clienteCriado
+        });
+        await fichaAnamneseRepository.save(fichaAnamnese);
+        console.log('✅ Ficha de anamnese criada com sucesso!');
+      } else {
+        console.log('ℹ️ Ficha de anamnese já existe para este cliente, pulando...');
+      }
     }
 
     // Criar produtos se não existirem

@@ -10,6 +10,7 @@ import { CartComponent } from './components/cart/cart';
 import { PagamentoComponent } from './pages/pagamento/pagamento';
 import { ServicosComponent } from './pages/servicos/servicos';
 import { ConfiguracoesComponent } from './pages/configuracoes/configuracoes';
+import { PerfilClienteComponent } from './components/perfil-cliente/perfil-cliente';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -24,5 +25,6 @@ export const routes: Routes = [
   { path: 'carrinho', component: CartComponent },
   { path: 'pagamento', component: PagamentoComponent },
   { path: 'configuracoes', component: ConfiguracoesComponent },
+  { path: 'perfil-cliente', component: PerfilClienteComponent },
   { path: '**', redirectTo: '' }
 ];

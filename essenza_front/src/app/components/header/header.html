@@ -12,10 +12,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <button class="nav-link btn btn-link" (click)="navegarParaHome()">
             <i class="bi bi-house-door me-1"></i>
             Home
-          </a>
+          </button>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -24,38 +24,38 @@
           </a>
           <ul class="dropdown-menu">
             <li>
-              <a class="dropdown-item" routerLink="/servicos" [queryParams]="{categoria: 'facial'}">
+              <button class="dropdown-item" (click)="navegarParaServicos('facial')">
                 <i class="bi bi-emoji-smile me-2"></i>
                 Facial
-              </a>
+              </button>
             </li>
             <li>
-              <a class="dropdown-item" routerLink="/servicos" [queryParams]="{categoria: 'corporal'}">
+              <button class="dropdown-item" (click)="navegarParaServicos('corporal')">
                 <i class="bi bi-person me-2"></i>
                 Corporal
-              </a>
+              </button>
             </li>
             <li>
-              <a class="dropdown-item" routerLink="/servicos" [queryParams]="{categoria: 'massagem'}">
+              <button class="dropdown-item" (click)="navegarParaServicos('massagem')">
                 <i class="bi bi-heart me-2"></i>
                 Massagem Relaxante
-              </a>
+              </button>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <a class="dropdown-item" routerLink="/servicos">
+              <button class="dropdown-item" (click)="navegarParaServicos()">
                 <i class="bi bi-grid me-2"></i>
                 Todos os Serviços
-              </a>
+              </button>
             </li>
           </ul>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" routerLink="/sobre" routerLinkActive="active">
+          <button class="nav-link btn btn-link" (click)="navegarParaSobre()">
             <i class="bi bi-info-circle me-1"></i>
             Sobre
-          </a>
+          </button>
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="/contato" routerLinkActive="active">
@@ -69,22 +69,22 @@
         <!-- Menu para usuários não autenticados -->
         <ng-container *ngIf="!isAuthenticated">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/cadastro" routerLinkActive="active">
+            <button class="nav-link btn btn-link" (click)="navegarParaCadastro()">
               <i class="bi bi-person-plus me-1"></i>
               Cadastro
-            </a>
+            </button>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/login" routerLinkActive="active">
+            <button class="nav-link btn btn-link" (click)="navegarParaLogin()">
               <i class="bi bi-person-circle me-1"></i>
               Login
-            </a>
+            </button>
           </li>
           <li class="nav-item">
-            <a class="btn btn-outline-light btn-sm ms-2" routerLink="/sobre" routerLinkActive="active">
+            <button class="btn btn-outline-light btn-sm ms-2" (click)="navegarParaSobre()">
               <i class="bi bi-info-circle me-1"></i>
               Saiba Mais
-            </a>
+            </button>
           </li>
         </ng-container>
 
@@ -109,17 +109,17 @@
                 </a>
               </li>
               <li><hr class="dropdown-divider"></li>
+                  <li *ngIf="currentUser?.tipo === 'cliente'">
+                    <button class="dropdown-item" (click)="navegarParaPerfilCliente()">
+                      <i class="bi bi-person me-2"></i>
+                      Meu Perfil
+                    </button>
+                  </li>
               <li>
-                <a class="dropdown-item" href="#">
-                  <i class="bi bi-person me-2"></i>
-                  Meu Perfil
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" routerLink="/configuracoes">
+                <button class="dropdown-item" (click)="navegarParaConfiguracoes()">
                   <i class="bi bi-gear me-2"></i>
                   Configurações
-                </a>
+                </button>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
@@ -131,11 +131,11 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/carrinho" routerLinkActive="active">
+            <button class="nav-link btn btn-link" (click)="navegarParaCarrinho()">
               <i class="bi bi-cart3 me-1"></i>
               Carrinho
               <span *ngIf="cartItemCount > 0" class="badge bg-danger ms-1">{{ cartItemCount }}</span>
-            </a>
+            </button>
           </li>
         </ng-container>
       </ul>

@@ -36,6 +36,13 @@ export class FichaAnamneseService {
     return this.fichaRepo.find();
   }
 
+  async findByClienteId(clienteId: number) {
+    return this.fichaRepo.findOne({
+      where: { cliente: { id: clienteId } },
+      relations: ['cliente']
+    });
+  }
+
   findOne(id: number) {
     return this.fichaRepo.findOneBy({id});
   }

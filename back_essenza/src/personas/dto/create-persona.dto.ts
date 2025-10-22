@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsBoolean, isNotEmpty, IsString, IsEmail, IsStrongPassword, IsIdentityCard, IsDate, IsDateString, IsOptional, IsIn } from 'class-validator';
-import { IsCpf } from 'src/validators/is_cpf.decorator';
+import { IsCpf } from '../../validators/is_cpf.decorator';
 export class CreatePersonaDto {
     @IsNotEmpty()
     @IsString()

@@ -74,7 +74,7 @@
           </button>
         </div>
 
-        <div *ngIf="!isLoadingAgendamentos && proximosAgendamentos.length > 0" class="row">
+        <div *ngIf="proximosAgendamentos.length > 0" class="row">
           <div *ngFor="let agendamento of proximosAgendamentos" class="col-md-4 mb-3">
             <div class="card h-100 agendamento-card border-0 shadow-sm" (click)="verDetalhesAgendamento(agendamento)" style="cursor: pointer;">
               <div class="card-body">
@@ -145,7 +145,7 @@
           </button>
         </div>
 
-        <div *ngIf="!isLoadingRecomendados && servicosRecomendados.length > 0" class="row">
+        <div *ngIf="servicosRecomendados.length > 0" class="row">
           <div *ngFor="let servico of servicosRecomendados" class="col-md-3 mb-4">
             <div class="card h-100 servico-card border-0 shadow-sm" (click)="openModal(servico)">
               <div class="card-img-top position-relative">
@@ -354,8 +354,9 @@
       </div>
     </div>
 
+
     <!-- Cards de Serviços -->
-    <div *ngIf="!isLoading" class="row g-4">
+    <div class="row g-4">
       <div *ngFor="let servico of servicos" class="col-lg-4 col-md-6">
         <div class="card border-0 shadow-sm h-100 servico-card" (click)="openModal(servico)">
           <div class="card-img-wrapper">
@@ -366,7 +367,7 @@
               style="height: 200px; object-fit: cover;"
               loading="lazy"
               [attr.data-src]="getServicoImage(servico)"
-              onerror="this.src='assets/images/placeholder-service.jpg'">
+              onerror="this.src='https://via.placeholder.com/400x200?text=Serviço'">
             <div class="card-img-overlay d-flex align-items-end">
               <div class="w-100">
                 <span class="badge bg-success mb-2">Disponível</span>

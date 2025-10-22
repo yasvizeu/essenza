@@ -62,4 +62,40 @@ export class Header implements OnInit, OnDestroy {
   goToDashboardProfissional(): void {
     this.router.navigate(['/dashboard-profissional']);
   }
+
+  navegarParaHome(): void {
+    this.router.navigate(['/']);
+  }
+
+  navegarParaCadastro(): void {
+    this.router.navigate(['/cadastro']);
+  }
+
+  navegarParaLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
+  navegarParaServicos(categoria?: string): void {
+    if (categoria) {
+      this.router.navigate(['/servicos'], { queryParams: { categoria } });
+    } else {
+      this.router.navigate(['/servicos']);
+    }
+  }
+
+  navegarParaCarrinho(): void {
+    this.router.navigate(['/carrinho']);
+  }
+
+  navegarParaConfiguracoes(): void {
+    this.router.navigate(['/configuracoes']);
+  }
+
+  navegarParaSobre(): void {
+    this.router.navigate(['/sobre']);
+  }
+
+  navegarParaPerfilCliente(): void {
+    this.router.navigate(['/perfil-cliente']);
+  }
 }

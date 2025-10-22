@@ -1,0 +1,190 @@
+<div class="perfil-container">
+  <!-- Header do Perfil -->
+  <div class="perfil-header">
+    <div class="perfil-avatar">
+      <i class="bi bi-person-circle display-1 text-success"></i>
+    </div>
+    <div class="perfil-info">
+      <h2 class="perfil-nome">{{ currentUser?.nome || currentUser?.name || 'Cliente' }}</h2>
+      <p class="perfil-email">{{ currentUser?.email }}</p>
+      <span class="badge bg-success">Cliente</span>
+    </div>
+    <div class="perfil-actions">
+      <button 
+        class="btn btn-outline-primary" 
+        (click)="toggleEdit()"
+        [disabled]="isLoading">
+        <i class="bi bi-pencil me-2"></i>
+        {{ isEditing ? 'Cancelar' : 'Editar' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Dados Pessoais -->
+  <div class="perfil-section">
+    <h4 class="section-title">
+      <i class="bi bi-person me-2"></i>
+      Dados Pessoais
+    </h4>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="info-item">
+          <label>Nome Completo:</label>
+          <span>{{ currentUser?.nome || currentUser?.name || 'Não informado' }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-item">
+          <label>CPF:</label>
+          <span>{{ currentUser?.cpf || 'Não informado' }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-item">
+          <label>Data de Nascimento:</label>
+          <span>{{ formatDate(currentUser?.birthDate) }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-item">
+          <label>Telefone:</label>
+          <span>{{ currentUser?.cell || 'Não informado' }}</span>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="info-item">
+          <label>Endereço:</label>
+          <span>{{ currentUser?.address || 'Não informado' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ficha de Anamnese -->
+  <div class="perfil-section">
+    <h4 class="section-title">
+      <i class="bi bi-clipboard-data me-2"></i>
+      Ficha de Anamnese
+    </h4>
+    
+    <div *ngIf="isLoading" class="text-center py-4">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+      <p class="mt-2 text-muted">Carregando ficha de anamnese...</p>
+    </div>
+
+    <div *ngIf="!isLoading && fichaAnamnese" class="anamnese-form">
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label for="healthProblems" class="form-label">
+              <i class="bi bi-heart-pulse me-1"></i>
+              Problemas de Saúde
+            </label>
+            <textarea 
+              id="healthProblems"
+              class="form-control" 
+              [(ngModel)]="fichaAnamnese.healthProblems"
+              [readonly]="!isEditing"
+              rows="3"
+              placeholder="Descreva seus problemas de saúde conhecidos...">
+            </textarea>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="form-group">
+            <label for="medications" class="form-label">
+              <i class="bi bi-capsule me-1"></i>
+              Medicamentos em Uso
+            </label>
+            <textarea 
+              id="medications"
+              class="form-control" 
+              [(ngModel)]="fichaAnamnese.medications"
+              [readonly]="!isEditing"
+              rows="3"
+              placeholder="Liste os medicamentos que você está tomando...">
+            </textarea>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="form-group">
+            <label for="allergies" class="form-label">
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              Alergias
+            </label>
+            <textarea 
+              id="allergies"
+              class="form-control" 
+              [(ngModel)]="fichaAnamnese.allergies"
+              [readonly]="!isEditing"
+              rows="3"
+              placeholder="Descreva suas alergias conhecidas...">
+            </textarea>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="form-group">
+            <label for="surgeries" class="form-label">
+              <i class="bi bi-hospital me-1"></i>
+              Cirurgias Realizadas
+            </label>
+            <textarea 
+              id="surgeries"
+              class="form-control" 
+              [(ngModel)]="fichaAnamnese.surgeries"
+              [readonly]="!isEditing"
+              rows="3"
+              placeholder="Liste as cirurgias que você já realizou...">
+            </textarea>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="form-group">
+            <label for="lifestyle" class="form-label">
+              <i class="bi bi-activity me-1"></i>
+              Estilo de Vida
+            </label>
+            <textarea 
+              id="lifestyle"
+              class="form-control" 
+              [(ngModel)]="fichaAnamnese.lifestyle"
+              [readonly]="!isEditing"
+              rows="4"
+              placeholder="Descreva seu estilo de vida, atividades físicas, alimentação, etc...">
+            </textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botões de Ação -->
+      <div *ngIf="isEditing" class="form-actions">
+        <button 
+          class="btn btn-success" 
+          (click)="saveFichaAnamnese()"
+          [disabled]="isLoading">
+          <i class="bi bi-check-lg me-2"></i>
+          Salvar Alterações
+        </button>
+        <button 
+          class="btn btn-secondary ms-2" 
+          (click)="cancelEdit()"
+          [disabled]="isLoading">
+          <i class="bi bi-x-lg me-2"></i>
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && !fichaAnamnese" class="text-center py-4">
+      <i class="bi bi-clipboard-x display-1 text-muted"></i>
+      <h5 class="text-muted mt-3">Ficha de Anamnese não encontrada</h5>
+      <p class="text-muted">Clique em "Editar" para criar sua ficha de anamnese.</p>
+    </div>
+  </div>
+</div>

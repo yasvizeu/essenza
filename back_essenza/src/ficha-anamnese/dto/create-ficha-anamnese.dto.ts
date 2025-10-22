@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsBoolean, isNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsBoolean, isNotEmpty, IsString, IsOptional, IsDateString } from 'class-validator';
 
 export class CreateFichaAnamneseDto {
     @IsNotEmpty()
@@ -24,4 +24,12 @@ export class CreateFichaAnamneseDto {
     @IsNumber()
     @IsNotEmpty()
     clienteId: number;
+
+    @IsOptional()
+    @IsDateString()
+    createdAt?: Date;
+
+    @IsOptional()
+    @IsDateString()
+    updatedAt?: Date;
 }

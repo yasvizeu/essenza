@@ -208,6 +208,160 @@
           </div>
         </div>
       </div>
+
+      <!-- Ficha de Anamnese - Apenas para Clientes -->
+      <div *ngIf="currentUser?.tipo === 'cliente'" class="card mb-4">
+        <div class="card-header bg-info text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-clipboard-data me-2"></i>
+              Ficha de Anamnese
+            </h5>
+            <button 
+              class="btn btn-outline-light btn-sm" 
+              (click)="toggleEditFicha()"
+              [disabled]="isLoadingFicha">
+              <i class="bi bi-pencil me-1"></i>
+              {{ isEditingFicha ? 'Cancelar' : 'Editar' }}
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          
+          <div *ngIf="isLoadingFicha" class="text-center py-4">
+            <div class="spinner-border text-info" role="status">
+              <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-2 text-muted">Carregando ficha de anamnese...</p>
+          </div>
+
+          <div *ngIf="!isLoadingFicha && fichaAnamnese" class="anamnese-form">
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group mb-3">
+                  <label for="healthProblems" class="form-label">
+                    <i class="bi bi-heart-pulse me-1"></i>
+                    Problemas de Saúde
+                  </label>
+                  <textarea 
+                    id="healthProblems"
+                    class="form-control" 
+                    formControlName="healthProblems"
+                    [readonly]="!isEditingFicha"
+                    rows="3"
+                    placeholder="Descreva seus problemas de saúde conhecidos...">
+                  </textarea>
+                </div>
+              </div>
+              
+              <div class="col-12">
+                <div class="form-group mb-3">
+                  <label for="medications" class="form-label">
+                    <i class="bi bi-capsule me-1"></i>
+                    Medicamentos em Uso
+                  </label>
+                  <textarea 
+                    id="medications"
+                    class="form-control" 
+                    formControlName="medications"
+                    [readonly]="!isEditingFicha"
+                    rows="3"
+                    placeholder="Liste os medicamentos que você está tomando...">
+                  </textarea>
+                </div>
+              </div>
+              
+              <div class="col-12">
+                <div class="form-group mb-3">
+                  <label for="allergies" class="form-label">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Alergias
+                  </label>
+                  <textarea 
+                    id="allergies"
+                    class="form-control" 
+                    formControlName="allergies"
+                    [readonly]="!isEditingFicha"
+                    rows="3"
+                    placeholder="Descreva suas alergias conhecidas...">
+                  </textarea>
+                </div>
+              </div>
+              
+              <div class="col-12">
+                <div class="form-group mb-3">
+                  <label for="surgeries" class="form-label">
+                    <i class="bi bi-hospital me-1"></i>
+                    Cirurgias Realizadas
+                  </label>
+                  <textarea 
+                    id="surgeries"
+                    class="form-control" 
+                    formControlName="surgeries"
+                    [readonly]="!isEditingFicha"
+                    rows="3"
+                    placeholder="Liste as cirurgias que você já realizou...">
+                  </textarea>
+                </div>
+              </div>
+              
+              <div class="col-12">
+                <div class="form-group mb-3">
+                  <label for="lifestyle" class="form-label">
+                    <i class="bi bi-activity me-1"></i>
+                    Estilo de Vida
+                  </label>
+                  <textarea 
+                    id="lifestyle"
+                    class="form-control" 
+                    formControlName="lifestyle"
+                    [readonly]="!isEditingFicha"
+                    rows="4"
+                    placeholder="Descreva seu estilo de vida, atividades físicas, alimentação, etc...">
+                  </textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Informações de Data -->
+            <div *ngIf="fichaAnamnese.createdAt || fichaAnamnese.updatedAt" class="row mt-3">
+              <div class="col-12">
+                <small class="text-muted">
+                  <i class="bi bi-calendar me-1"></i>
+                  Criado em: {{ formatDate(fichaAnamnese.createdAt) }}
+                  <span *ngIf="fichaAnamnese.updatedAt && fichaAnamnese.updatedAt !== fichaAnamnese.createdAt">
+                    | Atualizado em: {{ formatDate(fichaAnamnese.updatedAt) }}
+                  </span>
+                </small>
+              </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div *ngIf="isEditingFicha" class="form-actions mt-4">
+              <button 
+                class="btn btn-success" 
+                (click)="saveFichaAnamnese()"
+                [disabled]="isLoadingFicha || fichaForm.invalid">
+                <i class="bi bi-check-lg me-2"></i>
+                Salvar Alterações
+              </button>
+              <button 
+                class="btn btn-secondary ms-2" 
+                (click)="cancelEditFicha()"
+                [disabled]="isLoadingFicha">
+                <i class="bi bi-x-lg me-2"></i>
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="!isLoadingFicha && !fichaAnamnese" class="text-center py-4">
+            <i class="bi bi-clipboard-x display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">Ficha de Anamnese não encontrada</h5>
+            <p class="text-muted">Clique em "Editar" para criar sua ficha de anamnese.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

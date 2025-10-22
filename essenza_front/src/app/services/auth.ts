@@ -83,23 +83,21 @@ export class AuthService {
     if (!this.isBrowser()) return;
 
     const token = this.getAccessToken();
-    const user = this.getCurrentUser();
-
-    console.log('🔍 AuthService - checkAuthStatus:', { token: !!token, user: !!user });
+    const userStr = localStorage.getItem(this.userKey);
+    const user = userStr ? JSON.parse(userStr) : null;
 
     if (token && user) {
       // Verificar se o token ainda é válido
       if (!this.isTokenExpired()) {
         this.isAuthenticatedSubject.next(true);
         this.currentUserSubject.next(user);
-        console.log('🔍 AuthService - Usuário autenticado restaurado:', user);
       } else {
         // Token expirado, tentar fazer refresh
-        console.log('🔍 AuthService - Token expirado, tentando refresh...');
         this.tryRefreshToken();
       }
     } else {
-      console.log('🔍 AuthService - Nenhum usuário autenticado encontrado');
+      this.isAuthenticatedSubject.next(false);
+      this.currentUserSubject.next(null);
     }
   }
 
@@ -168,9 +166,7 @@ export class AuthService {
 
   // Verificar se o usuário está autenticado
   isAuthenticated(): boolean {
-    const isAuth = this.isAuthenticatedSubject.value;
-    console.log('🔍 AuthService - isAuthenticated:', isAuth);
-    return isAuth;
+    return this.isAuthenticatedSubject.value;
   }
 
   // Obter usuário atual

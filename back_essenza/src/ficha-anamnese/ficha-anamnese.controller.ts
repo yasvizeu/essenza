@@ -22,6 +22,11 @@ export class FichaAnamneseController {
     return this.fichaAnamneseService.findOne(+id);
   }
 
+  @Get('cliente/:clienteId')
+  findByClienteId(@Param('clienteId') clienteId: string) {
+    return this.fichaAnamneseService.findByClienteId(+clienteId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateFichaAnamneseDto: UpdateFichaAnamneseDto) {
     return this.fichaAnamneseService.update(+id, updateFichaAnamneseDto);

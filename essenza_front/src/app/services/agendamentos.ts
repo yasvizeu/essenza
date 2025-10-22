@@ -100,26 +100,19 @@ export class AgendamentosService {
 
   // Criar agendamento com formato do backend
   criarAgendamentoCompleto(agendamento: any): Observable<Agendamento> {
-    console.log('🔍 Debug - Criando agendamento completo:', agendamento);
     return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento);
   }
 
   // Buscar agendamentos do cliente
   getAgendamentosCliente(clienteId: number): Observable<Agendamento[]> {
-    console.log('🔍 Debug - Buscando agendamentos para cliente ID:', clienteId);
-    return this.http.get<Agendamento[]>(`${this.apiUrl}/agendamentos/cliente/${clienteId}`);
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<Agendamento[]>(`${this.apiUrl}/agendamentos/cliente/${clienteId}`, { headers });
   }
 
   // Buscar serviços pagos não agendados do cliente
   getServicosPagosNaoAgendados(clienteId: number): Observable<any[]> {
-    console.log('🔍 Debug - Buscando serviços pagos não agendados para cliente ID:', clienteId);
-    // Usar endpoint específico para serviços pagos não agendados
-    return this.http.get<any[]>(`${this.apiUrl}/agendamentos/servicos-pagos/${clienteId}`).pipe(
-      map(agendamentos => {
-        console.log('🔍 Debug - Serviços pagos não agendados recebidos da API:', agendamentos);
-        return agendamentos;
-      })
-    );
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<any[]>(`${this.apiUrl}/agendamentos/servicos-pagos/${clienteId}`, { headers });
   }
 
   // Atualizar agendamento

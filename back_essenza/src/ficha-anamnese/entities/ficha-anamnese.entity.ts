@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn} from "typeorm";
 
 @Entity()
 export class FichaAnamnese {
@@ -23,4 +23,10 @@ export class FichaAnamnese {
   @OneToOne('Cliente', { eager: true })
   @JoinColumn()
   cliente: any;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
